@@ -7,5 +7,6 @@
 <p>Our latest product:
     <a href="${latestProduct.url}">${latestProduct.name}</a>!
 </p>
+<img src="${image}" alt="" />
 </body>
 </html>

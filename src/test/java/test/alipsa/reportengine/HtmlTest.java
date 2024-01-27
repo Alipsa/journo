@@ -2,6 +2,7 @@ package test.alipsa.reportengine;
 
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;
+import se.alipsa.reportengine.ImageUtil;
 import se.alipsa.reportengine.ReportEngine;
 
 import java.io.BufferedOutputStream;
@@ -18,12 +19,14 @@ public class HtmlTest {
 
   @Test
   public void testTest() throws TemplateException, IOException {
-    ReportEngine engine = new ReportEngine();
+    ReportEngine engine = new ReportEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");
     Product prod = new Product("http://some.url.se/", "Fancy stuff");
     data.put("latestProduct", prod);
+
+    data.put("image", ImageUtil.asDataUrl("/images/1e.jpg"));
 
     String html = engine.renderHtml("test.ftlh", data);
     System.out.println(html);
@@ -36,7 +39,7 @@ public class HtmlTest {
 
   }
 
-  public class Product {
+  public static class Product {
     private String url;
     private String name;
 
