@@ -1,4 +1,6 @@
 # Journo - html to pdf
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/se.alipsa/journo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/se.alipsa/journo)
+[![javadoc](https://javadoc.io/badge2/se.alipsa/journo/javadoc.svg)](https://javadoc.io/doc/se.alipsa/journo)
 Journo is a tool to generate PDF from Freemarker templates i.e. it
 creates PDF documents from Freemarker markup.
 
@@ -27,6 +29,15 @@ String html = engine.renderHtml("test.ftlh", data);
 // Create a pdf file from the html
 Path path = Paths.get("test.pdf");
 engine.renderPdf(html, path);
+```
+
+To use it, add the following dependency to your maven pom.xml (or equivalent for your build system)
+```xml
+<dependency>
+    <groupId>se.alipsa</groupId>
+    <artifactId>journo</artifactId>
+    <version>1.0.0</version>
+</dependency>
 ```
 
 ## Handling images
