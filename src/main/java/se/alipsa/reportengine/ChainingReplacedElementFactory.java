@@ -11,10 +11,25 @@ import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A ReplacedElementFactory that contains a chain of ReplacedElementFactory objects
+ */
 public class ChainingReplacedElementFactory implements ReplacedElementFactory {
+
+  /**
+   * Default ctor
+   */
+  public ChainingReplacedElementFactory() {
+    // Default ctor
+  }
   private List<ReplacedElementFactory> replacedElementFactories
       = new ArrayList<ReplacedElementFactory>();
 
+  /**
+   * Add a ReplacedElementFactory to the chain
+   *
+   * @param replacedElementFactory the ReplacedElementFactory to add
+   */
   public void addReplacedElementFactory(ReplacedElementFactory replacedElementFactory) {
     replacedElementFactories.add(0, replacedElementFactory);
   }

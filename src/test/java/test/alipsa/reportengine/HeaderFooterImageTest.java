@@ -5,11 +5,14 @@ import org.junit.jupiter.api.Test;
 import se.alipsa.reportengine.ImageUtil;
 import se.alipsa.reportengine.ReportEngine;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HeaderFooterImageTest {
 
@@ -18,14 +21,19 @@ public class HeaderFooterImageTest {
     ReportEngine engine = new ReportEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
-    data.put("alice2", ImageUtil.asDataUrl("/images/alice2.png"));
+    String base64Image = ImageUtil.asDataUrl("/images/alice2.png");
+    data.put("alice2", base64Image);
     // Render the html using the template and the data
     String html = engine.renderHtml("headerFooter.ftlh", data);
-    System.out.println(html);
+    assertTrue(html.contains(base64Image));
+    //System.out.println(html);
 
     // Create a pdf file from the html
     Path path = Paths.get("headerFooter.pdf");
     engine.renderPdf(html, path);
-    System.out.println("Wrote " + path.toAbsolutePath());
+    File file = path.toFile();
+    assertTrue(file.exists());
+    file.deleteOnExit();
+
   }
 }

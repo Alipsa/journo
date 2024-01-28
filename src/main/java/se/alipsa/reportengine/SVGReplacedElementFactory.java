@@ -13,7 +13,18 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+/**
+ * Replace the svg tags
+ */
 public class SVGReplacedElementFactory implements ReplacedElementFactory {
+
+  /**
+   * default ctor
+   */
+  public SVGReplacedElementFactory() {
+    // default ctor
+  }
+
   @Override
   public ReplacedElement createReplacedElement(LayoutContext c, BlockBox box,
                                                UserAgentCallback uac, int cssWidth, int cssHeight) {

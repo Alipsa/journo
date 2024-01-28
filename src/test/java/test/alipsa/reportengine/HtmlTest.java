@@ -5,15 +5,14 @@ import org.junit.jupiter.api.Test;
 import se.alipsa.reportengine.ImageUtil;
 import se.alipsa.reportengine.ReportEngine;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HtmlTest {
 
@@ -29,14 +28,18 @@ public class HtmlTest {
     data.put("image", ImageUtil.asDataUrl("/images/1e.jpg"));
 
     String html = engine.renderHtml("test.ftlh", data);
-    System.out.println(html);
+    //System.out.println(html);
+    assertTrue(html.contains("Per"));
+    assertTrue(html.contains("Fancy stuff"));
 
     Path path = Paths.get("test.pdf");
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(path))) {
       fos.write(engine.renderPdf("test.ftlh", data));
-      System.out.println("Wrote " + path.toAbsolutePath());
+      //System.out.println("Wrote " + path.toAbsolutePath());
     }
-
+    File file = path.toFile();
+    assertTrue(file.exists());
+    file.deleteOnExit();
   }
 
   public static class Product {

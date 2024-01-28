@@ -1,5 +1,9 @@
-# htmlToPdf
-Creates PDF documents from Freemarker markup.
+# Journo - html to pdf
+Journo is a tool to generate PDF from Freemarker templates i.e. it
+creates PDF documents from Freemarker markup.
+
+Usage of this could be as a reporting engine in an application server (Spring Boot, Play, Quarkus etc.) or a
+java gui (Swing, JavaFx or SWT).
 
 The freemarker markup should ideally generate xhtml. If it does not you need to convert
 the html code into xhtml e.g. using `reportEngine.htmlToXhtml(html)`

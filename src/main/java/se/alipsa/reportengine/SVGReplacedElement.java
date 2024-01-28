@@ -18,6 +18,9 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 
+/**
+ * The replacement for the svg with a bitmap image
+ */
 public class SVGReplacedElement implements ITextReplacedElement {
 
   private Point location = new Point(0, 0);
@@ -25,6 +28,13 @@ public class SVGReplacedElement implements ITextReplacedElement {
   private int cssWidth;
   private int cssHeight;
 
+  /**
+   * creates a SVGReplacedElement
+   *
+   * @param svg the svg document
+   * @param cssWidth the width of the image
+   * @param cssHeight the height of the image
+   */
   public SVGReplacedElement(Document svg, int cssWidth, int cssHeight) {
     this.cssWidth = cssWidth;
     this.cssHeight = cssHeight;
