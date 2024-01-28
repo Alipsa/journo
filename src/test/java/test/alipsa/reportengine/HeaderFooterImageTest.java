@@ -2,8 +2,8 @@ package test.alipsa.reportengine;
 
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;
-import se.alipsa.reportengine.ImageUtil;
-import se.alipsa.reportengine.ReportEngine;
+import se.alipsa.journo.ImageUtil;
+import se.alipsa.journo.ReportEngine;
 
 import java.io.File;
 import java.io.IOException;

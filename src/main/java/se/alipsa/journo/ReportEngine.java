@@ -1,4 +1,4 @@
-package se.alipsa.reportengine;
+package se.alipsa.journo;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -8,7 +8,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.BufferedOutputStream;

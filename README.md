@@ -16,9 +16,10 @@ template needs to take into account the xhtml requirements posed by Flying Sauce
 [See the Flying Saucer user guide for details](https://flyingsaucerproject.github.io/flyingsaucer/r8/guide/users-guide-R8.html)
 
 Example usage:
+
 ```groovy
-import se.alipsa.reportengine.ReportEngine;
-    
+import se.alipsa.journo.ReportEngine;
+
 ReportEngine engine = new ReportEngine(this, "/templates");
 
 Map<String, Object> data = new HashMap<>();
@@ -51,8 +52,9 @@ Assuming you have an image like this in your Freemarker template:
 <img src="${alice2}" width="200px" height="300px"/>
 ```
 You can then convert the image to a data url using the Image util:
+
 ```groovy
-import se.alipsa.reportengine.ReportEngine;
+import se.alipsa.journo.ReportEngine;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,8 +102,9 @@ Assuming your Freemarker markup is as follows:
 ```
 
 You can then do:
+
 ```groovy
-import se.alipsa.reportengine.ReportEngine;
+import se.alipsa.journo.ReportEngine;
 import java.util.HashMap;
 import java.util.Map;
 

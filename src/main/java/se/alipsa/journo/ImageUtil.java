@@ -1,4 +1,4 @@
-package se.alipsa.reportengine;
+package se.alipsa.journo;
 
 import java.io.IOException;
 import java.io.InputStream;

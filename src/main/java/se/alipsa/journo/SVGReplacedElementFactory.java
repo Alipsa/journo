@@ -1,4 +1,4 @@
-package se.alipsa.reportengine;
+package se.alipsa.journo;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

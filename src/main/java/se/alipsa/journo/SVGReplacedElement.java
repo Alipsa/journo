@@ -1,4 +1,4 @@
-package se.alipsa.reportengine;
+package se.alipsa.journo;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
