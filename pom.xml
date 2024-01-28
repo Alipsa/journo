@@ -16,7 +16,7 @@
     <licenses>
         <license>
             <name>MIT</name>
-            <url>https://github.com/Alipsa/journo/blob/master/LICENSE</url>
+            <url>https://github.com/Alipsa/journo/blob/main/LICENSE</url>
         </license>
     </licenses>
     <developers>
@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:https://github.com/Alipsa/journo.git</connection>
         <developerConnection>scm:git:https://github.com/Alipsa/journo.git</developerConnection>
-        <url>https://github.com/Alipsa/journo/tree/master</url>
+        <url>https://github.com/Alipsa/journo/tree/main</url>
     </scm>
 
     <properties>
