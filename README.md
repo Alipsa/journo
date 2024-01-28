@@ -117,4 +117,30 @@ Note that it heavily depends on Freemarker and Flying Saucer which are
 licenced under the Apache License (Freemarker) and
 LGPL (Flying Saucer) respectively.
 
-## 3:rd party libraries used:
+## 3:rd party libraries used
+
+### Freemarker (https://freemarker.apache.org/)
+- Used to create the (x)html
+- Apache License Version 2.0
+
+### Flying Saucer (https://github.com/flyingsaucerproject/flyingsaucer)
+- Used to create PDFs
+- GNU Lesser General Public License, version 2.1 or later
+
+### Jsoup (https://jsoup.org/)
+- Used to convert html to xhtml
+- MIT license
+
+### Batik (https://xmlgraphics.apache.org/batik/)
+- Used to convert SVG to bitmaps
+- Apache License, Version 2.0
+
+### SLF4J (https://www.slf4j.org/)
+- Used for logging
+- MIT license
+
+## Test dependencies
+
+### Junit Jupiter (https://junit.org/junit5/)
+- Used for test assertions
+- Eclipse Public License 1.0
