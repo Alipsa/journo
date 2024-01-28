@@ -106,3 +106,11 @@ engine.renderPdf("svgImage.ftlh", data, path);
 
 ## Page breaks
 ## Header and Footer
+
+## License
+The htmlToPdf code is licensed under the MIT license.
+Note that it heavily depends on Freemarker and Flying Saucer which are
+licenced under the Apache License (Freemarker) and
+LGPL (Flying Saucer) respectively.
+
+## 3:rd party libraries used:
