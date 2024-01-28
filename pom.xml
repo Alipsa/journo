@@ -6,7 +6,7 @@
 
     <groupId>se.alipsa</groupId>
     <artifactId>journo</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Journo</name>
