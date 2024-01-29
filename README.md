@@ -185,6 +185,27 @@ Then, in the body you put div sections for each e.g:
 </body>
 ```
 
+## External Resources
+External resources, such as an external css must be treated with some care.
+If you run Journo in a servlet environment and need to reference an external css
+that is not publicly available, you should parameterize the location using 
+`getServletContext().getRealPath()`; if you are in Spring Boot you can do
+`getClass().getResource("/path/to/resource.css").toExternalForm()`.
+
+For example, in your Freemarker template:
+```xhtml
+<link rel="stylesheet" href="${externalCssPath}" type="text/css" media="all" />
+```
+
+... you then find the css and set the url parameter:
+```groovy
+String externalCssPath = this.getClass().getResource("/templates/mystyle.css").toExternalForm();
+data.put("externalCssPath", externalCssPath);
+```
+
+Of course if you either make your css available from some url or put your style inline in the
+xhtml document you don't need to do any of this.
+
 ## License
 The journo code is licensed under the MIT license.
 Note that it heavily depends on Freemarker and Flying Saucer which are
