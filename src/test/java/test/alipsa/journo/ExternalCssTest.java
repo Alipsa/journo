@@ -30,7 +30,7 @@ public class ExternalCssTest {
     data.put("externalCssPath", externalCssPath);
 
     String html = engine.renderHtml("externalCss.ftlh", data);
-    System.out.println(html);
+    // System.out.println(html);
 
     Path pdfFilePath = Paths.get("externalCss.pdf");
     engine.renderPdf("externalCss.ftlh", data, pdfFilePath);
