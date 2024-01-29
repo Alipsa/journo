@@ -123,11 +123,70 @@ Path path = Paths.get("svgImage.pdf");
 engine.renderPdf("svgImage.ftlh", data, path);
 ```
 
-## Page breaks
-## Header and Footer
+## Page structure
+
+A good way to structure your document is to define 3 sections in your page style i.e. for header, footer and content, e.g:
+
+```xhtml
+<style>
+    div.header {
+        display: block;
+        position: running(header);
+    }
+
+    div.footer {
+        display: block;
+        position: running(footer);
+    }
+
+    div.content {page-break-after: always;}
+    div.lastpage {page-break-after: avoid;}
+
+    @page {
+        @top-center { content: element(header) }
+    }
+    @page {
+        @bottom-right-corner { content: element(footer) }
+    }
+
+    #pagenumber:before {
+        content: counter(page);
+    }
+
+    #pagecount:before {
+        content: counter(pages);
+    }
+
+</style>
+```
+
+Then, in the body you put div sections for each e.g:
+```xhtml
+<body>
+<div class="header">Here goes the header text</div>
+<div class="footer" style="">  Page <span id="pagenumber"/> of <span id="pagecount"/> </div>
+<div class="content" id="page1">
+    <h1>CHAPTER I</h1>
+    <p>
+     Some text and images for the first page
+    </p>
+</div>
+<div class="content" id="page2">
+  <h1>CHAPTER 2</h1>
+  <p>
+    Some text and images for the second page
+  </p>
+</div>
+<div class="lastpage" id="page3">
+  <p>
+    some text and images for the last page
+  </p>
+</div>
+</body>
+```
 
 ## License
-The htmlToPdf code is licensed under the MIT license.
+The journo code is licensed under the MIT license.
 Note that it heavily depends on Freemarker and Flying Saucer which are
 licenced under the Apache License (Freemarker) and
 LGPL (Flying Saucer) respectively.
