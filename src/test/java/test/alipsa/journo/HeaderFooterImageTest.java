@@ -1,4 +1,4 @@
-package test.alipsa.reportengine;
+package test.alipsa.journo;
 
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;

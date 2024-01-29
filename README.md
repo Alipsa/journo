@@ -47,7 +47,7 @@ To use it, add the following dependency to your maven pom.xml (or equivalent for
 ### Regular images
 Regular images should be converted to base64 data url's that are passed in as data.
 
-Assuming you have an image like this in your Freemarker template:
+Assuming you have an image like this in your Freemarker template saved as a file called svgImage.ftlh:
 ```xhtml
 <img src="${alice2}" width="200px" height="300px"/>
 ```
@@ -65,7 +65,7 @@ Map<String, Object> data = new HashMap<>();
 // which is copied to the classes dir and to the root in the jar file
 data.put("alice2", ImageUtil.asDataUrl("/alice2.png"));
 // Render the html using the template and the data
-String html = engine.renderHtml("headerFooter.ftlh", data);
+String html = engine.renderHtml("svgImage.ftlh", data);
 ```
 
 ### SVG images
@@ -76,7 +76,7 @@ or inline block.
 If you are dynamically inserting your svg image, you need to 
 [disable autoescaping](https://freemarker.apache.org/docs/dgui_misc_autoescaping.html)
 
-Assuming your Freemarker markup is as follows:
+Assuming your Freemarker markup saved as a file called svgImage.ftlh with the following content:
 
 ```xhtml
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -163,25 +163,25 @@ A good way to structure your document is to define 3 sections in your page style
 Then, in the body you put div sections for each e.g:
 ```xhtml
 <body>
-<div class="header">Here goes the header text</div>
-<div class="footer" style="">  Page <span id="pagenumber"/> of <span id="pagecount"/> </div>
-<div class="content" id="page1">
-    <h1>CHAPTER I</h1>
-    <p>
-     Some text and images for the first page
-    </p>
-</div>
-<div class="content" id="page2">
-  <h1>CHAPTER 2</h1>
-  <p>
-    Some text and images for the second page
-  </p>
-</div>
-<div class="lastpage" id="page3">
-  <p>
-    some text and images for the last page
-  </p>
-</div>
+    <div class="header">Here goes the header text</div>
+    <div class="footer" style="">  Page <span id="pagenumber"/> of <span id="pagecount"/> </div>
+    <div class="content" id="page1">
+        <h1>CHAPTER I</h1>
+        <p>
+         Some text and images for the first page
+        </p>
+    </div>
+    <div class="content" id="page2">
+      <h1>CHAPTER 2</h1>
+      <p>
+        Some text and images for the second page
+      </p>
+    </div>
+    <div class="lastpage" id="page3">
+      <p>
+        some text and images for the last page
+      </p>
+    </div>
 </body>
 ```
 
