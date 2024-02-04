@@ -5,19 +5,47 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.alipsa</groupId>
-    <artifactId>journo-parent</artifactId>
+    <artifactId>journo-viewer</artifactId>
     <version>0.6.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>Journo Parent</name>
-    <description>Aggregator build for the journo project</description>
+    <name>Journo Viewer</name>
+    <description>Viewer for the journo project</description>
     <url>https://github.com/Alipsa/journo</url>
 
-    <modules>
-        <module>journo</module>
-        <module>journo-viewer</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>se.alipsa</groupId>
+            <artifactId>journo</artifactId>
+            <version>0.6.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>4.0.18</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>0.11.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.165</version>
+        </dependency>
+        <dependency>
+            <groupId>se.alipsa.groovy</groupId>
+            <artifactId>dependency-resolver</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
     <licenses>
         <license>
             <name>MIT</name>

@@ -1,0 +1,90 @@
+.styled-text-area .env-varName {
+    -fx-fill: black;
+}
+
+.styled-text-area .env-varValue {
+    -fx-fill: dimgray;
+}
+
+.styled-text-area {
+    -fx-cursor: text;
+    -fx-font-family: monospace;
+}
+
+.styled-text-area .paragraph-box .paragraph-text {
+    -fx-padding: 0 2px;
+}
+
+.styled-text-area .caret {
+    -rtfx-blink-rate: 500ms;
+    -fx-stroke-width: 1.0;
+}
+
+.styled-text-area .selection {
+    -fx-fill: dodgerblue;
+    -fx-stroke-width: 0;
+}
+
+.assign {
+    -fx-fill: dimgray;
+    -fx-font-weight: bold;
+}
+
+.bracket {
+    -fx-fill: dimgray;
+    -fx-font-weight: bold;
+}
+
+.brace {
+    -fx-fill: slategray;
+    -fx-font-weight: bold;
+}
+
+.comment {
+    -fx-fill: gray;
+    color: gray;
+}
+
+.digit {
+    /* -fx-fill:darkslateblue; */
+    -fx-fill:navy;
+}
+
+.error {
+    -fx-fill: red;
+}
+
+.function {
+    -fx-font-style: italic;
+    /*-fx-fill: darkblue;*/
+    -fx-fill: mediumblue;
+}
+
+.keyword {
+    -fx-fill: mediumblue;
+    /* -fx-font-weight: bold; */
+    color: mediumblue; /* web view */
+}
+
+.operator {
+    /*-fx-fill: darkslategray;*/
+    -fx-fill: dimgray;
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: #f2f9fc;
+}
+
+.paren {
+    -fx-fill: darkgray;
+    -fx-font-weight: bold;
+}
+
+.semicolon {
+    -fx-font-weight: bold;
+}
+
+.string {
+    -fx-fill: darkgreen;
+    color: darkgreen; /* web view */
+}

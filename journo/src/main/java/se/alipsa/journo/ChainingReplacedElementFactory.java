@@ -22,8 +22,7 @@ public class ChainingReplacedElementFactory implements ReplacedElementFactory {
   public ChainingReplacedElementFactory() {
     // Default ctor
   }
-  private List<ReplacedElementFactory> replacedElementFactories
-      = new ArrayList<ReplacedElementFactory>();
+  private List<ReplacedElementFactory> replacedElementFactories = new ArrayList<>();
 
   /**
    * Add a ReplacedElementFactory to the chain

@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -25,7 +22,7 @@ import java.util.TimeZone;
 public class ReportEngine {
 
   private static final Logger log = LoggerFactory.getLogger(ReportEngine.class);
-  private final Configuration cfg;
+  private Configuration cfg;
   private final ITextRenderer renderer = new ITextRenderer();
 
   /**
@@ -36,15 +33,18 @@ public class ReportEngine {
    *                      then "/templates" is the templatesPath
    */
   public ReportEngine(Object caller, String templatesPath) {
-    cfg = new Configuration(Configuration.VERSION_2_3_32);
-    cfg.setDefaultEncoding("UTF-8");
-    cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-    cfg.setLogTemplateExceptions(false);
-    cfg.setWrapUncheckedExceptions(true);
-    cfg.setFallbackOnNullLoopVariable(false);
-    cfg.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
+    createGenericConfig();
     cfg.setClassForTemplateLoading(caller.getClass(), templatesPath);
+    configureRenderers();
+  }
 
+  public ReportEngine(File templateDir) throws IOException {
+    createGenericConfig();
+    cfg.setDirectoryForTemplateLoading(templateDir);
+    configureRenderers();
+  }
+
+  private void configureRenderers() {
     // Enable SVG handling
     ChainingReplacedElementFactory chainingReplacedElementFactory = new ChainingReplacedElementFactory();
     // Add the default factory that handles "normal" images to the chain
@@ -53,7 +53,17 @@ public class ReportEngine {
     renderer.getSharedContext().setReplacedElementFactory(chainingReplacedElementFactory);
   }
 
-  /**
+  private void createGenericConfig() {
+    cfg = new Configuration(Configuration.VERSION_2_3_32);
+    cfg.setDefaultEncoding("UTF-8");
+    cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    cfg.setLogTemplateExceptions(false);
+    cfg.setWrapUncheckedExceptions(true);
+    cfg.setFallbackOnNullLoopVariable(false);
+    cfg.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
+  }
+
+                      /**
    * Render the Freemarker template to a html string
    *
    * @param template the Freemarker template relative file path
