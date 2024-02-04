@@ -206,6 +206,11 @@ data.put("externalCssPath", externalCssPath);
 Of course if you either make your css available from some url or put your style inline in the
 xhtml document you don't need to do any of this.
 
+## Javascript
+if you need to use Javascript to manipulate the DOM you must run the html code in a browser (e.g. Javafx WebView)
+before rendering the pdf (see [the gmd documentation](https://github.com/Alipsa/gmd/blob/main/README.md) for
+and example of using a WebView to do just this). 
+
 ## License
 The journo code is licensed under the MIT license.
 Note that it heavily depends on Freemarker and Flying Saucer which are
