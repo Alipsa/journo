@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -28,12 +29,16 @@ public class JournoViewer extends Application {
 
   private PDFViewer pdfViewer;
   private GroovyTextArea codeArea;
+
+  private FreemarkerTextArea freeMarkerArea;
   private ListView<String> dependencies;
   private TextField dirTf;
   private ReportEngine reportEngine;
-  private Button runButton;
+  private Button templateRunButton;
+  private Button codeRunButton;
   private TabPane tabPane = new TabPane();
   private File groovyFile = null;
+  private File markupFile = null;
   private ComboBox<String> templateNames  = new ComboBox<>();
   private TextField statusField = new TextField();
 
@@ -43,20 +48,33 @@ public class JournoViewer extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+    Tab freeMarkerTab = createFreeMarkerTab();
     Tab codeTab = createCodeTab();
     Tab pdfTab = createPdfTab();
-    tabPane.getTabs().addAll(codeTab, pdfTab);
+    tabPane.getTabs().addAll(freeMarkerTab, codeTab, pdfTab);
 
+    disableRunButtons();
     Scene scene = new Scene(tabPane, 800, 900);
     scene.getStylesheets().add(getClass().getResource("/default-theme.css").toExternalForm());
+    primaryStage.getIcons().add(new Image(JournoViewer.class.getResourceAsStream("/journo-logo.png")));
     primaryStage.setResizable(true);
     primaryStage.setTitle("Journo Viewer");
     primaryStage.setScene(scene);
     primaryStage.show();
   }
 
-  private Tab createCodeTab() {
-    Tab codeTab = new Tab("Data");
+  private void disableRunButtons() {
+    templateRunButton.setDisable(true);
+    codeRunButton.setDisable(true);
+  }
+
+  private void enableRunButtons() {
+    templateRunButton.setDisable(false);
+    codeRunButton.setDisable(false);
+  }
+
+  private Tab createFreeMarkerTab() {
+    Tab templateTab = new Tab("Template");
     BorderPane root = new BorderPane();
     HBox buttonPane = new HBox();
     buttonPane.setPadding(new Insets(5));
@@ -78,6 +96,64 @@ public class JournoViewer extends Application {
     HBox.setHgrow(dirTf, Priority.ALWAYS);
     buttonPane.getChildren().addAll(label, dirTf, browseButton, templateNames);
     root.setTop(buttonPane);
+
+    VBox codeBox = new VBox();
+    freeMarkerArea = new FreemarkerTextArea(this);
+    freeMarkerArea.setPadding(new Insets(5));
+    VBox.setVgrow(freeMarkerArea, Priority.ALWAYS);
+    codeBox.getChildren().addAll(freeMarkerArea);
+    root.setCenter(codeBox);
+    HBox actionPane = new HBox();
+    actionPane.setPadding(new Insets(5));
+    actionPane.setSpacing(5);
+    Button saveTemplateButton = new Button("Save template");
+    saveTemplateButton.setOnAction(a -> {
+      if (markupFile != null) {
+        try {
+          Files.writeString(markupFile.toPath(), freeMarkerArea.getText());
+          statusField.setText("Saved " + markupFile);
+        } catch (IOException e) {
+          statusField.setText("Failed to write " + markupFile);
+          ExceptionAlert.showAlert("Failed to write " + markupFile, e);
+        }
+      } else {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save template");
+        fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        String template = templateNames.getSelectionModel().getSelectedItem();
+        if (template != null) {
+          String suggested = template.substring(0, template.lastIndexOf(".")) + ".ftl";
+          fc.setInitialFileName(suggested);
+        }
+        File targetFile = fc.showSaveDialog(null);
+
+        if (targetFile != null) {
+          Path filePath = targetFile.toPath();
+          try {
+            statusField.setText("Writing " + filePath.toAbsolutePath());
+            Files.writeString(filePath, freeMarkerArea.getText());
+            statusField.setText("Saved " + markupFile);
+          } catch (IOException e) {
+            statusField.setText("Failed to write " + markupFile);
+            ExceptionAlert.showAlert("Failed to write " + filePath, e);
+          }
+        }
+      }
+    });
+    templateRunButton = new Button("Run");
+    templateRunButton.setOnAction(a -> run());
+    HBox.setHgrow(statusField, Priority.ALWAYS);
+    actionPane.getChildren().addAll(saveTemplateButton, templateRunButton, statusField);
+    root.setBottom(actionPane);
+
+    templateTab.setContent(root);
+    return templateTab;
+  }
+
+
+  private Tab createCodeTab() {
+    Tab codeTab = new Tab("Data");
+    BorderPane root = new BorderPane();
 
     VBox codeBox = new VBox();
     Label codeLabel = new Label("Groovy Code to generate data (must return a Map<String, Object>)");
@@ -156,11 +232,10 @@ public class JournoViewer extends Application {
         }
       }
     });
-    runButton = new Button("Run");
-    runButton.setDisable(true);
-    runButton.setOnAction(a -> run());
+    codeRunButton = new Button("Run");
+    codeRunButton.setOnAction(a -> run());
     HBox.setHgrow(statusField, Priority.ALWAYS);
-    actionPane.getChildren().addAll(loadScriptButton,saveScriptButton, runButton, statusField);
+    actionPane.getChildren().addAll(loadScriptButton,saveScriptButton, codeRunButton, statusField);
     root.setBottom(actionPane);
 
     codeTab.setContent(root);
@@ -205,7 +280,9 @@ public class JournoViewer extends Application {
 
   private void setTemplateDir(File pdfDir) {
     dirTf.setText(pdfDir.getAbsolutePath());
+    disableRunButtons();
     templateNames.getItems().clear();
+    markupFile = null;
     FilenameFilter filter = (dir, name) -> name.endsWith(".ftl") || name.endsWith(".ftlh");
     String[] templateFileNames = pdfDir.list(filter);
     if (templateFileNames != null) {
@@ -220,10 +297,18 @@ public class JournoViewer extends Application {
   }
 
   private void setTemplate(String selectedItem) {
-    runButton.setDisable(false);
+    enableRunButtons();
+    File templateFile = new File(dirTf.getText(), selectedItem);
+    try {
+      String content = Files.readString(templateFile.toPath());
+      freeMarkerArea.replaceText(content);
+      this.markupFile = templateFile;
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to read " + templateFile, e);
+    }
   }
 
-  private Tab createPdfTab() throws IOException {
+  private Tab createPdfTab() {
     Tab pdfTab = new Tab("PDF output");
     BorderPane root = new BorderPane();
 
@@ -245,9 +330,10 @@ public class JournoViewer extends Application {
   private void run() {
     try {
       Map<String, Object> data = codeArea.executeGroovyScript();
+      // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       byte[] pdf = reportEngine.renderPdf(templateNames.getSelectionModel().getSelectedItem(), data);
       pdfViewer.load(pdf);
-      tabPane.getSelectionModel().select(1);
+      tabPane.getSelectionModel().select(2);
     } catch (ResolvingException e) {
       ExceptionAlert.showAlert("Failed to add dependencies to groovy classpath", e);
     } catch (ScriptException e) {

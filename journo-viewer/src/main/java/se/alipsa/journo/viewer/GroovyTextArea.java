@@ -25,15 +25,13 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GroovyTextArea extends CodeArea {
+public class GroovyTextArea extends CodeTextArea {
 
   private GroovyScriptEngineImpl groovyScriptEngine;
   private GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
   Map<String, Object> contextObjects = new HashMap<>();
 
   ContextMenu suggestionsPopup = new ContextMenu();
-
-  public static final String INDENT = "  ";
 
   private static final String[] KEYWORDS = new String[]{
           "abstract", "as", "assert",
@@ -76,70 +74,23 @@ public class GroovyTextArea extends CodeArea {
   );
 
   public GroovyTextArea(JournoViewer gui) {
+    super();
     this.gui = gui;
-    getStylesheets().clear();
-    getStyleClass().add("styled-text-area");
-    getStyleClass().add("code-area");
-    getStyleClass().add("codeTextArea");
-    setUseInitialStyleForInsertion(true);
+
+
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
       if (e.isControlDown() && (KeyCode.SPACE.equals(e.getCode()) || KeyCode.PERIOD.equals(e.getCode()))) {
         autoComplete();
       }
     });
     //Platform.runLater(() -> setParagraphGraphicFactory(LineNumberFactory.get(this)));
-    multiPlainChanges()
-        // do not emit an event until 400 ms have passed since the last emission of previous stream
-        .successionEnds(Duration.ofMillis(400))
-        // run the following code block when previous stream emits an event
-        .subscribe(ignore -> highlightSyntax());
 
-    InputMap<KeyEvent> im = InputMap.consume(
-        EventPattern.keyPressed(KeyCode.TAB),
-        e -> {
-          String selected = selectedTextProperty().getValue();
-          if (!"".equals(selected)) {
-            IndexRange range = getSelection();
-            int start = range.getStart();
-            String indented = indentText(selected);
-            replaceSelection(indented);
-            selectRange(start, start + indented.length());
-          } else {
-            String line = getText(getCurrentParagraph());
-            int orgPos = getCaretPosition();
-            moveTo(getCurrentParagraph(), 0);
-            int start = getCaretPosition();
-            int end = start + line.length();
-            replaceText(start, end, INDENT + line);
-            moveTo(orgPos + INDENT.length());
-          }
-        }
-    );
-    Nodes.addInputMap(this, im);
-  }
-
-  /**
-   * Indent (add space) to the selected area
-   * e.g. when pressing the tab button
-   *
-   * @param selected the text to indent
-   * @return the indented text
-   */
-  protected String indentText(String selected) {
-    if (selected == null || "".equals(selected)) {
-      return INDENT;
-    }
-    String[] lines = selected.split("\n");
-    List<String> tabbed = new ArrayList<>();
-    for (String line : lines) {
-      tabbed.add(INDENT + line);
-    }
-    return String.join("\n", tabbed);
   }
 
   /**
    * compute and set syntax highlighting
    */
+  @Override
   public void highlightSyntax() {
     setStyleSpans(0, computeHighlighting(getText()));
   }

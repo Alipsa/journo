@@ -8,5 +8,7 @@ Your phone number is
 <#else>
     not valid
 </#if>
+
+<p>There you go, nice huh?</p>
 </body>
 </html>

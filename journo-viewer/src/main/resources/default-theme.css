@@ -66,6 +66,10 @@
     color: mediumblue; /* web view */
 }
 
+.lineno {
+    -fx-background-color: GhostWhite;
+}
+
 .operator {
     /*-fx-fill: darkslategray;*/
     -fx-fill: dimgray;
@@ -87,4 +91,29 @@
 .string {
     -fx-fill: darkgreen;
     color: darkgreen; /* web view */
+}
+
+.xml_tagmark {
+    -fx-fill: gray;
+}
+.xml_anytag {
+    -fx-fill: blue;
+}
+.xml_paren {
+    -fx-fill: darkgray;
+    -fx-font-weight: bold;
+}
+.xml_attribute {
+    -fx-fill: black;
+}
+.xml_avalue {
+    -fx-fill: darkgreen;
+}
+
+.xml_comment {
+    -fx-fill: darkseagreen;
+}
+
+.xml_pi {
+    -fx-fill: RebeccaPurple;
 }
