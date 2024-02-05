@@ -2,6 +2,7 @@
   Uses the following dependencies
   com.googlecode.libphonenumber:libphonenumber:8.13.29
 */
+@Grab('com.googlecode.libphonenumber:libphonenumber:8.13.29')
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 
 PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
