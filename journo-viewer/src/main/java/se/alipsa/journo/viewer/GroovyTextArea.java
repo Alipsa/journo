@@ -13,8 +13,8 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
-import se.alipsa.groovy.resolver.DependencyResolver;
-import se.alipsa.groovy.resolver.ResolvingException;
+//import se.alipsa.groovy.resolver.DependencyResolver;
+//import se.alipsa.groovy.resolver.ResolvingException;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
@@ -273,10 +273,11 @@ public class GroovyTextArea extends CodeTextArea {
     return groovyScriptEngine;
   }
 
-  Map<String, Object> executeGroovyScript() throws ScriptException, ResolvingException {
+  Map<String, Object> executeGroovyScript() throws ScriptException /*, ResolvingException */ {
       return (Map<String, Object>) getGroovyEngine().eval(getText());
   }
 
+  /*
   public void setDependencies(List<String> dependencies) throws ResolvingException {
     groovyClassLoader = new GroovyClassLoader();
     DependencyResolver dependencyResolver = new DependencyResolver(groovyClassLoader);
@@ -286,6 +287,8 @@ public class GroovyTextArea extends CodeTextArea {
     }
     groovyScriptEngine = new GroovyScriptEngineImpl(groovyClassLoader);
   }
+
+   */
 
   public void setText(String text) {
     replaceText(text);

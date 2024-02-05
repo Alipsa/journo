@@ -13,6 +13,13 @@
     <description>Viewer for the journo project</description>
     <url>https://github.com/Alipsa/journo</url>
 
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <groovy-version>4.0.18</groovy-version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>se.alipsa</groupId>
@@ -27,7 +34,7 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>4.0.18</version>
+            <version>${groovy-version}</version>
             <type>pom</type>
         </dependency>
         <dependency>
@@ -40,11 +47,13 @@
             <artifactId>classgraph</artifactId>
             <version>4.8.165</version>
         </dependency>
-        <dependency>
+
+        <!-- @Grab works again in groovy 4.0.18 so excluding this for now -->
+        <!--dependency>
             <groupId>se.alipsa.groovy</groupId>
             <artifactId>dependency-resolver</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency-->
     </dependencies>
     <licenses>
         <license>
@@ -65,12 +74,6 @@
         <developerConnection>scm:git:https://github.com/Alipsa/journo.git</developerConnection>
         <url>https://github.com/Alipsa/journo/tree/main</url>
     </scm>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <build>
         <plugins>
@@ -125,6 +128,19 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.1</version>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>module-info.class</exclude>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -132,7 +148,8 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <minimizeJar>true</minimizeJar>
+                            <!-- note setting this to true requires a lot of filter settings to include groovy stuff-->
+                            <minimizeJar>false</minimizeJar>
                         </configuration>
                     </execution>
                 </executions>

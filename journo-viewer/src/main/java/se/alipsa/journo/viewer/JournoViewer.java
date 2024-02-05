@@ -2,7 +2,6 @@ package se.alipsa.journo.viewer;
 
 import freemarker.template.TemplateException;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,7 +11,7 @@ import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import se.alipsa.groovy.resolver.ResolvingException;
+//import se.alipsa.groovy.resolver.ResolvingException;
 import se.alipsa.journo.ReportEngine;
 
 import javax.script.ScriptException;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Optional;
 import java.util.prefs.Preferences;
 
 public class JournoViewer extends Application {
@@ -32,7 +30,7 @@ public class JournoViewer extends Application {
   private GroovyTextArea codeArea;
 
   private FreemarkerTextArea freeMarkerArea;
-  private ListView<String> dependencies;
+  //private ListView<String> dependencies;
   private TextField dirTf;
   private ReportEngine reportEngine;
   private Button templateRunButton;
@@ -42,7 +40,6 @@ public class JournoViewer extends Application {
   private File markupFile = null;
   private final ComboBox<String> templateNames  = new ComboBox<>();
   private final TextField statusField = new TextField();
-  private Scene scene;
   private Stage stage;
 
   public static void main(String[] args) {
@@ -62,7 +59,7 @@ public class JournoViewer extends Application {
     root.setBottom(statusField);
 
     disableRunButtons();
-    scene = new Scene(root, 800, 940);
+    Scene scene = new Scene(root, 800, 940);
     scene.getStylesheets().add(getClass().getResource("/default-theme.css").toExternalForm());
     primaryStage.getIcons().add(new Image(JournoViewer.class.getResourceAsStream("/journo-logo.png")));
     primaryStage.setResizable(true);
@@ -116,6 +113,17 @@ public class JournoViewer extends Application {
     HBox actionPane = new HBox();
     actionPane.setPadding(new Insets(5));
     actionPane.setSpacing(5);
+    Button saveTemplateButton = createSaveTemplateButton();
+    templateRunButton = new Button("Run");
+    templateRunButton.setOnAction(a -> run());
+    actionPane.getChildren().addAll(saveTemplateButton, templateRunButton);
+    root.setBottom(actionPane);
+
+    templateTab.setContent(root);
+    return templateTab;
+  }
+
+  private Button createSaveTemplateButton() {
     Button saveTemplateButton = new Button("Save template");
     saveTemplateButton.setOnAction(a -> {
       if (markupFile != null) {
@@ -150,13 +158,7 @@ public class JournoViewer extends Application {
         }
       }
     });
-    templateRunButton = new Button("Run");
-    templateRunButton.setOnAction(a -> run());
-    actionPane.getChildren().addAll(saveTemplateButton, templateRunButton);
-    root.setBottom(actionPane);
-
-    templateTab.setContent(root);
-    return templateTab;
+    return saveTemplateButton;
   }
 
   private Preferences preferences() {
@@ -266,6 +268,7 @@ public class JournoViewer extends Application {
     return codeTab;
   }
 
+  /* we use @Grab in the groovy code instead
   private ListCell<String> createListCell() {
     ListCell<String> cell = new ListCell<>();
     ContextMenu contextMenu = new ContextMenu();
@@ -302,6 +305,8 @@ public class JournoViewer extends Application {
     outsideContextMenu.getItems().add(addDependencyMI);
     return outsideContextMenu;
   }
+
+   */
 
   private void setTemplateDir(File pdfDir) {
     dirTf.setText(pdfDir.getAbsolutePath());
@@ -361,8 +366,8 @@ public class JournoViewer extends Application {
       byte[] pdf = reportEngine.renderPdf(templateNames.getSelectionModel().getSelectedItem(), data);
       pdfViewer.load(pdf);
       tabPane.getSelectionModel().select(2);
-    } catch (ResolvingException e) {
-      ExceptionAlert.showAlert("Failed to add dependencies to groovy classpath", e);
+    /*} catch (ResolvingException e) {
+      ExceptionAlert.showAlert("Failed to add dependencies to groovy classpath", e);*/
     } catch (ScriptException e) {
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
     } catch (IOException | TemplateException e) {
