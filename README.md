@@ -211,6 +211,10 @@ if you need to use Javascript to manipulate the DOM you must run the html code i
 before rendering the pdf (see [the gmd documentation](https://github.com/Alipsa/gmd/blob/main/README.md) for
 an example of using a WebView to do just this). 
 
+## Journo viewer
+The [Journo Viewer](journo-viewer/readme.md) is a simple but powerful gui tool to shorten the report creation lifecycle.
+
+
 ## License
 The journo code is licensed under the MIT license.
 Note that it heavily depends on Freemarker and Flying Saucer which are
