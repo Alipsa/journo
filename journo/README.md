@@ -206,6 +206,9 @@ data.put("externalCssPath", externalCssPath);
 Of course if you either make your css available from some url or put your style inline in the
 xhtml document you don't need to do any of this.
 
+## Journo viewer
+The [Journo Viewer](journo-viewer/readme.md) is a simple but powerful gui tool to shorten the report creation lifecycle.
+
 ## License
 The journo code is licensed under the MIT license.
 Note that it heavily depends on Freemarker and Flying Saucer which are
