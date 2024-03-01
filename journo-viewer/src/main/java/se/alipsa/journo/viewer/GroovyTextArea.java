@@ -18,8 +18,10 @@ import org.fxmisc.wellbehaved.event.Nodes;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
 import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -273,22 +275,29 @@ public class GroovyTextArea extends CodeTextArea {
     return groovyScriptEngine;
   }
 
-  Map<String, Object> executeGroovyScript() throws ScriptException /*, ResolvingException */ {
-      return (Map<String, Object>) getGroovyEngine().eval(getText());
+  Map<String, Object> executeGroovyScript() throws ScriptException {
+    Object result = getGroovyEngine().eval(getText());
+    try {
+      return (Map<String, Object>) result;
+    } catch (ClassCastException e) {
+      ExceptionAlert.showAlert("The script does not return a Map<String, Object> but a " + result.getClass(), e);
+    }
+    return null;
   }
 
-  /*
-  public void setDependencies(List<String> dependencies) throws ResolvingException {
+
+  public void setDependencies(List<File> dependencies) {
+    // we reinitialize the scriptengine to handle removal of jars
     groovyClassLoader = new GroovyClassLoader();
-    DependencyResolver dependencyResolver = new DependencyResolver(groovyClassLoader);
-    for (String dependency : dependencies) {
-      //System.out.println("Adding dependency " + dependency);
-      dependencyResolver.addDependency(dependency);
-    }
+    dependencies.forEach(f -> {
+      try {
+        groovyClassLoader.addURL(f.toURI().toURL());
+      } catch (MalformedURLException e) {
+        ExceptionAlert.showAlert("Failed to add jar " + f, e);
+      }
+    });
     groovyScriptEngine = new GroovyScriptEngineImpl(groovyClassLoader);
   }
-
-   */
 
   public void setText(String text) {
     replaceText(text);

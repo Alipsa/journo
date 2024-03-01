@@ -47,13 +47,6 @@
             <artifactId>classgraph</artifactId>
             <version>4.8.165</version>
         </dependency>
-
-        <!-- @Grab works again in groovy 4.0.18 so excluding this for now -->
-        <!--dependency>
-            <groupId>se.alipsa.groovy</groupId>
-            <artifactId>dependency-resolver</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-        </dependency-->
     </dependencies>
     <licenses>
         <license>

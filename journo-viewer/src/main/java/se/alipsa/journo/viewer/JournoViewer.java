@@ -2,6 +2,8 @@ package se.alipsa.journo.viewer;
 
 import freemarker.template.TemplateException;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,6 +14,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 //import se.alipsa.groovy.resolver.ResolvingException;
+import org.apache.commons.io.FileUtils;
 import se.alipsa.journo.ReportEngine;
 
 import javax.script.ScriptException;
@@ -20,6 +23,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
@@ -30,7 +34,7 @@ public class JournoViewer extends Application {
   private GroovyTextArea codeArea;
 
   private FreemarkerTextArea freeMarkerArea;
-  //private ListView<String> dependencies;
+  private ListView<File> jarDependencies;
   private TextField dirTf;
   private ReportEngine reportEngine;
   private Button templateRunButton;
@@ -59,7 +63,7 @@ public class JournoViewer extends Application {
     root.setBottom(statusField);
 
     disableRunButtons();
-    Scene scene = new Scene(root, 800, 940);
+    Scene scene = new Scene(root, 950, 960);
     scene.getStylesheets().add(getClass().getResource("/default-theme.css").toExternalForm());
     primaryStage.getIcons().add(new Image(JournoViewer.class.getResourceAsStream("/journo-logo.png")));
     primaryStage.setResizable(true);
@@ -92,7 +96,14 @@ public class JournoViewer extends Application {
     browseButton.setOnAction(a -> {
       DirectoryChooser fc = new DirectoryChooser();
       fc.setTitle("Select dir where Freemarker templates are located");
-      fc.setInitialDirectory(new File(getPref(TEMPLATE_DIR, ".")));
+      File dir = new File(getPref(TEMPLATE_DIR, "."));
+      if (dir.isFile()){
+        dir = dir.getParentFile();
+      }
+      if (!dir.exists()) {
+        dir = new File(".");
+      }
+      fc.setInitialDirectory(dir);
       File pdfDir = fc.showDialog(stage);
       if (pdfDir != null) {
         setTemplateDir(pdfDir);
@@ -187,26 +198,18 @@ public class JournoViewer extends Application {
     codeBox.getChildren().addAll(codeLabel, codeArea);
     root.setCenter(codeBox);
 
-    /*
-    // @Grab seems to work again in 4.0.18 so commenting this out
     VBox dependenciesBox = new VBox();
-    Label depLabel = new Label("Dependencies");
+    Label depLabel = new Label("Jar dependencies");
     depLabel.setPadding(new Insets(5));
-    dependencies = new ListView<>();
-    dependencies.setContextMenu(createOutsideContextMenu(dependencies));
-    dependencies.setCellFactory(lv -> createListCell());
-    dependencies.getItems().addListener((ListChangeListener<? super String>) c -> {
-      try {
-        codeArea.setDependencies(dependencies.getItems());
-      } catch (ResolvingException e) {
-        ExceptionAlert.showAlert("Failed to add dependency", e);
-      }
+    jarDependencies = new ListView<>();
+    jarDependencies.setContextMenu(createOutsideContextMenu(jarDependencies));
+    jarDependencies.setCellFactory(lv -> new FileCell());
+    jarDependencies.getItems().addListener((ListChangeListener<? super File>) c -> {
+        codeArea.setDependencies(jarDependencies.getItems());
     });
-    VBox.setVgrow(dependencies, Priority.ALWAYS);
-    dependenciesBox.getChildren().addAll(depLabel, dependencies);
+    VBox.setVgrow(jarDependencies, Priority.ALWAYS);
+    dependenciesBox.getChildren().addAll(depLabel, jarDependencies);
     root.setRight(dependenciesBox);
-
-     */
 
     HBox actionPane = new HBox();
     actionPane.setPadding(new Insets(5));
@@ -268,45 +271,47 @@ public class JournoViewer extends Application {
     return codeTab;
   }
 
-  /* we use @Grab in the groovy code instead
-  private ListCell<String> createListCell() {
-    ListCell<String> cell = new ListCell<>();
-    ContextMenu contextMenu = new ContextMenu();
-    MenuItem deleteItem = new MenuItem();
-    deleteItem.textProperty().bind(Bindings.format("Delete \"%s\"", cell.itemProperty()));
-    deleteItem.setOnAction(event -> dependencies.getItems().remove(cell.getItem()));
-    contextMenu.getItems().addAll(deleteItem);
-    cell.textProperty().bind(cell.itemProperty());
-    cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
-      if (isNowEmpty) {
-        cell.setContextMenu(null);
-      } else {
-        cell.setContextMenu(contextMenu);
-      }
-    });
-    return cell;
+
+  private class FileCell extends ListCell<File> {
+
+    public FileCell() {
+      ContextMenu contextMenu = new ContextMenu();
+      MenuItem deleteItem = new MenuItem();
+      deleteItem.textProperty().bind(Bindings.format("Remove \"%s\"", itemProperty()));
+      deleteItem.setOnAction(event -> jarDependencies.getItems().remove(getItem()));
+      contextMenu.getItems().addAll(deleteItem);
+      emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
+        if (isNowEmpty) {
+          setContextMenu(null);
+        } else {
+          setContextMenu(contextMenu);
+        }
+      });
+    }
+    @Override
+    protected void updateItem(File item, boolean empty) {
+      super.updateItem(item, empty);
+      setText(item == null ? "" : item.getName());
+    }
   }
 
-  private ContextMenu createOutsideContextMenu(ListView<String> dependencies) {
+  private ContextMenu createOutsideContextMenu(ListView<File> dependencies) {
     ContextMenu outsideContextMenu = new ContextMenu();
     MenuItem addDependencyMI = new MenuItem("add");
     addDependencyMI.setOnAction(a -> {
-      TextInputDialog dialog = new TextInputDialog();
-      dialog.initOwner(stage);
-      dialog.setTitle("Add dependency");
-      dialog.setHeaderText("Add a maven dependency in the form groupId:artifactId:version");
-      dialog.setContentText("Dependency");
-      Optional<String> result = dialog.showAndWait();
-      result.ifPresent(d ->  {
-        System.out.println("adding " + d);
-        dependencies.getItems().add(d);
-      });
+      FileChooser fc = new FileChooser();
+      fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Jar file", "*.jar"));
+      fc.setTitle("Add jar dependency");
+      File jarFile = fc.showOpenDialog(stage);
+      if (jarFile != null) {
+        System.out.println("adding " + jarFile);
+        dependencies.getItems().add(jarFile);
+      }
     });
     outsideContextMenu.getItems().add(addDependencyMI);
     return outsideContextMenu;
   }
 
-   */
 
   private void setTemplateDir(File pdfDir) {
     dirTf.setText(pdfDir.getAbsolutePath());
@@ -350,6 +355,20 @@ public class JournoViewer extends Application {
     Button reloadButton = new Button("Reload");
     buttonPane.getChildren().add(reloadButton);
     reloadButton.setOnAction(a -> run());
+    Button saveButton = new Button("Save");
+    saveButton.setOnAction(a -> {
+      FileChooser fc = new FileChooser();
+      File file = fc.showSaveDialog(stage);
+      if (file != null) {
+        try {
+          writeToFile(file, pdfViewer.getContent());
+        } catch (IOException e) {
+          ExceptionAlert.showAlert("Failed to save " + file, e);
+        }
+      }
+    });
+    buttonPane.getChildren().add(saveButton);
+
     root.setTop(buttonPane);
 
     pdfViewer = new PDFViewer();
@@ -366,9 +385,7 @@ public class JournoViewer extends Application {
       byte[] pdf = reportEngine.renderPdf(templateNames.getSelectionModel().getSelectedItem(), data);
       pdfViewer.load(pdf);
       tabPane.getSelectionModel().select(2);
-    /*} catch (ResolvingException e) {
-      ExceptionAlert.showAlert("Failed to add dependencies to groovy classpath", e);*/
-    } catch (ScriptException e) {
+    } catch (ScriptException | RuntimeException e) {
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
     } catch (IOException | TemplateException e) {
       ExceptionAlert.showAlert("Failed to render the pdf", e);
@@ -377,6 +394,10 @@ public class JournoViewer extends Application {
 
   public void setStatus(String status) {
     statusField.setText(status);
+  }
+
+  public static Path writeToFile(File file, byte[] content) throws IOException {
+    return Files.write(file.toPath(), content);
   }
 
 }

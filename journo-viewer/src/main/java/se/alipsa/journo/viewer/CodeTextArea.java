@@ -4,6 +4,7 @@ import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
@@ -20,6 +21,7 @@ public abstract class CodeTextArea extends CodeArea {
     getStyleClass().add("code-area");
     getStyleClass().add("codeTextArea");
     setUseInitialStyleForInsertion(true);
+    setParagraphGraphicFactory(LineNumberFactory.get(this));
     multiPlainChanges()
         // do not emit an event until 400 ms have passed since the last emission of previous stream
         .successionEnds(Duration.ofMillis(400))

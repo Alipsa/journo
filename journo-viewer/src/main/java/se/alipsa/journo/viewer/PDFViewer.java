@@ -14,6 +14,8 @@ import java.nio.file.Files;
 
 public class PDFViewer extends Pagination {
 
+  byte[] content;
+
   public PDFViewer() {
 
   }
@@ -25,9 +27,10 @@ public class PDFViewer extends Pagination {
     PDDocument document = Loader.loadPDF(content);
     PDFRenderer renderer = new PDFRenderer(document);
     load(document, renderer);
+    this.content = content;
   }
 
-  public void load(PDDocument document, PDFRenderer renderer) {
+  private void load(PDDocument document, PDFRenderer renderer) {
     this.setPageCount(document.getNumberOfPages());
     this.setMaxPageIndicatorCount(3);
     this.setPageFactory((pageIndex) -> {
@@ -41,5 +44,9 @@ public class PDFViewer extends Pagination {
       }
       return imageView;
     });
+  }
+
+  public byte[] getContent() {
+    return content;
   }
 }
