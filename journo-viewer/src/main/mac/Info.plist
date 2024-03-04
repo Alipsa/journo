@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<plist version="1.0">
+  <dict>
+    <key>CFBundleExecutable</key>
+    <string>journo</string>
+    <key>CFBundleGetInfoString</key>
+    <string>Journo PDF Report IDE</string>
+    <key>CFBundleVersion</key>
+    <string>1.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleIconFile</key>
+    <string>journo.icns</string>
+    <key>CFBundleIconName</key>
+    <string>journo</string>
+  </dict>
+</plist>
