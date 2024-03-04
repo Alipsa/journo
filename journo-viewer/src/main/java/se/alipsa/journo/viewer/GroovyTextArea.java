@@ -301,6 +301,7 @@ public class GroovyTextArea extends CodeTextArea {
 
   public void setText(String text) {
     replaceText(text);
+    highlightSyntax();
   }
 
   protected void suggestCompletion(String lastWord, TreeMap<String, Boolean> keyWords, ContextMenu suggestionsPopup) {

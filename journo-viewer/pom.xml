@@ -20,6 +20,13 @@
         <groovy-version>4.0.18</groovy-version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>se.alipsa</groupId>
@@ -46,6 +53,11 @@
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
             <version>4.8.165</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.hervegirod</groupId>
+            <artifactId>fxsvgimage</artifactId>
+            <version>1.1</version>
         </dependency>
     </dependencies>
     <licenses>

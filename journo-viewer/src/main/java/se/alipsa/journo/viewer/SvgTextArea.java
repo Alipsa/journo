@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FreemarkerTextArea extends CodeTextArea {
+public class SvgTextArea extends CodeTextArea {
 
   JournoViewer gui;
 
@@ -24,13 +24,16 @@ public class FreemarkerTextArea extends CodeTextArea {
   private static final int GROUP_EQUAL_SYMBOL = 2;
   private static final int GROUP_ATTRIBUTE_VALUE = 3;
 
-  public FreemarkerTextArea(JournoViewer gui) {
+  public SvgTextArea(JournoViewer gui) {
     super();
     this.gui = gui;
 
   }
 
-
+  public void setText(String text) {
+    replaceText(text);
+    highlightSyntax();
+  }
   @Override
   public void highlightSyntax() {
     setStyleSpans(0, computeHighlighting(getText()));
@@ -77,10 +80,5 @@ public class FreemarkerTextArea extends CodeTextArea {
     }
     spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
     return spansBuilder.create();
-  }
-
-  public void setText(String content) {
-    replaceText(content);
-    highlightSyntax();
   }
 }
