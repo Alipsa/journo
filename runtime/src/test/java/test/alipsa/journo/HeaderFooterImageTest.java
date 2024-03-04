@@ -29,7 +29,7 @@ public class HeaderFooterImageTest {
     //System.out.println(html);
 
     // Create a pdf file from the html
-    Path path = Paths.get("headerFooter.pdf");
+    Path path = Paths.get("target/headerFooter.pdf");
     engine.renderPdf(html, path);
     File file = path.toFile();
     assertTrue(file.exists());

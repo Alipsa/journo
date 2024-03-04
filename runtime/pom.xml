@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.alipsa</groupId>
-    <artifactId>journo-runtime</artifactId>
+    <artifactId>journo</artifactId>
     <version>0.6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Journo</name>
+    <name>Journo Runtime</name>
     <description>Create PDF documents from Freemarker markup</description>
     <url>https://github.com/Alipsa/journo</url>
 
@@ -37,6 +37,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <slf4j.version>2.0.12</slf4j.version>
+        <flying-saucer.version>9.5.2</flying-saucer.version>
     </properties>
 
     <dependencies>
@@ -48,12 +50,12 @@
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-core</artifactId>
-            <version>9.5.1</version>
+            <version>${flying-saucer.version}</version>
         </dependency>
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-pdf</artifactId>
-            <version>9.5.1</version>
+            <version>${flying-saucer.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -63,13 +65,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.11</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <!-- redirect commons logging to slf4j -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>2.0.11</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -86,14 +88,14 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.1</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.11</version>
+            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
     <build>

@@ -14,8 +14,8 @@
     <url>https://github.com/Alipsa/journo</url>
 
     <modules>
-        <module>journo</module>
-        <module>journo-viewer</module>
+        <module>runtime</module>
+        <module>viewer</module>
     </modules>
 
     <licenses>

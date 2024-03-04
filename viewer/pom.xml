@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.alipsa</groupId>
-    <artifactId>viewer</artifactId>
+    <artifactId>journo-viewer</artifactId>
     <version>0.6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -17,7 +17,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <groovy-version>4.0.18</groovy-version>
+        <groovy-version>4.0.19</groovy-version>
     </properties>
 
     <repositories>
@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>se.alipsa</groupId>
-            <artifactId>runtime</artifactId>
+            <artifactId>journo-runtime</artifactId>
             <version>0.6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -120,6 +120,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -132,7 +133,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.5.2</version>
                 <configuration>
                     <filters>
                         <filter>

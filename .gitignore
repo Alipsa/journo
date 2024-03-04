@@ -28,3 +28,4 @@ replay_pid*
 /journo-viewer/target/
 /journo-viewer/dependency-reduced-pom.xml
 /viewer/target/
+/viewer/dependency-reduced-pom.xml
