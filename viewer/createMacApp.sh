@@ -31,9 +31,9 @@ MACOS_DIR="${CONTENT_DIR}/MacOS"
 RESOURCE_DIR="${CONTENT_DIR}/Resources"
 mkdir -p "$MACOS_DIR"
 mkdir -p "$RESOURCE_DIR"
-cp "src/main/mac/Info.plist" "$CONTENT_DIR/"
-cp "src/main/mac/journo.icns" "${RESOURCE_DIR}/"
-cp "src/main/mac/journo" "${MACOS_DIR}/"
+cp "src/main/assembly/mac/Info.plist" "$CONTENT_DIR/"
+cp "src/main/assembly/mac/journo.icns" "${RESOURCE_DIR}/"
+cp "src/main/assembly/mac/journo" "${MACOS_DIR}/"
 chmod +x "${MACOS_DIR}/journo"
 # cd to the target so we dont have to allow full disk access in Settings -> Privacy and Security
 cd "${targetDir}/.." || exit 1
