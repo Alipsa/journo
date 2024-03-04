@@ -38,6 +38,12 @@ public class ReportEngine {
     configureRenderers();
   }
 
+  /**
+   * Creates a ReportEngine
+   *
+   * @param templateDir the dir where your freemarker templates resides
+   * @throws IOException if there was some problem accessing the directory
+   */
   public ReportEngine(File templateDir) throws IOException {
     createGenericConfig();
     cfg.setDirectoryForTemplateLoading(templateDir);
@@ -63,7 +69,7 @@ public class ReportEngine {
     cfg.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
   }
 
-                      /**
+  /**
    * Render the Freemarker template to a html string
    *
    * @param template the Freemarker template relative file path

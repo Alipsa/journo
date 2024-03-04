@@ -15,6 +15,8 @@ This library uses Flying Saucer to generate the PDF so the html produced by the 
 template needs to take into account the xhtml requirements posed by Flying Saucer.
 [See the Flying Saucer user guide for details](https://flyingsaucerproject.github.io/flyingsaucer/r8/guide/users-guide-R8.html)
 
+Journo requires JDK 17 or later.
+
 Example usage:
 
 ```groovy
@@ -213,7 +215,7 @@ an example of using a WebView to do just this).
 
 ## Journo viewer
 The [Journo Viewer](journo-viewer/readme.md) is a simple but powerful gui tool to shorten the report creation lifecycle.
-
+You need a JDK 17 or higher with javafx bundled to run it (e.g. the Bellsoft Full JDK distribution)
 
 ## License
 The journo code is licensed under the MIT license.
