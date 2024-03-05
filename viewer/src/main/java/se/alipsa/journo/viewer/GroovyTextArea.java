@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 public class GroovyTextArea extends CodeTextArea {
 
   private GroovyScriptEngineImpl groovyScriptEngine;
-  private GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
+  // private GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
   Map<String, Object> contextObjects = new HashMap<>();
 
   ContextMenu suggestionsPopup = new ContextMenu();
@@ -270,7 +270,7 @@ public class GroovyTextArea extends CodeTextArea {
 
   private GroovyScriptEngineImpl getGroovyEngine() {
     if (groovyScriptEngine == null) {
-      groovyScriptEngine = new GroovyScriptEngineImpl(groovyClassLoader);
+      groovyScriptEngine = new GroovyScriptEngineImpl();
     }
     return groovyScriptEngine;
   }
@@ -288,15 +288,16 @@ public class GroovyTextArea extends CodeTextArea {
 
   public void setDependencies(List<File> dependencies) {
     // we reinitialize the scriptengine to handle removal of jars
-    groovyClassLoader = new GroovyClassLoader();
+    groovyScriptEngine = new GroovyScriptEngineImpl();
+    final GroovyClassLoader groovyClassLoader = groovyScriptEngine.getClassLoader();
     dependencies.forEach(f -> {
       try {
+        System.out.println("Adding " + f + " to classloader");
         groovyClassLoader.addURL(f.toURI().toURL());
       } catch (MalformedURLException e) {
         ExceptionAlert.showAlert("Failed to add jar " + f, e);
       }
     });
-    groovyScriptEngine = new GroovyScriptEngineImpl(groovyClassLoader);
   }
 
   public void setText(String text) {

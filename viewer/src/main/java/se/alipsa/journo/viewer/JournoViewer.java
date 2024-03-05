@@ -2,8 +2,10 @@ package se.alipsa.journo.viewer;
 
 import freemarker.template.TemplateException;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -31,6 +33,7 @@ public class JournoViewer extends Application {
 
   private final TextField statusField = new TextField();
   private Stage stage;
+  private Scene scene;
 
   Image appIcon;
 
@@ -53,7 +56,7 @@ public class JournoViewer extends Application {
     root.setTop(createMenu());
 
     disableRunButtons();
-    Scene scene = new Scene(root, 950, 980);
+    scene = new Scene(root, 950, 980);
     scene.getStylesheets().add(getClass().getResource("/default-theme.css").toExternalForm());
     appIcon = new Image(JournoViewer.class.getResourceAsStream("/journo-logo.png"));
     primaryStage.getIcons().add(appIcon);
@@ -140,16 +143,20 @@ public class JournoViewer extends Application {
   }
 
   void run() {
+    scene.setCursor(Cursor.WAIT);
     try {
       Map<String, Object> data = codeTab.runScript();
       // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       byte[] pdf = freeMarkerTab.renderPdf(data);
       pdfViewer.load(pdf);
       tabPane.getSelectionModel().select(pdfTab);
-    } catch (ScriptException | RuntimeException e) {
-      ExceptionAlert.showAlert("Failed to execute groovy script", e);
+      scene.setCursor(Cursor.DEFAULT);
     } catch (IOException | TemplateException e) {
+      scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
+    }  catch (Throwable e) {
+      scene.setCursor(Cursor.DEFAULT);
+      ExceptionAlert.showAlert("Failed to execute groovy script", e);
     }
   }
 

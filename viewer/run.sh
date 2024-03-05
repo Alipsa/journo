@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+if command -v jdk21; then
+  source jdk21
+fi
 if command -v java ; then
 	javaVersion=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
 	if [[ (( $javaVersion -ge 17 )) ]]; then
@@ -29,5 +32,18 @@ fi
 DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd "$DIR" || exit
 
-java -jar ./journo-viewer-0.6.0-SNAPSHOT.jar
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  OS=linux
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  OS=mac
+else
+  OS=win
+fi
+
+JAVA_OPTS="-Xmx8g"
+if [[ "$OS" == "mac" ]]; then
+  JAVA_OPTS="$JAVA_OPTS -Xdock:name=journo -Xdock:icon=./Contents/Resources/journo.icns"
+fi
+
+java $JAVA_OPTS -jar ./journo-viewer-0.6.0-SNAPSHOT.jar
 

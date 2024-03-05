@@ -125,7 +125,6 @@ public class GroovyTab extends JournoTab {
       fc.setTitle("Add jar dependency");
       File jarFile = fc.showOpenDialog(gui.getStage());
       if (jarFile != null) {
-        System.out.println("adding " + jarFile);
         dependencies.getItems().add(jarFile);
       }
     });
