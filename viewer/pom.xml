@@ -124,6 +124,12 @@
                 <configuration>
                     <archive>
                         <manifest>
+                            <!-- Below line will add the following attributes to the jar:
+                                Implementation-Title: ${pom.name}
+                                Implementation-Version: ${pom.version}
+                                Implementation-Vendor-Id: ${pom.groupId}
+                                Implementation-Vendor: ${pom.organization.name}
+                            -->
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addClasspath>true</addClasspath>
                             <mainClass>se.alipsa.journo.viewer.JournoViewer</mainClass>
