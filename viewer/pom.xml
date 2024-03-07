@@ -124,6 +124,7 @@
                 <configuration>
                     <archive>
                         <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addClasspath>true</addClasspath>
                             <mainClass>se.alipsa.journo.viewer.JournoViewer</mainClass>
                         </manifest>

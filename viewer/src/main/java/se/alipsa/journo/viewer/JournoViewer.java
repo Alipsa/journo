@@ -1,6 +1,7 @@
 package se.alipsa.journo.viewer;
 
 import freemarker.template.TemplateException;
+import groovy.lang.GroovySystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -15,11 +16,11 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import javax.script.ScriptException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.jar.Manifest;
 import java.util.prefs.Preferences;
 
 public class JournoViewer extends Application {
@@ -76,6 +77,39 @@ public class JournoViewer extends Application {
       SvgTab svgTab = new SvgTab(this);
       tabPane.getTabs().add(svgTab);
       tabPane.getSelectionModel().select(svgTab);
+    });
+    Menu helpMenu = new Menu("Help");
+    menuBar.getMenus().add(helpMenu);
+    MenuItem about = new MenuItem("about");
+    helpMenu.getItems().add(about);
+    about.setOnAction(a -> {
+      StringBuilder content = new StringBuilder();
+      String version = "unknown";
+      try (InputStream is = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
+        if (is != null) {
+          BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+          String line;
+          while ((line = bufferedReader.readLine()) != null) {
+            if (line.startsWith("Implementation-Version")) {
+              version = line.substring(line.indexOf(':'));
+            }
+          }
+        } else {
+          content.append("Failed to find MANIFEST.MF");
+        }
+
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Error reading manifest", e);
+      }
+      content.append("Journo version: ").append(version)
+      .append("\nJava Runtime Version: ")
+      .append(System.getProperty("java.runtime.version"))
+          .append(" (").append(System.getProperty("os.arch")).append(")")
+          .append(")")
+          .append("\nGroovy version: ").append(GroovySystem.getVersion());
+      Alert infoDialog = new Alert(Alert.AlertType.INFORMATION, content.toString());
+      infoDialog.setHeaderText("About Journo");
+      infoDialog.show();
     });
     return menuBar;
   }

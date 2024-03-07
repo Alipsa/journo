@@ -34,10 +34,10 @@ mkdir -p "$RESOURCE_DIR"
 cp "src/main/assembly/mac/Info.plist" "$CONTENT_DIR/"
 cp "src/main/assembly/mac/journo.icns" "${RESOURCE_DIR}/"
 cp "src/main/assembly/mac/journo" "${MACOS_DIR}/"
+cp "$DIR"/target/journo-viewer*.jar "$targetDir"/
+cp src/main/assembly/mac/run.sh "$targetDir"/
 chmod +x "${MACOS_DIR}/journo"
 # cd to the target so we dont have to allow full disk access in Settings -> Privacy and Security
 cd "${targetDir}/.." || exit 1
 SetFile -a B "${appName}"
-cp "$DIR"/target/journo-viewer*.jar $targetDir/
-cp "$DIR"/run.sh $targetDir/
-echo 'Done!'
+echo "Done! Drag the app in $targetDir to your applications folder to install!"
