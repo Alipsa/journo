@@ -8,7 +8,8 @@ creates PDF documents from Freemarker markup.
 Usage of this could be as a reporting engine in an application server (Spring Boot, Play, Quarkus etc.) or a
 java gui (Swing, JavaFx or SWT).
 
-The freemarker markup should ideally generate xhtml. If it does not you need to convert
+The freemarker markup shougit pull
+ld ideally generate xhtml. If it does not you need to convert
 the html code into xhtml e.g. using `reportEngine.htmlToXhtml(html)`
 
 This library uses Flying Saucer to generate the PDF so the html produced by the Freemarker

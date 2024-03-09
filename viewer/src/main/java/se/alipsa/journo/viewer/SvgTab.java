@@ -1,17 +1,29 @@
 package se.alipsa.journo.viewer;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.girod.javafx.svgimage.SVGImage;
 import org.girod.javafx.svgimage.SVGLoader;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -39,6 +51,20 @@ public class SvgTab extends JournoTab {
       display(img);
     });
     actionPane.getChildren().add(viewButton);
+
+    Button batikViewButton = new Button("View with Batik");
+    batikViewButton.setOnAction(a -> {
+      BufferedImageTranscoder transcoder = new BufferedImageTranscoder();
+      try (StringReader reader = new StringReader(textArea.getText())) {
+        TranscoderInput input = new TranscoderInput(reader);
+        transcoder.transcode(input, null);
+        Image img = SwingFXUtils.toFXImage(transcoder.getBufferedImage(), null);
+        display(new ImageView(img));
+      } catch (TranscoderException e) {
+        ExceptionAlert.showAlert("Faied to convert svg image", e);
+      }
+    });
+    actionPane.getChildren().add(batikViewButton);
 
     Button loadScriptButton = new Button("Load svg file");
     actionPane.getChildren().add(loadScriptButton);
@@ -97,7 +123,7 @@ public class SvgTab extends JournoTab {
     });
   }
 
-  private void display(SVGImage img) {
+  private void display(Node img) {
     Stage stage = new Stage();
     BorderPane pane = new BorderPane(img);
     pane.setPadding(new Insets(10));
