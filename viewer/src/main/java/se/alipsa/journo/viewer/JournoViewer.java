@@ -3,25 +3,28 @@ package se.alipsa.journo.viewer;
 import freemarker.template.TemplateException;
 import groovy.lang.GroovySystem;
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
-import javax.script.ScriptException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.jar.Manifest;
+import java.util.Optional;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 public class JournoViewer extends Application {
 
@@ -35,7 +38,7 @@ public class JournoViewer extends Application {
   private final TextField statusField = new TextField();
   private Stage stage;
   private Scene scene;
-
+  private final ComboBox<Project> projectCombo = new ComboBox<>();
   Image appIcon;
 
   public static void main(String[] args) {
@@ -53,8 +56,12 @@ public class JournoViewer extends Application {
     root.setCenter(tabPane);
     statusField.setDisable(true);
     root.setBottom(statusField);
-
-    root.setTop(createMenu());
+    HBox topBox = new HBox();
+    MenuBar menuBar = createMenu();
+    topBox.getChildren().add(menuBar);
+    topBox.getChildren().add(createProjectBar());
+    HBox.setHgrow(menuBar, Priority.ALWAYS);
+    root.setTop(topBox);
 
     disableRunButtons();
     scene = new Scene(root, 950, 980);
@@ -65,6 +72,82 @@ public class JournoViewer extends Application {
     primaryStage.setTitle("Journo Viewer");
     primaryStage.setScene(scene);
     primaryStage.show();
+  }
+
+  private Node createProjectBar() {
+    HBox hbox = new HBox();
+    hbox.setSpacing(5);
+    hbox.setPadding(new Insets(1));
+    hbox.setStyle("-fx-background-color: -fx-body-color; -fx-border-color: lightgray");
+    Label label = new Label("Project");
+    label.setPadding(new Insets(4, 0, 0, 5));
+    label.setAlignment(Pos.BOTTOM_CENTER);
+
+    hbox.getChildren().add(label);
+    hbox.getChildren().add(projectCombo);
+    try {
+      populateProjectCombo(projectCombo);
+    } catch (Exception e) {
+      ExceptionAlert.showAlert("Failed to load project from preferences", e);
+    }
+    projectCombo.setOnAction(a -> setActiveProject(projectCombo.getValue()));
+    Button loadButton = new Button("load");
+    hbox.getChildren().add(loadButton);
+    loadButton.setOnAction(a -> {
+      FileChooser fc = new FileChooser();
+      fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+      fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Journo project files", ".jpr"));
+      File projectFile = fc.showOpenDialog(getStage());
+      if (projectFile != null) {
+        try {
+          Project p = Project.load(projectFile.getAbsolutePath());
+          projectCombo.getItems().add(p);
+          projectCombo.setValue(p);
+          setActiveProject(p);
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    });
+    Button saveButton = new Button("save");
+    hbox.getChildren().add(saveButton);
+    saveButton.setOnAction(a -> {
+      if (projectCombo.getValue() != null) {
+        try {
+          saveProject(projectCombo.getValue());
+        } catch (IOException e) {
+          ExceptionAlert.showAlert("Failed to save project", e);
+        }
+      }
+    });
+
+    Button newProjectButton = new Button("new");
+    hbox.getChildren().add(newProjectButton);
+    newProjectButton.setOnAction(a -> {
+      TextInputDialog tid = new TextInputDialog();
+      tid.setTitle("Create new Project");
+      tid.setHeaderText("Name of project");
+      tid.setContentText("name");
+      Optional<String> response = tid.showAndWait();
+      if (response.isEmpty()) {
+        return;
+      }
+      Project p = new Project();
+      p.setName(response.get());
+      p.setTemplateFile(freeMarkerTab.getTemplateFile());
+      p.setDataFile(codeTab.getScriptFile());
+      projectCombo.getItems().add(p);
+      projectCombo.setValue(p);
+      setActiveProject(p);
+    });
+
+    return hbox;
+  }
+
+  private void setActiveProject(Project p) {
+    freeMarkerTab.loadFile(p.getTemplateFile());
+    codeTab.loadFile(p.getDataFile());
+    codeTab.setDependencies(p.getDependencyList());
   }
 
   private MenuBar createMenu() {
@@ -114,6 +197,40 @@ public class JournoViewer extends Application {
     return menuBar;
   }
 
+  void populateProjectCombo(ComboBox<Project> projectCombo) throws BackingStoreException, IOException {
+    Preferences projects = preferences().node("projects");
+    ObservableList<Project> list = projectCombo.getItems();
+    for (String name : projects.childrenNames()) {
+      String path = projects.node(name).get("projectFile", null);
+      list.add(Project.load(path));
+    }
+  }
+
+  void saveProject(Project p) throws IOException {
+    String projectFilePath = preferences().node(p.getName()).get("projectFile", null);
+    if (projectFilePath == null) {
+      FileChooser fc = new FileChooser();
+      fc.setTitle("Save Journo project file");
+      fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+      fc.setInitialFileName(p.getName() + ".jpr");
+      File file = fc.showSaveDialog(getStage());
+      if (file == null) {
+        return;
+      }
+      projectFilePath = file.getAbsolutePath();
+    }
+    saveProject(p, new File(projectFilePath));
+  }
+
+  void saveProject(Project p, File path) throws IOException {
+    String projectFilePath = path.getAbsolutePath();
+    System.out.println("Saving project: " + p.values());
+    Project.save(p, projectFilePath);
+    Preferences projects = preferences().node("projects");
+    projects.node(p.getName()).put("projectFile", projectFilePath);
+  }
+
+
   void disableRunButtons() {
     freeMarkerTab.disbleRunButton();
     codeTab.disbleRunButton();
@@ -138,7 +255,7 @@ public class JournoViewer extends Application {
     preferences().put(preference, value);
   }
 
-  public Window getStage() {
+  public Stage getStage() {
     return stage;
   }
 
@@ -208,5 +325,32 @@ public class JournoViewer extends Application {
 
   public Image getAppIcon() {
     return appIcon;
+  }
+
+  public void setProjectTemplateFile(File templateFile) {
+    Project p = projectCombo.getValue();
+    if (p == null) {
+      return;
+    }
+    System.out.println("Setting project.templateFile = " + templateFile);
+    p.setTemplateFile(templateFile.getAbsolutePath());
+  }
+
+  public void setProjectDataFile(File dataFile) {
+    Project p = projectCombo.getValue();
+    if (p == null) {
+      return;
+    }
+    System.out.println("Setting project.datafile = " + dataFile);
+    p.setDataFile(dataFile.getAbsolutePath());
+  }
+
+  public void setProjectDependencies(List<File> items) {
+    Project p = projectCombo.getValue();
+    if (p == null) {
+      return;
+    }
+    System.out.println("Setting project.dependencies = " + items);
+    p.setDependencies(items.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
   }
 }

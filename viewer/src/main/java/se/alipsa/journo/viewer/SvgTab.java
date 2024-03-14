@@ -48,7 +48,7 @@ public class SvgTab extends JournoTab {
     Button viewButton = new Button("View");
     viewButton.setOnAction(a -> {
       SVGImage img = SVGLoader.load(textArea.getText());
-      display(img);
+      Popup.display(img, gui);
     });
     actionPane.getChildren().add(viewButton);
 
@@ -59,7 +59,7 @@ public class SvgTab extends JournoTab {
         TranscoderInput input = new TranscoderInput(reader);
         transcoder.transcode(input, null);
         Image img = SwingFXUtils.toFXImage(transcoder.getBufferedImage(), null);
-        display(new ImageView(img));
+        Popup.display(new ImageView(img), gui);
       } catch (TranscoderException e) {
         ExceptionAlert.showAlert("Faied to convert svg image", e);
       }
@@ -123,13 +123,5 @@ public class SvgTab extends JournoTab {
     });
   }
 
-  private void display(Node img) {
-    Stage stage = new Stage();
-    BorderPane pane = new BorderPane(img);
-    pane.setPadding(new Insets(10));
-    Scene scene = new Scene(pane);
-    stage.getIcons().add(gui.getAppIcon());
-    stage.setScene(scene);
-    stage.show();
-  }
+
 }

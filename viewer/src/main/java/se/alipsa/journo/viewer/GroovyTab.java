@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Map;
 
 public class GroovyTab extends JournoTab {
@@ -62,13 +63,8 @@ public class GroovyTab extends JournoTab {
       fc.setInitialDirectory(new File(System.getProperty("user.dir")));
       File targetFile = fc.showOpenDialog(gui.getStage());
       if (targetFile != null) {
-        try {
-          codeArea.setText(Files.readString(targetFile.toPath()));
-          groovyFile = targetFile;
-          setText(targetFile.getName());
-        } catch (IOException e) {
-          ExceptionAlert.showAlert("Failed to read " + groovyFile, e);
-        }
+        loadScript(targetFile);
+        gui.setProjectDataFile(targetFile);
       }
     });
     Button saveScriptButton = new Button("Save groovy script");
@@ -110,10 +106,40 @@ public class GroovyTab extends JournoTab {
     });
     codeRunButton = new Button("Run");
     codeRunButton.setOnAction(a -> gui.run());
-    actionPane.getChildren().addAll(loadScriptButton,saveScriptButton, codeRunButton);
+
+    Button showResultButton = new Button("Show data");
+    showResultButton.setOnAction(a -> {
+      TextArea ta = new TextArea();
+      StringBuilder sb = new StringBuilder();
+      try {
+        runScript().forEach((k, v) -> sb.append(k).append(": ").append(v).append('\n'));
+        ta.setText(sb.toString());
+        Popup.display(ta, gui);
+      } catch (ScriptException e) {
+        ExceptionAlert.showAlert("Failed to run Script", e);
+      }
+    });
+    actionPane.getChildren().addAll(loadScriptButton,saveScriptButton, codeRunButton, showResultButton);
     root.setBottom(actionPane);
 
     setContent(root);
+  }
+
+  private void loadScript(File targetFile) {
+    try {
+      codeArea.setText(Files.readString(targetFile.toPath()));
+      groovyFile = targetFile;
+      setText(targetFile.getName());
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to read " + groovyFile, e);
+    }
+  }
+
+  public void loadFile(String dataFile) {
+    if(dataFile == null) {
+      return;
+    }
+    loadScript(new File(dataFile));
   }
 
   private ContextMenu createOutsideContextMenu(ListView<File> dependencies) {
@@ -126,6 +152,7 @@ public class GroovyTab extends JournoTab {
       File jarFile = fc.showOpenDialog(gui.getStage());
       if (jarFile != null) {
         dependencies.getItems().add(jarFile);
+        gui.setProjectDependencies(dependencies.getItems());
       }
     });
     outsideContextMenu.getItems().add(addDependencyMI);
@@ -142,6 +169,14 @@ public class GroovyTab extends JournoTab {
 
   public Map<String, Object> runScript() throws ScriptException {
     return codeArea.executeGroovyScript();
+  }
+
+  public String getScriptFile() {
+    return groovyFile == null ? null : groovyFile.getAbsolutePath();
+  }
+
+  public void setDependencies(Collection<String> dependencyList) {
+    dependencyList.forEach(d -> jarDependencies.getItems().add(new File(d)));
   }
 
   private class FileCell extends ListCell<File> {
