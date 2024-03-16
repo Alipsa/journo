@@ -12,4 +12,6 @@ public abstract class JournoTab extends Tab {
   protected void setStatus(String text) {
     gui.setStatus(text);
   }
+
+  public abstract CodeTextArea getCodeArea();
 }

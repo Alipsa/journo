@@ -4,6 +4,7 @@ import freemarker.template.TemplateException;
 import groovy.lang.GroovySystem;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -11,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -18,10 +20,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -35,10 +34,14 @@ public class JournoViewer extends Application {
   GroovyTab codeTab;
   private final TabPane tabPane = new TabPane();
 
+  private Stage searchWindow;
+
   private final TextField statusField = new TextField();
   private Stage stage;
   private Scene scene;
   private final ComboBox<Project> projectCombo = new ComboBox<>();
+
+  private final List<String> searchStrings = new UniqueList<>();
   Image appIcon;
 
   public static void main(String[] args) {
@@ -64,7 +67,7 @@ public class JournoViewer extends Application {
     root.setTop(topBox);
 
     disableRunButtons();
-    scene = new Scene(root, 950, 980);
+    scene = new Scene(root, 990, 980);
     scene.getStylesheets().add(getClass().getResource("/default-theme.css").toExternalForm());
     appIcon = new Image(JournoViewer.class.getResourceAsStream("/journo-logo.png"));
     primaryStage.getIcons().add(appIcon);
@@ -77,16 +80,18 @@ public class JournoViewer extends Application {
   private Node createProjectBar() {
     HBox hbox = new HBox();
     hbox.setSpacing(5);
-    hbox.setPadding(new Insets(1));
-    hbox.setStyle("-fx-background-color: -fx-body-color; -fx-border-color: lightgray");
+    hbox.setPadding(new Insets(3,2,0,2));
+    hbox.setStyle("-fx-border-color: lightgray");
     Label label = new Label("Project");
+    label.setStyle("-fx-background-color: transparent;");
     label.setPadding(new Insets(4, 0, 0, 5));
     label.setAlignment(Pos.BOTTOM_CENTER);
 
     hbox.getChildren().add(label);
     hbox.getChildren().add(projectCombo);
     try {
-      populateProjectCombo(projectCombo);
+      populateProjectCombo(
+          projectCombo);
     } catch (Exception e) {
       ExceptionAlert.showAlert("Failed to load project from preferences", e);
     }
@@ -152,6 +157,7 @@ public class JournoViewer extends Application {
 
   private MenuBar createMenu() {
     MenuBar menuBar = new MenuBar();
+    menuBar.setPadding(new Insets(5));
     Menu graphicsMenu = new Menu("Graphics");
     menuBar.getMenus().add(graphicsMenu);
     MenuItem addSvgTabMi = new MenuItem("Add SVG tab");
@@ -161,6 +167,17 @@ public class JournoViewer extends Application {
       tabPane.getTabs().add(svgTab);
       tabPane.getSelectionModel().select(svgTab);
     });
+    Menu editMenu = new Menu("Edit");
+    menuBar.getMenus().add(editMenu);
+    MenuItem undoMI = new MenuItem("undo  ctrl+Z");
+    editMenu.getItems().add(undoMI);
+    undoMI.setOnAction(a -> undo());
+    MenuItem redoMI = new MenuItem("redo ctrl+Y");
+    editMenu.getItems().add(redoMI);
+    redoMI.setOnAction(a -> redo());
+    MenuItem findMI = new MenuItem("find ctrl+F");
+    editMenu.getItems().add(findMI);
+    findMI.setOnAction(a -> displayFind());
     Menu helpMenu = new Menu("Help");
     menuBar.getMenus().add(helpMenu);
     MenuItem about = new MenuItem("about");
@@ -195,6 +212,107 @@ public class JournoViewer extends Application {
       infoDialog.show();
     });
     return menuBar;
+  }
+
+  private JournoTab getActiveTab() {
+    return (JournoTab) tabPane.getSelectionModel().getSelectedItem();
+  }
+
+  private void undo() {
+    JournoTab codeTab = getActiveTab();
+    CodeTextArea codeArea = codeTab.getCodeArea();
+    codeArea.undo();
+  }
+
+  private void redo() {
+    JournoTab codeTab = getActiveTab();
+    CodeTextArea codeArea = codeTab.getCodeArea();
+    codeArea.redo();
+  }
+
+  public void displayFind() {
+    if (searchWindow != null) {
+      searchWindow.toFront();
+      searchWindow.requestFocus();
+      return;
+    }
+
+    VBox vBox = new VBox();
+    vBox.setPadding(new Insets(3));
+    FlowPane pane = new FlowPane();
+    vBox.getChildren().add(pane);
+    Label resultLabel = new Label();
+    resultLabel.setPadding(new Insets(1));
+    vBox.getChildren().add(resultLabel);
+    pane.setPadding(new Insets(5));
+    pane.setHgap(5);
+    pane.setVgap(5);
+    Button findButton = new Button("search");
+
+    ComboBox<String> searchInput = new ComboBox<>();
+    searchInput.setOnKeyPressed(e -> {
+      if (e.getCode() == KeyCode.ENTER) {
+        findButton.fire();
+      }
+    });
+    searchInput.setEditable(true);
+    if (!searchStrings.isEmpty()) {
+      searchStrings.forEach(s -> searchInput.getItems().add(s));
+      searchInput.setValue(searchStrings.get(searchStrings.size()-1));
+    }
+
+    findButton.setOnAction(e -> {
+      JournoTab codeTab = getActiveTab();
+      if (codeTab == null) {
+        resultLabel.setText("No active code tab exists, nothing to search in");
+        return;
+      }
+      CodeTextArea codeArea = codeTab.getCodeArea();
+      int caretPos = codeArea.getCaretPosition();
+      String text = codeArea.getText().substring(caretPos);
+      String searchWord = searchInput.getValue();
+      if (searchWord == null) {
+        searchWord = searchInput.getEditor().getText();
+        if (searchWord == null) {
+          System.out.println("searchWord is null and nothing entered in the combobox text field, nothing that can be searched");
+          resultLabel.setText("Nothing to search for");
+          return;
+        }
+      }
+      searchStrings.add(searchWord);
+      if (!searchInput.getItems().contains(searchWord)) {
+        searchInput.getItems().add(searchWord);
+      }
+      if (text.contains(searchWord)) {
+        int place = text.indexOf(searchWord);
+        codeArea.moveTo(place);
+        codeArea.selectRange(caretPos + place, caretPos + place + searchWord.length());
+        codeArea.requestFollowCaret();
+        resultLabel.setText("found on line " + (codeArea.getCurrentParagraph() + 1));
+      } else {
+        resultLabel.setText(searchWord + " not found");
+      }
+    });
+
+    Button toTopButton = new Button("To beginning");
+    toTopButton.setOnAction(a -> {
+      JournoTab codeTab = getActiveTab();
+      CodeTextArea codeArea = codeTab.getCodeArea();
+      codeArea.moveTo(0);
+      codeArea.requestFollowCaret();
+    });
+    pane.getChildren().addAll(searchInput, findButton, toTopButton);
+    Scene scene = new Scene(vBox);
+    scene.getStylesheets().addAll(scene.getStylesheets());
+    searchWindow = new Stage();
+    searchWindow.setOnCloseRequest(event -> searchWindow = null);
+    searchWindow.setTitle("Find");
+    searchWindow.setScene(scene);
+    searchWindow.sizeToScene();
+    searchWindow.show();
+    searchWindow.toFront();
+    searchWindow.setAlwaysOnTop(true);
+
   }
 
   void populateProjectCombo(ComboBox<Project> projectCombo) throws BackingStoreException, IOException {
@@ -352,5 +470,13 @@ public class JournoViewer extends Application {
     }
     System.out.println("Setting project.dependencies = " + items);
     p.setDependencies(items.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
+  }
+
+  public void contentChanged() {
+    // todo disable run buttons
+  }
+
+  public void contentSaved() {
+    // todo enable run buttons
   }
 }

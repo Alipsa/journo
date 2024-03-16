@@ -123,5 +123,8 @@ public class SvgTab extends JournoTab {
     });
   }
 
-
+  @Override
+  public CodeTextArea getCodeArea() {
+    return textArea;
+  }
 }

@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 
 public class FreemarkerTextArea extends CodeTextArea {
 
-  JournoViewer gui;
-
   private static final Pattern XML_TAG = Pattern.compile("(?<ELEMENT>(</?\\h*)(\\w+|\\.)+([^<>]*)(\\h*/?>))"
       + "|(?<COMMENT>(?s)<!--.*?-->)");
   private static final Pattern ATTRIBUTES = Pattern.compile("(\\w+\\h*)(=)(\\h*\"[^\"]+\")");
@@ -25,9 +23,7 @@ public class FreemarkerTextArea extends CodeTextArea {
   private static final int GROUP_ATTRIBUTE_VALUE = 3;
 
   public FreemarkerTextArea(JournoViewer gui) {
-    super();
-    this.gui = gui;
-
+    super(gui);
   }
 
 

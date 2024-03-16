@@ -185,4 +185,9 @@ public class FreemarkerTab extends JournoTab {
     setTemplateDir(tf.getParentFile());
     setTemplate(tf.getName());
   }
+
+  @Override
+  public CodeTextArea getCodeArea() {
+    return freeMarkerArea;
+  }
 }

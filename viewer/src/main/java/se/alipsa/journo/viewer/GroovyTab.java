@@ -202,4 +202,8 @@ public class GroovyTab extends JournoTab {
     }
   }
 
+  @Override
+  public CodeTextArea getCodeArea() {
+    return codeArea;
+  }
 }

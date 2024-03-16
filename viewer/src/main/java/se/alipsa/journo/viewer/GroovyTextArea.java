@@ -63,8 +63,6 @@ public class GroovyTextArea extends CodeTextArea {
   private static final String STRING_PATTERN = "\"\"|''|\"[^\"]+\"|'[^']+'";
   private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
 
-  JournoViewer gui;
-
   private static final Pattern PATTERN = Pattern.compile(
       "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
           + "|(?<PAREN>" + PAREN_PATTERN + ")"
@@ -76,9 +74,7 @@ public class GroovyTextArea extends CodeTextArea {
   );
 
   public GroovyTextArea(JournoViewer gui) {
-    super();
-    this.gui = gui;
-
+    super(gui);
 
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
       if (e.isControlDown() && (KeyCode.SPACE.equals(e.getCode()) || KeyCode.PERIOD.equals(e.getCode()))) {
