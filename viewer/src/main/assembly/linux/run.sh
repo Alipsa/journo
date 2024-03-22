@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-JV=21
+JV=17
 
 if command -v java ; then
 	javaVersion=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)

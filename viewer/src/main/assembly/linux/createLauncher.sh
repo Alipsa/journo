@@ -6,7 +6,7 @@ cd "${DIR}" || exit 1
 LAUNCHER=~/.local/share/applications/journo.desktop
 {
 echo "[Desktop Entry]
-Name=Gade
+Name=Journo
 Exec=${DIR}/run.sh
 Comment=Journo, a PDF Report Development Environment
 Terminal=false
