@@ -26,18 +26,19 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 public class SvgTab extends JournoTab {
   private final SvgTextArea textArea;
   private File svgFile = null;
   public SvgTab(JournoViewer gui) {
     super(gui);
+    textArea = new SvgTextArea(gui);
     BorderPane root = new BorderPane();
     FlowPane actionPane = new FlowPane();
     actionPane.setPadding(new Insets(5));
     actionPane.setHgap(5);
     addButtons(actionPane);
-    textArea = new SvgTextArea(gui);
     root.setCenter(textArea);
     root.setBottom(actionPane);
     setContent(root);
@@ -120,6 +121,13 @@ public class SvgTab extends JournoTab {
           }
         }
       }
+    });
+    Button savePngButton = new Button("Export png");
+    actionPane.getChildren().add(savePngButton);
+    savePngButton.setOnAction(a -> {
+      ExportPngDialog dialog = new ExportPngDialog(textArea, gui);
+      Optional<File> result = dialog.showAndWait();
+      result.ifPresent(file -> gui.setStatus("Saved svg as " + file));
     });
   }
 
