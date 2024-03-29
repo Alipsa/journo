@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class ExceptionAlert extends Alert {
 
-  private static Logger logger = LogManager.getLogger();
+  private static Logger logger = LogManager.getLogger(ExceptionAlert.class);
   public ExceptionAlert() {
     super(AlertType.ERROR);
   }

@@ -6,15 +6,11 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.wellbehaved.event.EventPattern;
-import org.fxmisc.wellbehaved.event.InputMap;
-import org.fxmisc.wellbehaved.event.Nodes;
-//import se.alipsa.groovy.resolver.DependencyResolver;
-//import se.alipsa.groovy.resolver.ResolvingException;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
@@ -22,15 +18,14 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
-import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GroovyTextArea extends CodeTextArea {
 
+  private static Logger logger = LogManager.getLogger(GroovyTextArea.class);
   private GroovyScriptEngineImpl groovyScriptEngine;
-  // private GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
   Map<String, Object> contextObjects = new HashMap<>();
 
   ContextMenu suggestionsPopup = new ContextMenu();
@@ -288,7 +283,7 @@ public class GroovyTextArea extends CodeTextArea {
     final GroovyClassLoader groovyClassLoader = groovyScriptEngine.getClassLoader();
     dependencies.forEach(f -> {
       try {
-        System.out.println("Adding " + f + " to classloader");
+        logger.debug("Adding " + f + " to classloader");
         groovyClassLoader.addURL(f.toURI().toURL());
       } catch (MalformedURLException e) {
         ExceptionAlert.showAlert("Failed to add jar " + f, e);

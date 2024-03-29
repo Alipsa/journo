@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -15,7 +16,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.appender.FileAppender;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -27,6 +33,7 @@ import java.util.stream.Collectors;
 
 public class JournoViewer extends Application {
 
+  private static Logger logger = LogManager.getLogger(JournoViewer.class);
   public static final String TEMPLATE_DIR = JournoViewer.class.getName() + ".templateDir";
   private PDFViewer pdfViewer;
   FreemarkerTab freeMarkerTab;
@@ -150,6 +157,7 @@ public class JournoViewer extends Application {
   }
 
   private void setActiveProject(Project p) {
+    logger.info("Setting active project to {}", p);
     freeMarkerTab.loadFile(p.getTemplateFile());
     codeTab.loadFile(p.getDataFile());
     codeTab.setDependencies(p.getDependencyList());
@@ -160,6 +168,7 @@ public class JournoViewer extends Application {
     menuBar.setPadding(new Insets(5));
     Menu graphicsMenu = new Menu("Graphics");
     menuBar.getMenus().add(graphicsMenu);
+
     MenuItem addSvgTabMi = new MenuItem("Add SVG tab");
     graphicsMenu.getItems().add(addSvgTabMi);
     addSvgTabMi.setOnAction(a -> {
@@ -167,19 +176,29 @@ public class JournoViewer extends Application {
       tabPane.getTabs().add(svgTab);
       tabPane.getSelectionModel().select(svgTab);
     });
+
     Menu editMenu = new Menu("Edit");
     menuBar.getMenus().add(editMenu);
+
     MenuItem undoMI = new MenuItem("undo  ctrl+Z");
     editMenu.getItems().add(undoMI);
     undoMI.setOnAction(a -> undo());
+
     MenuItem redoMI = new MenuItem("redo ctrl+Y");
     editMenu.getItems().add(redoMI);
     redoMI.setOnAction(a -> redo());
+
     MenuItem findMI = new MenuItem("find ctrl+F");
     editMenu.getItems().add(findMI);
     findMI.setOnAction(a -> displayFind());
+
     Menu helpMenu = new Menu("Help");
     menuBar.getMenus().add(helpMenu);
+
+    MenuItem viewLogFile = new MenuItem("View logfile");
+    helpMenu.getItems().add(viewLogFile);
+    viewLogFile.setOnAction(this::viewLogFile);
+
     MenuItem about = new MenuItem("about");
     helpMenu.getItems().add(about);
     about.setOnAction(a -> {
@@ -274,7 +293,7 @@ public class JournoViewer extends Application {
       if (searchWord == null) {
         searchWord = searchInput.getEditor().getText();
         if (searchWord == null) {
-          System.out.println("searchWord is null and nothing entered in the combobox text field, nothing that can be searched");
+          logger.info("searchWord is null and nothing entered in the combobox text field, nothing that can be searched");
           resultLabel.setText("Nothing to search for");
           return;
         }
@@ -342,7 +361,7 @@ public class JournoViewer extends Application {
 
   void saveProject(Project p, File path) throws IOException {
     String projectFilePath = path.getAbsolutePath();
-    System.out.println("Saving project: " + p.values());
+    logger.debug("Saving project: " + p.values());
     Project.save(p, projectFilePath);
     Preferences projects = preferences().node("projects");
     projects.node(p.getName()).put("projectFile", projectFilePath);
@@ -450,7 +469,7 @@ public class JournoViewer extends Application {
     if (p == null) {
       return;
     }
-    System.out.println("Setting project.templateFile = " + templateFile);
+    logger.debug("Setting project.templateFile = " + templateFile);
     p.setTemplateFile(templateFile.getAbsolutePath());
   }
 
@@ -459,7 +478,7 @@ public class JournoViewer extends Application {
     if (p == null) {
       return;
     }
-    System.out.println("Setting project.datafile = " + dataFile);
+    logger.debug("Setting project.datafile = " + dataFile);
     p.setDataFile(dataFile.getAbsolutePath());
   }
 
@@ -468,7 +487,7 @@ public class JournoViewer extends Application {
     if (p == null) {
       return;
     }
-    System.out.println("Setting project.dependencies = " + items);
+    logger.debug("Setting project.dependencies = " + items);
     p.setDependencies(items.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
   }
 
@@ -478,5 +497,32 @@ public class JournoViewer extends Application {
 
   public void contentSaved() {
     // todo enable run buttons
+  }
+
+  private void viewLogFile(ActionEvent actionEvent) {
+    try {
+      org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+      Map.Entry<String, Appender> appenderEntry = logger.get().getAppenders().entrySet().stream()
+          .filter(e -> "JournoLog".equals(e.getKey())).findAny().orElse(null);
+      if (appenderEntry == null) {
+        Alerts.warn("Failed to find log file", "Failed to find an appender called JournoLog");
+        return;
+      }
+      FileAppender appender = (FileAppender) appenderEntry.getValue();
+
+      File logFile = new File(appender.getFileName());
+      if (!logFile.exists()) {
+        Alerts.warn("Failed to find log file", "Failed to find log file " + logFile.getAbsolutePath());
+        return;
+      }
+      try {
+        String content = Files.readString(logFile.toPath());
+        Alerts.info(logFile.getAbsolutePath(), content);
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Failed to read log file content", e);
+      }
+    } catch (RuntimeException e) {
+      ExceptionAlert.showAlert("Failed to show log file", e);
+    }
   }
 }
