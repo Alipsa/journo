@@ -115,7 +115,7 @@ public class GroovyTab extends JournoTab {
         runScript().forEach((k, v) -> sb.append(k).append(": ").append(v).append('\n'));
         ta.setText(sb.toString());
         Popup.display(ta, gui);
-      } catch (ScriptException e) {
+      } catch (Exception e) {
         ExceptionAlert.showAlert("Failed to run Script", e);
       }
     });

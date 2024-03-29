@@ -48,8 +48,12 @@ public class SvgTab extends JournoTab {
   private void addButtons(FlowPane actionPane) {
     Button viewButton = new Button("View");
     viewButton.setOnAction(a -> {
-      SVGImage img = SVGLoader.load(textArea.getText());
-      Popup.display(img, gui);
+      try {
+        SVGImage img = SVGLoader.load(textArea.getText());
+        Popup.display(img, gui);
+      } catch (Exception e) {
+        ExceptionAlert.showAlert("Failed to display svg", e);
+      }
     });
     actionPane.getChildren().add(viewButton);
 
@@ -61,8 +65,8 @@ public class SvgTab extends JournoTab {
         transcoder.transcode(input, null);
         Image img = SwingFXUtils.toFXImage(transcoder.getBufferedImage(), null);
         Popup.display(new ImageView(img), gui);
-      } catch (TranscoderException e) {
-        ExceptionAlert.showAlert("Faied to convert svg image", e);
+      } catch (Exception e) {
+        ExceptionAlert.showAlert("Failed to convert svg image", e);
       }
     });
     actionPane.getChildren().add(batikViewButton);
@@ -79,7 +83,7 @@ public class SvgTab extends JournoTab {
           textArea.setText(Files.readString(targetFile.toPath()));
           svgFile = targetFile;
           setText(targetFile.getName());
-        } catch (IOException e) {
+        } catch (Exception e) {
           ExceptionAlert.showAlert("Failed to read " + targetFile, e);
         }
       }
@@ -91,7 +95,7 @@ public class SvgTab extends JournoTab {
         try {
           Files.writeString(svgFile.toPath(), textArea.getText());
           setStatus("Saved " + svgFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
           setStatus("Failed to write " + svgFile);
           ExceptionAlert.showAlert("Failed to write " + svgFile, e);
         }
