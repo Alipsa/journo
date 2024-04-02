@@ -6,7 +6,7 @@
 
     <groupId>se.alipsa</groupId>
     <artifactId>journo-runtime</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Journo Runtime</name>
@@ -96,6 +96,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
