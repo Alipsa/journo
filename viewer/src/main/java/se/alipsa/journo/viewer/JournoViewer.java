@@ -26,6 +26,7 @@ import org.apache.logging.log4j.core.appender.FileAppender;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -48,6 +49,7 @@ public class JournoViewer extends Application {
   private Scene scene;
   private final ComboBox<Project> projectCombo = new ComboBox<>();
 
+  Label projectLabel = new Label("Project");
   private final List<String> searchStrings = new UniqueList<>();
   Image appIcon;
 
@@ -89,12 +91,11 @@ public class JournoViewer extends Application {
     hbox.setSpacing(5);
     hbox.setPadding(new Insets(3,2,0,2));
     hbox.setStyle("-fx-border-color: lightgray");
-    Label label = new Label("Project");
-    label.setStyle("-fx-background-color: transparent;");
-    label.setPadding(new Insets(4, 0, 0, 5));
-    label.setAlignment(Pos.BOTTOM_CENTER);
+    projectLabel.setStyle("-fx-background-color: transparent;");
+    projectLabel.setPadding(new Insets(4, 0, 0, 5));
+    projectLabel.setAlignment(Pos.BOTTOM_CENTER);
 
-    hbox.getChildren().add(label);
+    hbox.getChildren().add(projectLabel);
     hbox.getChildren().add(projectCombo);
     try {
       populateProjectCombo(
@@ -112,12 +113,12 @@ public class JournoViewer extends Application {
       File projectFile = fc.showOpenDialog(getStage());
       if (projectFile != null) {
         try {
-          Project p = Project.load(projectFile.getAbsolutePath());
+          Project p = Project.load(projectFile.toPath());
           projectCombo.getItems().add(p);
           projectCombo.setValue(p);
           setActiveProject(p);
-        } catch (IOException e) {
-          throw new RuntimeException(e);
+        } catch (Exception e) {
+          ExceptionAlert.showAlert("Failed to load " + projectFile, e);
         }
       }
     });
@@ -136,16 +137,13 @@ public class JournoViewer extends Application {
     Button newProjectButton = new Button("new");
     hbox.getChildren().add(newProjectButton);
     newProjectButton.setOnAction(a -> {
-      TextInputDialog tid = new TextInputDialog();
-      tid.setTitle("Create new Project");
-      tid.setHeaderText("Name of project");
-      tid.setContentText("name");
-      Optional<String> response = tid.showAndWait();
+      CreateProjectDialog cpd = new CreateProjectDialog();
+      Optional<Map<String, String>> response = cpd.showAndWait();
       if (response.isEmpty()) {
         return;
       }
       Project p = new Project();
-      p.setName(response.get());
+      p.setName(response.get().get("name"));
       p.setTemplateFile(freeMarkerTab.getTemplateFile());
       p.setDataFile(codeTab.getScriptFile());
       projectCombo.getItems().add(p);
@@ -160,7 +158,12 @@ public class JournoViewer extends Application {
     logger.info("Setting active project to {}", p);
     freeMarkerTab.loadFile(p.getTemplateFile());
     codeTab.loadFile(p.getDataFile());
-    codeTab.setDependencies(p.getDependencyList());
+    logger.info("setActiveProject(), Dependencies are: {}", p.getDependencies());
+    codeTab.setDependencies(p.getDependencies());
+    Preferences projects = preferences().node("projects");
+    String path = projects.node(p.getName()).get("projectFile", null);
+    Path projectFilePath = Paths.get(path);
+    projectCombo.setTooltip(new Tooltip(projectFilePath.toString()));
   }
 
   private MenuBar createMenu() {
@@ -339,13 +342,24 @@ public class JournoViewer extends Application {
     ObservableList<Project> list = projectCombo.getItems();
     for (String name : projects.childrenNames()) {
       String path = projects.node(name).get("projectFile", null);
-      list.add(Project.load(path));
+      Path projectFilePath = Paths.get(path);
+      if (Files.exists(projectFilePath)) {
+        try {
+          list.add(Project.load(projectFilePath));
+        } catch (Exception e) {
+          ExceptionAlert.showAlert("Failed to load project from " + projectFilePath, e);
+        }
+      } else {
+        logger.info("{} does not exist, removing the projectFile pref", projectFilePath);
+        projects.node(name).removeNode();
+      }
     }
   }
 
   void saveProject(Project p) throws IOException {
-    String projectFilePath = preferences().node(p.getName()).get("projectFile", null);
-    if (projectFilePath == null) {
+    String projectFilePref = preferences().node(p.getName()).get("projectFile", null);
+    Path projectFilePath;
+    if (projectFilePref == null) {
       FileChooser fc = new FileChooser();
       fc.setTitle("Save Journo project file");
       fc.setInitialDirectory(new File(System.getProperty("user.dir")));
@@ -354,17 +368,14 @@ public class JournoViewer extends Application {
       if (file == null) {
         return;
       }
-      projectFilePath = file.getAbsolutePath();
+      projectFilePath = file.toPath();
+    } else {
+      projectFilePath = Paths.get(projectFilePref);
     }
-    saveProject(p, new File(projectFilePath));
-  }
-
-  void saveProject(Project p, File path) throws IOException {
-    String projectFilePath = path.getAbsolutePath();
     logger.debug("Saving project: " + p.values());
     Project.save(p, projectFilePath);
     Preferences projects = preferences().node("projects");
-    projects.node(p.getName()).put("projectFile", projectFilePath);
+    projects.node(p.getName()).put("projectFile", projectFilePath.toString());
   }
 
 
@@ -379,11 +390,10 @@ public class JournoViewer extends Application {
     codeTab.enableRunButton();
   }
 
-
-
   private Preferences preferences() {
     return Preferences.userRoot().node(this.getClass().getName());
   }
+
   String getPref(String preference, String fallback) {
     return preferences().get(preference, fallback);
   }
@@ -464,31 +474,31 @@ public class JournoViewer extends Application {
     return appIcon;
   }
 
-  public void setProjectTemplateFile(File templateFile) {
+  public void setProjectTemplateFile(Path templateFile) {
     Project p = projectCombo.getValue();
     if (p == null) {
       return;
     }
     logger.debug("Setting project.templateFile = " + templateFile);
-    p.setTemplateFile(templateFile.getAbsolutePath());
+    p.setTemplateFile(templateFile);
   }
 
-  public void setProjectDataFile(File dataFile) {
+  public void setProjectDataFile(Path dataFile) {
     Project p = projectCombo.getValue();
     if (p == null) {
       return;
     }
     logger.debug("Setting project.datafile = " + dataFile);
-    p.setDataFile(dataFile.getAbsolutePath());
+    p.setDataFile(dataFile);
   }
 
-  public void setProjectDependencies(List<File> items) {
+  public void setProjectDependencies(List<Path> items) {
     Project p = projectCombo.getValue();
     if (p == null) {
       return;
     }
     logger.debug("Setting project.dependencies = " + items);
-    p.setDependencies(items.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
+    p.setDependencies(items);
   }
 
   public void contentChanged() {
@@ -523,6 +533,20 @@ public class JournoViewer extends Application {
       }
     } catch (RuntimeException e) {
       ExceptionAlert.showAlert("Failed to show log file", e);
+    }
+  }
+
+  public void saveDataFile(File groovyFile) {
+    Project p = projectCombo.getValue();
+    if (p != null && groovyFile != null) {
+      p.setDataFile(groovyFile.toPath());
+    }
+  }
+
+  public void saveTemplateFile(File markupFile) {
+    Project p = projectCombo.getValue();
+    if (p != null && markupFile != null) {
+      p.setTemplateFile(markupFile.toPath());
     }
   }
 }

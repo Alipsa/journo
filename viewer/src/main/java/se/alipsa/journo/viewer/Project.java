@@ -4,16 +4,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 public class Project {
 
   private String name;
-  private String templateFile;
-  private String dataFile;
+  private Path templateFile;
+  private Path dataFile;
 
-  private String dependencies;
+  private List<Path> dependencies = new ArrayList<>();
+
+  public Project() {
+  }
 
   public String getName() {
     return name;
@@ -23,39 +27,37 @@ public class Project {
     this.name = name;
   }
 
-  public String getTemplateFile() {
+  public Path getTemplateFile() {
     return templateFile;
   }
 
-  public void setTemplateFile(String templateFile) {
+  public void setTemplateFile(Path templateFile) {
     this.templateFile = templateFile;
   }
 
-  public String getDataFile() {
+  public Path getDataFile() {
     return dataFile;
   }
 
-  public void setDataFile(String dataFile) {
+  public void setDataFile(Path dataFile) {
     this.dataFile = dataFile;
   }
 
-  public String getDependencies() {
+  public List<Path> getDependencies() {
     return dependencies;
   }
 
-  public Collection<String> getDependencyList() {
-    List<String> l = new ArrayList<>();
-    if (dependencies != null) {
-      Collections.addAll(l, dependencies.split(";"));
+  public void setDependencies(Collection<Path> dependencies) {
+    this.dependencies.clear();
+    this.dependencies.addAll(dependencies);
+  }
+  public void setDependencies(String dependencyList, Path projectPath) {
+    dependencies = new ArrayList<>();
+    if (dependencyList != null && !dependencyList.isBlank()) {
+      for (String dep : dependencyList.split(";")) {
+        dependencies.add(absolutePath(Paths.get(dep), projectPath));
+      }
     }
-    return l;
-  }
-
-  public void setDependencies(Collection<String> dependencies) {
-    this.dependencies = String.join(";", dependencies);
-  }
-  public void setDependencies(String dependencies) {
-    this.dependencies = dependencies;
   }
 
   @Override
@@ -67,28 +69,47 @@ public class Project {
     return "name: " + name + ", templateFile: " + templateFile + ", dataFile: " + dataFile + ", dependencies: " + dependencies;
   }
 
-  public static Project load(String projectFile) throws IOException {
+  public static Project load(Path projectPath) throws IOException {
     Properties props = new Properties();
-    try (InputStream in = Files.newInputStream(Paths.get(projectFile))) {
+    try (InputStream in = Files.newInputStream(projectPath)) {
       props.load(in);
     }
     Project p = new Project();
     p.setName(props.getProperty("name"));
-    p.setTemplateFile(props.getProperty("templateFile"));
-    p.setDataFile(props.getProperty("dataFile"));
-    p.setDependencies(props.getProperty("dependencies"));
+    p.setTemplateFile(absolutePath(Paths.get(props.getProperty("templateFile")), projectPath));
+    String dataFilePref = props.getProperty("dataFile");
+    if (dataFilePref != null) {
+      p.setDataFile(absolutePath(Paths.get(dataFilePref), projectPath));
+    }
+    p.setDependencies(props.getProperty("dependencies"), projectPath);
     return p;
   }
 
-  public static void save(Project p, String path) throws IOException {
+  public static void save(Project p, Path projectFilePath) throws IOException {
     Properties props = new Properties();
     if (p.getName() != null) props.setProperty("name", p.getName());
-    if (p.getTemplateFile() != null) props.setProperty("templateFile", p.getTemplateFile());
-    if (p.getDataFile() != null) props.setProperty("dataFile", p.getDataFile());
-    if (p.getDependencies() != null) props.setProperty("dependencies", p.getDependencies());
-    try (OutputStream out = Files.newOutputStream(Paths.get(path))) {
+    if (p.getTemplateFile() != null) props.setProperty("templateFile", pathRelativeTo(p.getTemplateFile(), projectFilePath).toString());
+    if (p.getDataFile() != null) props.setProperty("dataFile", pathRelativeTo(p.getDataFile(), projectFilePath).toString());
+    if (p.getDependencies() != null) props.setProperty("dependencies", p.getDependencyString(projectFilePath));
+    try (OutputStream out = Files.newOutputStream(projectFilePath)) {
       props.store(out, "Journo project file");
     }
+  }
+
+  private String getDependencyString(Path projectFilePath) {
+    return String.join(";", getDependencies().stream().map(d -> pathRelativeTo(d, projectFilePath).toString()).toList());
+  }
+
+  private static Path pathRelativeTo(Path path, Path projectFilePath) {
+    Path projectDir = projectFilePath.getParent().toAbsolutePath();
+    return projectDir.relativize(path);
+  }
+
+  private static Path absolutePath(Path path, Path projectFilePath) {
+    if (!Files.isDirectory(projectFilePath)) {
+      projectFilePath = projectFilePath.getParent();
+    }
+    return projectFilePath.resolve(path).normalize();
   }
 
 }

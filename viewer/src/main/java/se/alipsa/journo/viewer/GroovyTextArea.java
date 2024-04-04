@@ -18,6 +18,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -277,14 +278,14 @@ public class GroovyTextArea extends CodeTextArea {
   }
 
 
-  public void setDependencies(List<File> dependencies) {
+  public void setDependencies(List<Path> dependencies) {
     // we reinitialize the scriptengine to handle removal of jars
     groovyScriptEngine = new GroovyScriptEngineImpl();
     final GroovyClassLoader groovyClassLoader = groovyScriptEngine.getClassLoader();
     dependencies.forEach(f -> {
       try {
         logger.debug("Adding " + f + " to classloader");
-        groovyClassLoader.addURL(f.toURI().toURL());
+        groovyClassLoader.addURL(f.toUri().toURL());
       } catch (MalformedURLException e) {
         ExceptionAlert.showAlert("Failed to add jar " + f, e);
       }

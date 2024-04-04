@@ -54,12 +54,15 @@ public class FreemarkerTab extends JournoTab {
       fc.setInitialDirectory(dir);
       File pdfDir = fc.showDialog(gui.getStage());
       if (pdfDir != null) {
-        setTemplateDir(pdfDir);
+        setTemplateDir(pdfDir.toPath());
       }
     });
 
-    templateNames.setOnAction(a ->
-        setTemplate(templateNames.getSelectionModel().getSelectedItem())
+    templateNames.setOnAction(a -> {
+          String selectedItem = templateNames.getSelectionModel().getSelectedItem();
+          if (selectedItem != null)
+            setTemplate(templateNames.getSelectionModel().getSelectedItem());
+        }
     );
     HBox.setHgrow(dirTf, Priority.ALWAYS);
     buttonPane.getChildren().addAll(label, dirTf, browseButton, templateNames);
@@ -75,7 +78,7 @@ public class FreemarkerTab extends JournoTab {
     actionPane.setPadding(new Insets(5));
     actionPane.setSpacing(5);
     Button saveTemplateButton = createSaveTemplateButton();
-    templateRunButton = new Button("Run");
+    templateRunButton = new Button("View PDF");
     templateRunButton.setOnAction(a -> gui.run());
     actionPane.getChildren().addAll(saveTemplateButton, templateRunButton);
     root.setBottom(actionPane);
@@ -111,6 +114,7 @@ public class FreemarkerTab extends JournoTab {
             setStatus("Writing " + filePath.toAbsolutePath());
             Files.writeString(filePath, freeMarkerArea.getText());
             setStatus("Saved " + markupFile);
+            gui.saveTemplateFile(markupFile);
           } catch (IOException e) {
             setStatus("Failed to write " + markupFile);
             ExceptionAlert.showAlert("Failed to write " + filePath, e);
@@ -129,7 +133,8 @@ public class FreemarkerTab extends JournoTab {
     templateRunButton.setDisable(false);
   }
 
-  private void setTemplateDir(File pdfDir) {
+  private void setTemplateDir(Path pdfPath) {
+    File pdfDir = pdfPath.toFile();
     dirTf.setText(pdfDir.getAbsolutePath());
     gui.disableRunButtons();
     templateNames.getItems().clear();
@@ -150,8 +155,9 @@ public class FreemarkerTab extends JournoTab {
 
   private void setTemplate(String selectedItem) {
     gui.enableRunButtons();
+    //System.out.println("dirTf = " + dirTf + ", dirTf.getText() = " + (dirTf == null ? "null" : dirTf.getText()) + ", selectedItem = " + selectedItem);
     File templateFile = new File(dirTf.getText(), selectedItem);
-    gui.setProjectTemplateFile(templateFile);
+    gui.setProjectTemplateFile(templateFile.toPath());
     try {
       String content = Files.readString(templateFile.toPath());
       templateNames.setValue(selectedItem);
@@ -166,24 +172,23 @@ public class FreemarkerTab extends JournoTab {
     return templateNames.getSelectionModel().getSelectedItem();
   }
 
-  public String getTemplateFile() {
+  public Path getTemplateFile() {
     if (getSelectedTemplate() == null) {
       return null;
     }
     File file = new File(dirTf.getText(), getSelectedTemplate());
-    return file.exists() ? file.getAbsolutePath() : null;
+    return file.exists() ? file.toPath() : null;
   }
   public byte[] renderPdf(Map<String, Object> data) throws TemplateException, IOException {
     return reportEngine.renderPdf(getSelectedTemplate(), data);
   }
 
-  public void loadFile(String templateFile) {
+  public void loadFile(Path templateFile) {
     if (templateFile == null) {
       return;
     }
-    File tf = new File(templateFile);
-    setTemplateDir(tf.getParentFile());
-    setTemplate(tf.getName());
+    setTemplateDir(templateFile.getParent());
+    setTemplate(templateFile.getFileName().toString());
   }
 
   @Override

@@ -23,7 +23,7 @@ public class GroovyTab extends JournoTab {
   private File groovyFile = null;
   private final Button codeRunButton;
   private final GroovyTextArea codeArea;
-  private final ListView<File> jarDependencies;
+  private final ListView<Path> jarDependencies;
 
   public GroovyTab(JournoViewer gui) {
     super(gui);
@@ -46,7 +46,7 @@ public class GroovyTab extends JournoTab {
     jarDependencies = new ListView<>();
     jarDependencies.setContextMenu(createOutsideContextMenu(jarDependencies));
     jarDependencies.setCellFactory(lv -> new FileCell());
-    jarDependencies.getItems().addListener((ListChangeListener<? super File>) c -> {
+    jarDependencies.getItems().addListener((ListChangeListener<? super Path>) c -> {
       codeArea.setDependencies(jarDependencies.getItems());
     });
     VBox.setVgrow(jarDependencies, Priority.ALWAYS);
@@ -64,7 +64,7 @@ public class GroovyTab extends JournoTab {
       File targetFile = fc.showOpenDialog(gui.getStage());
       if (targetFile != null) {
         loadScript(targetFile);
-        gui.setProjectDataFile(targetFile);
+        gui.setProjectDataFile(targetFile.toPath());
       }
     });
     Button saveScriptButton = new Button("Save groovy script");
@@ -97,6 +97,7 @@ public class GroovyTab extends JournoTab {
             setStatus("Saved " + groovyFile);
             groovyFile = targetFile;
             setText(targetFile.getName());
+            gui.saveDataFile(groovyFile);
           } catch (IOException e) {
             setStatus("Failed to write " + groovyFile);
             ExceptionAlert.showAlert("Failed to write " + filePath, e);
@@ -104,17 +105,17 @@ public class GroovyTab extends JournoTab {
         }
       }
     });
-    codeRunButton = new Button("Run");
+    codeRunButton = new Button("View PDF");
     codeRunButton.setOnAction(a -> gui.run());
 
-    Button showResultButton = new Button("Show data");
+    Button showResultButton = new Button("Run script");
     showResultButton.setOnAction(a -> {
       TextArea ta = new TextArea();
       StringBuilder sb = new StringBuilder();
       try {
         runScript().forEach((k, v) -> sb.append(k).append(": ").append(v).append('\n'));
         ta.setText(sb.toString());
-        Popup.display(ta, gui);
+        Popup.display(ta, gui, "Groovy script result");
       } catch (Exception e) {
         ExceptionAlert.showAlert("Failed to run Script", e);
       }
@@ -135,14 +136,14 @@ public class GroovyTab extends JournoTab {
     }
   }
 
-  public void loadFile(String dataFile) {
+  public void loadFile(Path dataFile) {
     if(dataFile == null) {
       return;
     }
-    loadScript(new File(dataFile));
+    loadScript(dataFile.toFile());
   }
 
-  private ContextMenu createOutsideContextMenu(ListView<File> dependencies) {
+  private ContextMenu createOutsideContextMenu(ListView<Path> dependencies) {
     ContextMenu outsideContextMenu = new ContextMenu();
     MenuItem addDependencyMI = new MenuItem("add");
     addDependencyMI.setOnAction(a -> {
@@ -151,7 +152,7 @@ public class GroovyTab extends JournoTab {
       fc.setTitle("Add jar dependency");
       File jarFile = fc.showOpenDialog(gui.getStage());
       if (jarFile != null) {
-        dependencies.getItems().add(jarFile);
+        dependencies.getItems().add(jarFile.toPath());
         gui.setProjectDependencies(dependencies.getItems());
       }
     });
@@ -171,15 +172,16 @@ public class GroovyTab extends JournoTab {
     return codeArea.executeGroovyScript();
   }
 
-  public String getScriptFile() {
-    return groovyFile == null ? null : groovyFile.getAbsolutePath();
+  public Path getScriptFile() {
+    return groovyFile == null ? null : groovyFile.toPath();
   }
 
-  public void setDependencies(Collection<String> dependencyList) {
-    dependencyList.forEach(d -> jarDependencies.getItems().add(new File(d)));
+  public void setDependencies(Collection<Path> dependencyList) {
+    jarDependencies.getItems().clear();
+    dependencyList.forEach(d -> jarDependencies.getItems().add(d));
   }
 
-  private class FileCell extends ListCell<File> {
+  private class FileCell extends ListCell<Path> {
 
     public FileCell() {
       ContextMenu contextMenu = new ContextMenu();
@@ -196,9 +198,9 @@ public class GroovyTab extends JournoTab {
       });
     }
     @Override
-    protected void updateItem(File item, boolean empty) {
+    protected void updateItem(Path item, boolean empty) {
       super.updateItem(item, empty);
-      setText(item == null ? "" : item.getName());
+      setText(item == null ? "" : item.getFileName().toString());
     }
   }
 

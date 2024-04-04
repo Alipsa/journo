@@ -8,8 +8,11 @@ import javafx.stage.Stage;
 
 public class Popup {
 
-  public static void display(Node img, JournoViewer gui) {
+  public static void display(Node img, JournoViewer gui, String... title) {
     Stage stage = new Stage();
+    if (title.length > 0) {
+      stage.setTitle(title[0]);
+    }
     BorderPane pane = new BorderPane(img);
     pane.setPadding(new Insets(10));
     Scene scene = new Scene(pane);
