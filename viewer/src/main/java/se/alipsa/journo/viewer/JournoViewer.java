@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -17,7 +16,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,13 +23,13 @@ import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.appender.FileAppender;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import java.util.stream.Collectors;
 
 public class JournoViewer extends Application {
 
@@ -52,7 +50,9 @@ public class JournoViewer extends Application {
 
   Label projectLabel = new Label("Project");
   private final List<String> searchStrings = new UniqueList<>();
-  Image appIcon;
+  private static Image appIcon;
+
+  private static URL styleSheetUrl;
 
   public static void main(String[] args) {
     launch();
@@ -78,8 +78,8 @@ public class JournoViewer extends Application {
 
     disableRunButtons();
     scene = new Scene(root, 990, 980);
-    scene.getStylesheets().add(getClass().getResource("/default-theme.css").toExternalForm());
-    appIcon = new Image(JournoViewer.class.getResourceAsStream("/journo-logo.png"));
+    scene.getStylesheets().add(getStyleSheet().toExternalForm());
+    appIcon = getLogo();
 
     primaryStage.setOnCloseRequest(t -> {
       if (hasUnsavedFiles()) {
@@ -101,6 +101,24 @@ public class JournoViewer extends Application {
     primaryStage.setTitle("Journo Viewer");
     primaryStage.setScene(scene);
     primaryStage.show();
+  }
+
+  public static Image getLogo() {
+    if (appIcon == null) {
+      try (InputStream is = JournoViewer.class.getResourceAsStream("/journo-logo.png")) {
+        appIcon = is == null ? null : new Image(is);
+      } catch (Exception e) {
+        // ignore
+      }
+    }
+    return appIcon;
+  }
+
+  public static URL getStyleSheet() {
+    if (styleSheetUrl == null) {
+      styleSheetUrl = JournoViewer.class.getResource("/default-theme.css");
+    }
+    return styleSheetUrl;
   }
 
   private boolean hasUnsavedFiles() {
@@ -510,10 +528,6 @@ public class JournoViewer extends Application {
     return freeMarkerTab.getSelectedTemplate();
   }
 
-  public Image getAppIcon() {
-    return appIcon;
-  }
-
   public void setProjectTemplateFile(Path templateFile) {
     Project p = projectCombo.getValue();
     if (p == null) {
@@ -568,14 +582,14 @@ public class JournoViewer extends Application {
     }
   }
 
-  public void saveDataFile(File groovyFile) {
+  public void saveDataFileToProject(File groovyFile) {
     Project p = projectCombo.getValue();
     if (p != null && groovyFile != null) {
       p.setDataFile(groovyFile.toPath());
     }
   }
 
-  public void saveTemplateFile(File markupFile) {
+  public void saveTemplateFileToProject(File markupFile) {
     Project p = projectCombo.getValue();
     if (p != null && markupFile != null) {
       p.setTemplateFile(markupFile.toPath());

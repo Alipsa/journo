@@ -93,6 +93,7 @@ public class FreemarkerTab extends JournoTab {
         try {
           Files.writeString(markupFile.toPath(), freeMarkerArea.getText());
           setStatus("Saved " + markupFile);
+          gui.saveTemplateFileToProject(markupFile);
           contentSaved();
         } catch (IOException e) {
           setStatus("Failed to write " + markupFile);
@@ -115,7 +116,8 @@ public class FreemarkerTab extends JournoTab {
             setStatus("Writing " + filePath.toAbsolutePath());
             Files.writeString(filePath, freeMarkerArea.getText());
             setStatus("Saved " + markupFile);
-            gui.saveTemplateFile(markupFile);
+            contentSaved();
+            gui.saveTemplateFileToProject(markupFile);
           } catch (IOException e) {
             setStatus("Failed to write " + markupFile);
             ExceptionAlert.showAlert("Failed to write " + filePath, e);

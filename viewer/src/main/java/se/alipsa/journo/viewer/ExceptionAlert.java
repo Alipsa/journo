@@ -7,6 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -64,6 +65,10 @@ public class ExceptionAlert extends Alert {
 
     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     alert.getDialogPane().setPrefWidth(500);
+
+    alert.getDialogPane().getStylesheets().add(JournoViewer.getStyleSheet().toExternalForm());
+    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+    stage.getIcons().add(JournoViewer.getLogo());
 
     return alert.showAndWait();
   }

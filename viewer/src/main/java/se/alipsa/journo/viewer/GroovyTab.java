@@ -74,6 +74,7 @@ public class GroovyTab extends JournoTab {
           Files.writeString(groovyFile.toPath(), codeArea.getText());
           setStatus("Saved " + groovyFile);
           contentSaved();
+          gui.saveDataFileToProject(groovyFile);
         } catch (IOException e) {
           setStatus("Failed to write " + groovyFile);
           ExceptionAlert.showAlert("Failed to write " + groovyFile, e);
@@ -98,7 +99,8 @@ public class GroovyTab extends JournoTab {
             setStatus("Saved " + groovyFile);
             groovyFile = targetFile;
             setText(targetFile.getName());
-            gui.saveDataFile(groovyFile);
+            contentSaved();
+            gui.saveDataFileToProject(groovyFile);
           } catch (IOException e) {
             setStatus("Failed to write " + groovyFile);
             ExceptionAlert.showAlert("Failed to write " + filePath, e);

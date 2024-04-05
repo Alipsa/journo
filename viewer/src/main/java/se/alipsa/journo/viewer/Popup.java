@@ -16,7 +16,8 @@ public class Popup {
     BorderPane pane = new BorderPane(img);
     pane.setPadding(new Insets(10));
     Scene scene = new Scene(pane);
-    stage.getIcons().add(gui.getAppIcon());
+    stage.getIcons().add(JournoViewer.getLogo());
+    scene.getStylesheets().add(JournoViewer.getStyleSheet().toExternalForm());
     stage.setScene(scene);
     stage.show();
   }

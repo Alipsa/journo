@@ -76,7 +76,12 @@ public class Project {
     }
     Project p = new Project();
     p.setName(props.getProperty("name"));
-    p.setTemplateFile(absolutePath(Paths.get(props.getProperty("templateFile")), projectPath));
+    String templateFile = props.getProperty("templateFile");
+    if (templateFile == null) {
+      Alerts.warn("Problem loading project file", "templateFile does not exist");
+    } else {
+      p.setTemplateFile(absolutePath(Paths.get(templateFile), projectPath));
+    }
     String dataFilePref = props.getProperty("dataFile");
     if (dataFilePref != null) {
       p.setDataFile(absolutePath(Paths.get(dataFilePref), projectPath));

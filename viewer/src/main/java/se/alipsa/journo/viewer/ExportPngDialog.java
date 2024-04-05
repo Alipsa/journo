@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.apache.batik.transcoder.TranscoderException;
 
 import java.io.File;
@@ -56,6 +57,9 @@ public class ExportPngDialog extends Dialog<File> {
     TextField heightTf = new TextField();
     scaleRow.getChildren().addAll(widthLabel, widthTf, heightLabel, heightTf);
     getDialogPane().setContent(content);
+    getDialogPane().getStylesheets().add(JournoViewer.getStyleSheet().toExternalForm());
+    Stage stage = (Stage) getDialogPane().getScene().getWindow();
+    stage.getIcons().add(JournoViewer.getLogo());
     setResultConverter(c ->  {
       if (c == save) {
         try {

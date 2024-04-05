@@ -6,6 +6,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.Map;
@@ -40,6 +41,9 @@ public class CreateProjectDialog extends Dialog<Map<String, String>> {
     ButtonType createButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
     ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
     getDialogPane().getButtonTypes().addAll(cancelButtonType, createButtonType);
+    getDialogPane().getStylesheets().add(JournoViewer.getStyleSheet().toExternalForm());
+    Stage stage = (Stage) getDialogPane().getScene().getWindow();
+    stage.getIcons().add(JournoViewer.getLogo());
     setResultConverter(c -> {
       if (c.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
         return Map.of("path", locationField.getText(), "name", nameField.getText());
