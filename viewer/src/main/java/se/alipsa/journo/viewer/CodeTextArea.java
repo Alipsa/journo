@@ -16,9 +16,9 @@ import java.util.List;
 public abstract class CodeTextArea extends CodeArea {
   public static final String INDENT = "  ";
 
-  protected JournoViewer gui;
-  protected CodeTextArea(JournoViewer gui) {
-    this.gui = gui;
+  protected JournoTab parentTab;
+  protected CodeTextArea(JournoTab parentTab) {
+    this.parentTab = parentTab;
     getStylesheets().clear();
     getStyleClass().add("styled-text-area");
     getStyleClass().add("code-area");
@@ -57,13 +57,13 @@ public abstract class CodeTextArea extends CodeArea {
       KeyCode keyCode = e.getCode();
       if (e.isControlDown() || e.isMetaDown()) {
         if (KeyCode.F.equals(keyCode)) {
-          gui.displayFind();
+          parentTab.gui.displayFind();
         }
       }
     });
 
     plainTextChanges().subscribe(ptc -> {
-      gui.contentChanged();
+      parentTab.contentChanged();
     });
   }
 

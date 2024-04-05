@@ -3,6 +3,7 @@ package se.alipsa.journo.viewer;
 import freemarker.template.TemplateException;
 import groovy.lang.GroovySystem;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -79,11 +80,50 @@ public class JournoViewer extends Application {
     scene = new Scene(root, 990, 980);
     scene.getStylesheets().add(getClass().getResource("/default-theme.css").toExternalForm());
     appIcon = new Image(JournoViewer.class.getResourceAsStream("/journo-logo.png"));
+
+    primaryStage.setOnCloseRequest(t -> {
+      if (hasUnsavedFiles()) {
+        boolean exitAnyway = Alerts.confirm(
+            "Are you sure you want to exit?",
+            "There are unsaved files",
+            "Are you sure you want to exit \n -even though you have unsaved files?"
+        );
+        if (!exitAnyway) {
+          t.consume();
+          return;
+        }
+      }
+      endProgram();
+    });
+
     primaryStage.getIcons().add(appIcon);
     primaryStage.setResizable(true);
     primaryStage.setTitle("Journo Viewer");
     primaryStage.setScene(scene);
     primaryStage.show();
+  }
+
+  private boolean hasUnsavedFiles() {
+    for (Tab tab : tabPane.getTabs()) {
+      if (tab instanceof JournoTab taTab) {
+        if (taTab.isChanged()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public void endProgram() {
+    Platform.exit();
+    // Allow some time before calling system exist so stop() can be used to do stuff if needed
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+      public void run() {
+        System.exit(0);
+      }
+    };
+    timer.schedule(task, 200);
   }
 
   private Node createProjectBar() {
@@ -499,14 +539,6 @@ public class JournoViewer extends Application {
     }
     logger.debug("Setting project.dependencies = " + items);
     p.setDependencies(items);
-  }
-
-  public void contentChanged() {
-    // todo disable run buttons
-  }
-
-  public void contentSaved() {
-    // todo enable run buttons
   }
 
   private void viewLogFile(ActionEvent actionEvent) {

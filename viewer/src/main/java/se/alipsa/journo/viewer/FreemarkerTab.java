@@ -69,7 +69,7 @@ public class FreemarkerTab extends JournoTab {
     root.setTop(buttonPane);
 
     VBox codeBox = new VBox();
-    freeMarkerArea = new FreemarkerTextArea(gui);
+    freeMarkerArea = new FreemarkerTextArea(this);
     freeMarkerArea.setPadding(new Insets(5));
     VBox.setVgrow(freeMarkerArea, Priority.ALWAYS);
     codeBox.getChildren().addAll(freeMarkerArea);
@@ -93,6 +93,7 @@ public class FreemarkerTab extends JournoTab {
         try {
           Files.writeString(markupFile.toPath(), freeMarkerArea.getText());
           setStatus("Saved " + markupFile);
+          contentSaved();
         } catch (IOException e) {
           setStatus("Failed to write " + markupFile);
           ExceptionAlert.showAlert("Failed to write " + markupFile, e);

@@ -2,8 +2,6 @@ package se.alipsa.journo.viewer;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -11,17 +9,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.girod.javafx.svgimage.SVGImage;
 import org.girod.javafx.svgimage.SVGLoader;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -34,7 +25,7 @@ public class SvgTab extends JournoTab {
   private File svgFile = null;
   public SvgTab(JournoViewer gui) {
     super(gui);
-    textArea = new SvgTextArea(gui);
+    textArea = new SvgTextArea(this);
     BorderPane root = new BorderPane();
     FlowPane actionPane = new FlowPane();
     actionPane.setPadding(new Insets(5));
@@ -97,6 +88,7 @@ public class SvgTab extends JournoTab {
         try {
           Files.writeString(svgFile.toPath(), textArea.getText());
           setStatus("Saved " + svgFile);
+          contentSaved();
         } catch (Exception e) {
           setStatus("Failed to write " + svgFile);
           ExceptionAlert.showAlert("Failed to write " + svgFile, e);

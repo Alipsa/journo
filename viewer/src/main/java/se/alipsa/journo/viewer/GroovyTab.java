@@ -34,7 +34,7 @@ public class GroovyTab extends JournoTab {
     VBox codeBox = new VBox();
     Label codeLabel = new Label("Groovy Code to generate data (must return a Map<String, Object>)");
     codeLabel.setPadding(new Insets(5));
-    codeArea = new GroovyTextArea(gui);
+    codeArea = new GroovyTextArea(this);
     codeArea.setPadding(new Insets(5));
     VBox.setVgrow(codeArea, Priority.ALWAYS);
     codeBox.getChildren().addAll(codeLabel, codeArea);
@@ -73,6 +73,7 @@ public class GroovyTab extends JournoTab {
         try {
           Files.writeString(groovyFile.toPath(), codeArea.getText());
           setStatus("Saved " + groovyFile);
+          contentSaved();
         } catch (IOException e) {
           setStatus("Failed to write " + groovyFile);
           ExceptionAlert.showAlert("Failed to write " + groovyFile, e);

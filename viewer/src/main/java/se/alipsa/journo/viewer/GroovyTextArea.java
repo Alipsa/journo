@@ -14,7 +14,6 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -69,8 +68,8 @@ public class GroovyTextArea extends CodeTextArea {
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
 
-  public GroovyTextArea(JournoViewer gui) {
-    super(gui);
+  public GroovyTextArea(JournoTab parentTab) {
+    super(parentTab);
 
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
       if (e.isControlDown() && (KeyCode.SPACE.equals(e.getCode()) || KeyCode.PERIOD.equals(e.getCode()))) {
@@ -78,7 +77,6 @@ public class GroovyTextArea extends CodeTextArea {
       }
     });
     //Platform.runLater(() -> setParagraphGraphicFactory(LineNumberFactory.get(this)));
-
   }
 
   /**
@@ -194,7 +192,7 @@ public class GroovyTextArea extends CodeTextArea {
           lastWord = endsWithDot ? lastWord : lastWord + ".";
           suggestions.putAll(getStaticMethods(exactMatches.get(0), prefix));
         } else if (exactMatches.size() > 1){
-          gui.setStatus("Multiple matches for this class detected, cannot determine which one is meant");
+          parentTab.gui.setStatus("Multiple matches for this class detected, cannot determine which one is meant");
           return;
         } else {
           List<String> possiblePackages = scanResult.getPackageInfo().stream()
@@ -219,7 +217,7 @@ public class GroovyTextArea extends CodeTextArea {
     if (!suggestions.isEmpty()) {
       suggestCompletion(lastWord, suggestions, suggestionsPopup);
     } else {
-      gui.setStatus("No matches found for " + searchWord);
+      parentTab.gui.setStatus("No matches found for " + searchWord);
     }
   }
 

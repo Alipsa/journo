@@ -22,8 +22,8 @@ public class FreemarkerTextArea extends CodeTextArea {
   private static final int GROUP_EQUAL_SYMBOL = 2;
   private static final int GROUP_ATTRIBUTE_VALUE = 3;
 
-  public FreemarkerTextArea(JournoViewer gui) {
-    super(gui);
+  public FreemarkerTextArea(JournoTab parentTab) {
+    super(parentTab);
   }
 
 

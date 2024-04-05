@@ -22,8 +22,8 @@ public class SvgTextArea extends CodeTextArea {
   private static final int GROUP_EQUAL_SYMBOL = 2;
   private static final int GROUP_ATTRIBUTE_VALUE = 3;
 
-  public SvgTextArea(JournoViewer gui) {
-    super(gui);
+  public SvgTextArea(JournoTab parentTab) {
+    super(parentTab);
   }
 
   public void setText(String text) {
