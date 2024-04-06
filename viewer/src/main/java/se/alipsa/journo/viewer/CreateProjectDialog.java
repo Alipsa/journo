@@ -14,6 +14,8 @@ import java.util.Optional;
 
 public class CreateProjectDialog extends Dialog<Map<String, String>> {
 
+  public static final String KEY_NAME = "name";
+  public static final String KEY_PATH = "path";
 
   public CreateProjectDialog() {
     setTitle("Create new Project");
@@ -48,7 +50,7 @@ public class CreateProjectDialog extends Dialog<Map<String, String>> {
     stage.getIcons().add(JournoViewer.getLogo());
     setResultConverter(c -> {
       if (c.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-        return Map.of("path", ensureExtension(locationField.getText()), "name", nameField.getText());
+        return Map.of(KEY_PATH, ensureExtension(locationField.getText()), KEY_NAME, nameField.getText());
       }
       return null;
     });

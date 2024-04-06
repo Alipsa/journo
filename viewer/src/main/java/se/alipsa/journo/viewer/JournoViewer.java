@@ -31,6 +31,9 @@ import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import static se.alipsa.journo.viewer.CreateProjectDialog.KEY_NAME;
+import static se.alipsa.journo.viewer.CreateProjectDialog.KEY_PATH;
+
 public class JournoViewer extends Application {
 
   private static Logger logger = LogManager.getLogger(JournoViewer.class);
@@ -201,13 +204,14 @@ public class JournoViewer extends Application {
         return;
       }
       Project p = new Project();
-      p.setName(response.get().get("name"));
+      Map<String, String> res = response.get();
+      p.setName(res.get(KEY_NAME));
       p.setTemplateFile(freeMarkerTab.getTemplateFile());
       p.setDataFile(codeTab.getScriptFile());
       projectCombo.getItems().add(p);
       projectCombo.setValue(p);
       try {
-        saveProject(p, response.get().get("location"));
+        saveProject(p, res.get(KEY_PATH));
       } catch (IOException e) {
         ExceptionAlert.showAlert("Failed to save project " + p, e);
       }
