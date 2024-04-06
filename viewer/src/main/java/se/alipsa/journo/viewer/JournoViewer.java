@@ -206,6 +206,11 @@ public class JournoViewer extends Application {
       p.setDataFile(codeTab.getScriptFile());
       projectCombo.getItems().add(p);
       projectCombo.setValue(p);
+      try {
+        saveProject(p, response.get().get("location"));
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Failed to save project " + p, e);
+      }
       setActiveProject(p);
     });
 
@@ -221,6 +226,7 @@ public class JournoViewer extends Application {
     Preferences projects = preferences().node("projects");
     String path = projects.node(p.getName()).get("projectFile", null);
     Path projectFilePath = Paths.get(path);
+    System.setProperty("user.dir", path);
     projectCombo.setTooltip(new Tooltip(projectFilePath.toString()));
   }
 
@@ -412,6 +418,12 @@ public class JournoViewer extends Application {
         projects.node(name).removeNode();
       }
     }
+  }
+
+  void saveProject(Project p, String path) throws IOException {
+    Preferences projects = preferences().node("projects");
+    projects.node(p.getName()).put("projectFile", path);
+    saveProject(p);
   }
 
   void saveProject(Project p) throws IOException {

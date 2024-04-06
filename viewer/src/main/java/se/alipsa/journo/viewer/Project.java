@@ -97,6 +97,9 @@ public class Project {
     if (p.getDataFile() != null) props.setProperty("dataFile", pathRelativeTo(p.getDataFile(), projectFilePath).toString());
     if (p.getDependencies() != null) props.setProperty("dependencies", p.getDependencyString(projectFilePath));
     try (OutputStream out = Files.newOutputStream(projectFilePath)) {
+      if (!Files.exists(projectFilePath.getParent())) {
+        Files.createDirectories(projectFilePath.getParent());
+      }
       props.store(out, "Journo project file");
     }
   }
