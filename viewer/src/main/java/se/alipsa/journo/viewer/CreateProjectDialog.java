@@ -32,9 +32,11 @@ public class CreateProjectDialog extends Dialog<Map<String, String>> {
     Button locationButton = new Button("...");
     locationButton.setOnAction(a -> {
       FileChooser fc = new FileChooser();
+      fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Journo project(*.jpr)", "*.jpr"));
+      fc.setInitialFileName("*.jpr");
       File file = fc.showSaveDialog(null);
       if (file != null) {
-        locationField.setText(file.getAbsolutePath());
+        locationField.setText(ensureExtension(file.getAbsolutePath()));
       }
     });
     locationRow.getChildren().addAll(locationLabel, locationField, locationButton);
@@ -46,9 +48,16 @@ public class CreateProjectDialog extends Dialog<Map<String, String>> {
     stage.getIcons().add(JournoViewer.getLogo());
     setResultConverter(c -> {
       if (c.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-        return Map.of("path", locationField.getText(), "name", nameField.getText());
+        return Map.of("path", ensureExtension(locationField.getText()), "name", nameField.getText());
       }
       return null;
     });
+  }
+
+  String ensureExtension(String location) {
+    if (location.endsWith(".jpr")) {
+      location = location + ".jpr";
+    }
+    return location;
   }
 }
