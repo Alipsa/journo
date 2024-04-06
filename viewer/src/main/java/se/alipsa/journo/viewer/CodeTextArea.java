@@ -16,6 +16,13 @@ import java.util.List;
 public abstract class CodeTextArea extends CodeArea {
   public static final String INDENT = "  ";
 
+  /**
+   * A flag that indicates whether a change of text should be considered
+   * as changed text (true), e-g- an edit by the user,
+   * or new text (false), e.g. read from file
+   */
+  protected boolean blockChange = false;
+
   protected JournoTab parentTab;
   protected CodeTextArea(JournoTab parentTab) {
     this.parentTab = parentTab;
@@ -38,9 +45,9 @@ public abstract class CodeTextArea extends CodeArea {
           if (!"".equals(selected)) {
             IndexRange range = getSelection();
             int start = range.getStart();
-            String indented = indentText(selected);
-            replaceSelection(indented);
-            selectRange(start, start + indented.length());
+            String s = indentText(selected);
+            replaceSelection(s);
+            selectRange(start, start + s.length());
           } else {
             String line = getText(getCurrentParagraph());
             int orgPos = getCaretPosition();
@@ -59,11 +66,32 @@ public abstract class CodeTextArea extends CodeArea {
         if (KeyCode.F.equals(keyCode)) {
           parentTab.gui.displayFind();
         }
+      } else if (e.isShiftDown() && KeyCode.TAB.equals(keyCode)) {
+        String selected = selectedTextProperty().getValue();
+        if (!"".equals(selected)) {
+          IndexRange range = getSelection();
+          int start = range.getStart();
+          String s = backIndentText(selected);
+          replaceSelection(s);
+          selectRange(start, start + s.length());
+        } else {
+          String line = getText(getCurrentParagraph());
+          int orgPos = getCaretPosition();
+          moveTo(getCurrentParagraph(), 0);
+          int start = getCaretPosition();
+          int end = start + line.length();
+          if (line.startsWith(INDENT)) {
+            replaceText(start, end, backIndentText(line));
+            moveTo(orgPos - INDENT.length());
+          }
+        }
       }
     });
 
     plainTextChanges().subscribe(ptc -> {
-      parentTab.contentChanged();
+      if (parentTab != null && !parentTab.isChanged() && !blockChange) {
+        parentTab.contentChanged();
+      }
     });
   }
 
@@ -86,6 +114,19 @@ public abstract class CodeTextArea extends CodeArea {
       tabbed.add(INDENT + line);
     }
     return String.join("\n", tabbed);
+  }
+
+  protected String backIndentText(String selected) {
+    String[] lines = selected.split("\n");
+    List<String> untabbed = new ArrayList<>();
+    for (String line : lines) {
+      if (line.startsWith(INDENT)) {
+        untabbed.add(line.substring(2));
+      } else {
+        untabbed.add(line);
+      }
+    }
+    return String.join("\n", untabbed);
   }
 
 }

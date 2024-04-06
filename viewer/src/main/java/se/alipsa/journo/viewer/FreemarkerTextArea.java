@@ -76,7 +76,9 @@ public class FreemarkerTextArea extends CodeTextArea {
   }
 
   public void setText(String content) {
+    blockChange = true;
     replaceText(content);
     highlightSyntax();
+    blockChange = false;
   }
 }

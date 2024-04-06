@@ -216,7 +216,7 @@ public class JournoViewer extends Application {
     logger.info("Setting active project to {}", p);
     freeMarkerTab.loadFile(p.getTemplateFile());
     codeTab.loadFile(p.getDataFile());
-    logger.info("setActiveProject(), Dependencies are: {}", p.getDependencies());
+    logger.debug("setActiveProject(), Dependencies are: {}", p.getDependencies());
     codeTab.setDependencies(p.getDependencies());
     Preferences projects = preferences().node("projects");
     String path = projects.node(p.getName()).get("projectFile", null);

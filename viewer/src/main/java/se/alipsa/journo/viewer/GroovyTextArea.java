@@ -291,8 +291,10 @@ public class GroovyTextArea extends CodeTextArea {
   }
 
   public void setText(String text) {
+    blockChange = true;
     replaceText(text);
     highlightSyntax();
+    blockChange = false;
   }
 
   protected void suggestCompletion(String lastWord, TreeMap<String, Boolean> keyWords, ContextMenu suggestionsPopup) {
@@ -343,11 +345,12 @@ public class GroovyTextArea extends CodeTextArea {
     suggestionsPopup.show(this, screenX, screenY);
   }
 
-  public String getTextContent() {
+  @Override
+  public String getText() {
     String code;
     String selected = selectedTextProperty().getValue();
     if (selected == null || selected.isEmpty()) {
-      code = getText();
+      code = textProperty().getValue();
     } else {
       code = selected;
     }

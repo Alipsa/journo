@@ -27,8 +27,10 @@ public class SvgTextArea extends CodeTextArea {
   }
 
   public void setText(String text) {
+    blockChange = true;
     replaceText(text);
     highlightSyntax();
+    blockChange = false;
   }
   @Override
   public void highlightSyntax() {
