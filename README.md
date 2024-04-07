@@ -57,6 +57,7 @@ You can then convert the image to a data url using the Image util:
 
 ```groovy
 import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.ImageUtil;
 import java.util.HashMap;
 import java.util.Map;
 
