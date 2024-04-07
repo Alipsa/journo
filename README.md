@@ -1,6 +1,6 @@
 # Journo - a pdf creation library converting Freemarker markup to pdf
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/se.alipsa/journo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/se.alipsa/journo)
-[![javadoc](https://javadoc.io/badge2/se.alipsa/journo/javadoc.svg)](https://javadoc.io/doc/se.alipsa/journo)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/se.alipsa/journo-runtime/badge.svg)](https://maven-badges.herokuapp.com/maven-central/se.alipsa/journo-runtime)
+[![javadoc](https://javadoc.io/badge2/se.alipsa/journo-runtime/javadoc.svg)](https://javadoc.io/doc/se.alipsa/journo-runtime)
 
 Journo is a tool to generate PDF from Freemarker templates i.e. it
 creates PDF documents from Freemarker markup.
