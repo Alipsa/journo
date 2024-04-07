@@ -17,7 +17,7 @@ template needs to take into account the xhtml requirements posed by Flying Sauce
 
 Journo requires JDK 17 or later.
 
-Below is a short introduction, for more comprehensive documentation, see [the wiki](wiki/Journo-Wiki-Home)
+Below is a short introduction, for more comprehensive documentation, see [the wiki](https://github.com/Alipsa/journo/wiki/Journo-Wiki-Home)
 
 Example usage:
 
