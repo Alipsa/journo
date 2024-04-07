@@ -215,7 +215,7 @@ before rendering the pdf (see [the gmd documentation](https://github.com/Alipsa/
 an example of using a WebView to do just this). 
 
 ## Journo viewer
-The [Journo Viewer](journo-viewer/readme.md) is a simple but powerful gui tool to shorten the report creation lifecycle.
+The [Journo Viewer](viewer/readme.md) is a simple but powerful gui tool to shorten the report creation lifecycle.
 You need a JDK 17 or higher with javafx bundled to run it (e.g. the Bellsoft Full JDK distribution)
 
 ## License
