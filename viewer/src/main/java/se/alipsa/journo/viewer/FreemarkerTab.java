@@ -102,7 +102,7 @@ public class FreemarkerTab extends JournoTab {
       } else {
         FileChooser fc = new FileChooser();
         fc.setTitle("Save template");
-        fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fc.setInitialDirectory(gui.getProjectDir());
         String template = templateNames.getSelectionModel().getSelectedItem();
         if (template != null) {
           String suggested = template.substring(0, template.lastIndexOf(".")) + ".ftl";
@@ -147,7 +147,6 @@ public class FreemarkerTab extends JournoTab {
     if (templateFileNames != null) {
       templateNames.getItems().addAll(templateFileNames);
     }
-    System.setProperty("user.dir", pdfDir.getAbsolutePath());
     gui.setPref(TEMPLATE_DIR, pdfDir.getAbsolutePath());
     try {
       reportEngine = new ReportEngine(pdfDir);

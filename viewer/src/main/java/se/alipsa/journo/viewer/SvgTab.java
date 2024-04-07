@@ -69,7 +69,7 @@ public class SvgTab extends JournoTab {
     loadScriptButton.setOnAction(a -> {
       FileChooser fc = new FileChooser();
       fc.setTitle("Select Svg file");
-      fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+      fc.setInitialDirectory(gui.getProjectDir());
       File targetFile = fc.showOpenDialog(gui.getStage());
       if (targetFile != null) {
         try {
@@ -96,7 +96,7 @@ public class SvgTab extends JournoTab {
       } else {
         FileChooser fc = new FileChooser();
         fc.setTitle("Save svg");
-        fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fc.setInitialDirectory(gui.getProjectDir());
 
         String template = gui.getSelectedTemplate();
         if (template != null) {

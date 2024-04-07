@@ -169,7 +169,7 @@ public class JournoViewer extends Application {
     hbox.getChildren().add(loadButton);
     loadButton.setOnAction(a -> {
       FileChooser fc = new FileChooser();
-      fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+      fc.setInitialDirectory(getProjectDir());
       fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Journo project files", ".jpr"));
       File projectFile = fc.showOpenDialog(getStage());
       if (projectFile != null) {
@@ -230,7 +230,7 @@ public class JournoViewer extends Application {
     Preferences projects = preferences().node("projects");
     String path = projects.node(p.getName()).get("projectFile", null);
     Path projectFilePath = Paths.get(path);
-    System.setProperty("user.dir", path);
+    setProjectDir(projectFilePath.getParent().toFile());
     projectCombo.setTooltip(new Tooltip(projectFilePath.toString()));
   }
 
@@ -436,7 +436,7 @@ public class JournoViewer extends Application {
     if (projectFilePref == null) {
       FileChooser fc = new FileChooser();
       fc.setTitle("Save Journo project file");
-      fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+      fc.setInitialDirectory(getProjectDir());
       fc.setInitialFileName(p.getName() + ".jpr");
       File file = fc.showSaveDialog(getStage());
       if (file == null) {
@@ -610,5 +610,25 @@ public class JournoViewer extends Application {
     if (p != null && markupFile != null) {
       p.setTemplateFile(markupFile.toPath());
     }
+  }
+
+  public File getProjectDir() {
+    File dir = new File(System.getProperty("user.dir"));
+    if (!dir.exists()) {
+      String projectFilePref = preferences().node(projectCombo.getValue().getName()).get("projectFile", null);
+      if (projectFilePref != null) {
+        return new File(projectFilePref).getParentFile();
+      }
+    } else if (dir.isFile()) {
+      return dir.getParentFile();
+    }
+    return dir;
+  }
+
+  public void setProjectDir(File dir) {
+    if (dir.isFile()) {
+      dir = dir.getParentFile();
+    }
+    System.setProperty("user.dir", dir.getAbsolutePath());
   }
 }

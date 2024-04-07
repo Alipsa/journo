@@ -9,6 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.script.ScriptException;
 import java.io.File;
@@ -16,10 +18,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 public class GroovyTab extends JournoTab {
 
+  private static final Logger log = LogManager.getLogger(GroovyTab.class);
   private File groovyFile = null;
   private final Button codeRunButton;
   private final GroovyTextArea codeArea;
@@ -60,7 +64,7 @@ public class GroovyTab extends JournoTab {
     loadScriptButton.setOnAction(a -> {
       FileChooser fc = new FileChooser();
       fc.setTitle("Select Groovy Script");
-      fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+      fc.setInitialDirectory(gui.getProjectDir());
       File targetFile = fc.showOpenDialog(gui.getStage());
       if (targetFile != null) {
         loadScript(targetFile);
@@ -80,9 +84,10 @@ public class GroovyTab extends JournoTab {
           ExceptionAlert.showAlert("Failed to write " + groovyFile, e);
         }
       } else {
+        log.info("Saving groovy script to new location");
         FileChooser fc = new FileChooser();
         fc.setTitle("Save groovy script");
-        fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fc.setInitialDirectory(gui.getProjectDir());
 
         String template = gui.getSelectedTemplate();
         if (template != null) {
@@ -101,7 +106,7 @@ public class GroovyTab extends JournoTab {
             setText(targetFile.getName());
             contentSaved();
             gui.saveDataFileToProject(groovyFile);
-          } catch (IOException e) {
+          } catch (Exception e) {
             setStatus("Failed to write " + groovyFile);
             ExceptionAlert.showAlert("Failed to write " + filePath, e);
           }
@@ -171,8 +176,13 @@ public class GroovyTab extends JournoTab {
     codeRunButton.setDisable(false);
   }
 
-  public Map<String, Object> runScript() throws ScriptException {
-    return codeArea.executeGroovyScript();
+  public Map<String, Object> runScript() {
+    try {
+      return codeArea.executeGroovyScript();
+    } catch (Exception e) {
+      ExceptionAlert.showAlert("Failed to run groovy script", e);
+      return Collections.emptyMap();
+    }
   }
 
   public Path getScriptFile() {

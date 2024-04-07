@@ -265,7 +265,7 @@ public class GroovyTextArea extends CodeTextArea {
     return groovyScriptEngine;
   }
 
-  Map<String, Object> executeGroovyScript() throws ScriptException {
+  Map<String, Object> executeGroovyScript() throws Exception {
     Object result = getGroovyEngine().eval(getText());
     try {
       return (Map<String, Object>) result;
