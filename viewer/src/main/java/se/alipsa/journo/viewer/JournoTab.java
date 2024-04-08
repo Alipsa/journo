@@ -27,12 +27,14 @@ public abstract class JournoTab extends Tab {
     if (!getTitle().endsWith("*") && !isChanged) {
       setTitle(getTitle() + "*");
       isChanged = true;
+      gui.disableRunButton();
     }
   }
 
   public void contentSaved() {
     setTitle(getTitle().replace("*", ""));
     isChanged = false;
+    gui.enableRunButton();
   }
 
   public String getTitle() {

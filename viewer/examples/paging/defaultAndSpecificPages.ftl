@@ -4,30 +4,26 @@
     <style>
 
         @page firstPage {
-            size: a5 landscape;
-            margin: 20px;
-            padding: 0;
+            size: a4 landscape;
             background-color: lightblue;
         }
 
         @page secondPage {
-            size: a5 portrait;
-            margin: 0;
+            size: a4 portrait;
+            margin-bottom: 20px;
             padding: 0;
             background-color: yellow;
             @bottom-right { content: element(footer) }
         }
 
         @page standardPage {
-            size: a5 portrait;
-            margin: 0px;
-            padding: 50px;
+            size: a4 portrait;
             @top-left { content: element(header) }
             @bottom-right { content: element(footer) }
         }
 
         div.header {
-            font-size: 9px;
+            font-size: 10px;
             font-style: italic;
             font-family: serif;
             text-align: left;
@@ -37,7 +33,7 @@
         }
 
         div.footer {
-            font-size: 90%;
+            font-size: 9px;
             font-style: italic;
             text-align: right;
             display: block;
@@ -47,9 +43,9 @@
 
         div.content {
             page-break-after: always;
-            margin: 0.25in;
+            margin: 10px;
             border: thin solid black;
-            padding: 1em;
+            padding: 15px;
             page: standardPage;
         }
 
@@ -75,8 +71,13 @@
             width: .7em;
             font-size: 400%;
         }
-        #page1 {
+
+        #coverPage {
             page: firstPage;
+            page-break-after: always;
+            font-size: 60px;
+            text-align: center;
+            white-space: nowrap;
         }
 
         #page2 {
@@ -92,7 +93,10 @@
 
 <body>
 <div class="header">Alice's Adventures in Wonderland</div>
-<div class="footer" style="">  Page <span id="pagenumber"/> of <span id="pagecount"/> </div>
+<div class="footer">  Page <span id="pagenumber"/> of <span id="pagecount"/> </div>
+<div id="coverPage">
+  Alice's Adventures in Wonderland
+</div>
 <div id="page1" class="content">
     <h1>CHAPTER I</h1>
 

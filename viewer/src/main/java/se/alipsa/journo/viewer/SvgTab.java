@@ -118,9 +118,9 @@ public class SvgTab extends JournoTab {
       fc.setTitle("Save svg");
       fc.setInitialDirectory(gui.getProjectDir());
 
-      String template = gui.getSelectedTemplate();
-      if (template != null) {
-        String suggested = template.substring(0, template.lastIndexOf(".")) + ".svg";
+      String projectName = gui.getActiveProject().getName();
+      if (projectName != null) {
+        String suggested = projectName + ".svg";
         fc.setInitialFileName(suggested);
       }
       File targetFile = fc.showSaveDialog(gui.getStage());

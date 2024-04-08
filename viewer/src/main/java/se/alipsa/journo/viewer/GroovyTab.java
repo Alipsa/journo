@@ -23,8 +23,6 @@ import java.util.Map;
 public class GroovyTab extends JournoTab {
 
   private static final Logger log = LogManager.getLogger(GroovyTab.class);
-
-  private final Button codeRunButton;
   private final GroovyTextArea codeArea;
   private final ListView<Path> jarDependencies;
 
@@ -59,14 +57,6 @@ public class GroovyTab extends JournoTab {
     HBox actionPane = new HBox();
     actionPane.setPadding(new Insets(5));
     actionPane.setSpacing(5);
-    Button loadScriptButton = new Button("Load groovy script");
-    loadScriptButton.setOnAction(a -> {
-      promptAndLoad();
-    });
-    Button saveScriptButton = new Button("Save groovy script");
-    saveScriptButton.setOnAction(a -> save());
-    codeRunButton = new Button("View PDF");
-    codeRunButton.setOnAction(a -> gui.run());
 
     Button showResultButton = new Button("Run script");
     showResultButton.setOnAction(a -> {
@@ -80,7 +70,7 @@ public class GroovyTab extends JournoTab {
         ExceptionAlert.showAlert("Failed to run Script", e);
       }
     });
-    actionPane.getChildren().addAll(loadScriptButton,saveScriptButton, codeRunButton, showResultButton);
+    actionPane.getChildren().addAll(showResultButton);
     root.setBottom(actionPane);
 
     setContent(root);
@@ -119,14 +109,6 @@ public class GroovyTab extends JournoTab {
     });
     outsideContextMenu.getItems().add(addDependencyMI);
     return outsideContextMenu;
-  }
-
-  public void disbleRunButton() {
-    codeRunButton.setDisable(true);
-  }
-
-  public void enableRunButton() {
-    codeRunButton.setDisable(false);
   }
 
   public Map<String, Object> runScript() {
@@ -207,9 +189,9 @@ public class GroovyTab extends JournoTab {
       fc.setTitle("Save groovy script");
       fc.setInitialDirectory(gui.getProjectDir());
 
-      String template = gui.getSelectedTemplate();
-      if (template != null) {
-        String suggested = template.substring(0, template.lastIndexOf(".")) + ".groovy";
+      String projectName = gui.getActiveProject().getName();
+      if (projectName != null) {
+        String suggested = projectName + ".groovy";
         fc.setInitialFileName(suggested);
       }
       File targetFile = fc.showSaveDialog(gui.getStage());

@@ -37,7 +37,7 @@ import static se.alipsa.journo.viewer.CreateProjectDialog.KEY_PATH;
 public class JournoViewer extends Application {
 
   private static Logger logger = LogManager.getLogger(JournoViewer.class);
-  public static final String TEMPLATE_DIR = JournoViewer.class.getName() + ".templateDir";
+
   private PDFViewer pdfViewer;
   FreemarkerTab freeMarkerTab;
   Tab pdfTab;
@@ -56,6 +56,8 @@ public class JournoViewer extends Application {
   private static Image appIcon;
 
   private static URL styleSheetUrl;
+
+  private Button viewButton;
 
   public static void main(String[] args) {
     launch();
@@ -79,7 +81,7 @@ public class JournoViewer extends Application {
     HBox.setHgrow(menuBar, Priority.ALWAYS);
     root.setTop(topBox);
 
-    disableRunButtons();
+    disableRunButton();
     scene = new Scene(root, 990, 980);
     scene.getStylesheets().add(getStyleSheet().toExternalForm());
     appIcon = getLogo();
@@ -152,10 +154,14 @@ public class JournoViewer extends Application {
     hbox.setSpacing(5);
     hbox.setPadding(new Insets(3,2,0,2));
     hbox.setStyle("-fx-border-color: lightgray");
+
+    viewButton = new Button("View PDF");
+    hbox.getChildren().add(viewButton);
+    viewButton.setOnAction(a -> run());
+
     projectLabel.setStyle("-fx-background-color: transparent;");
     projectLabel.setPadding(new Insets(4, 0, 0, 5));
     projectLabel.setAlignment(Pos.BOTTOM_CENTER);
-
     hbox.getChildren().add(projectLabel);
     hbox.getChildren().add(projectCombo);
     try {
@@ -188,6 +194,12 @@ public class JournoViewer extends Application {
     saveButton.setOnAction(a -> {
       if (projectCombo.getValue() != null) {
         try {
+          if (freeMarkerTab.isChanged()) {
+            freeMarkerTab.save();
+          }
+          if (codeTab.isChanged()) {
+            codeTab.save();
+          }
           saveProject(projectCombo.getValue());
         } catch (IOException e) {
           ExceptionAlert.showAlert("Failed to save project", e);
@@ -504,15 +516,14 @@ public class JournoViewer extends Application {
   }
 
 
-  void disableRunButtons() {
-    freeMarkerTab.disbleRunButton();
-    codeTab.disbleRunButton();
-
+  void disableRunButton() {
+    viewButton.setDisable(true);
   }
 
-  void enableRunButtons() {
-    freeMarkerTab.enableRunButton();
-    codeTab.enableRunButton();
+  void enableRunButton() {
+    if (!freeMarkerTab.isChanged() && !codeTab.isChanged()) {
+      viewButton.setDisable(false);
+    }
   }
 
   private Preferences preferences() {
@@ -590,10 +601,6 @@ public class JournoViewer extends Application {
 
   public static Path writeToFile(File file, byte[] content) throws IOException {
     return Files.write(file.toPath(), content);
-  }
-
-  public String getSelectedTemplate() {
-    return freeMarkerTab.getSelectedTemplate();
   }
 
   public void setProjectTemplateFile(Path templateFile) {
@@ -682,5 +689,9 @@ public class JournoViewer extends Application {
       dir = dir.getParentFile();
     }
     System.setProperty("user.dir", dir.getAbsolutePath());
+  }
+
+  public Project getActiveProject() {
+    return projectCombo.getValue();
   }
 }
