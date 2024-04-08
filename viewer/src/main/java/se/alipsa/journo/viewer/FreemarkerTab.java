@@ -27,7 +27,6 @@ public class FreemarkerTab extends JournoTab {
   private TextField dirTf;
   private FreemarkerTextArea freeMarkerArea;
   private final ComboBox<String> templateNames  = new ComboBox<>();
-  private File markupFile = null;
 
   public FreemarkerTab(JournoViewer gui) {
     super(gui);
@@ -90,64 +89,32 @@ public class FreemarkerTab extends JournoTab {
   private Button createLoadTemplateButton() {
     Button loadScriptButton = new Button("Load template");
     loadScriptButton.setOnAction(a -> {
-      FileChooser fc = new FileChooser();
-      fc.setTitle("Select Freemarker template");
-      fc.setInitialDirectory(gui.getProjectDir());
-      File targetFile = fc.showOpenDialog(gui.getStage());
-      if (targetFile != null) {
-        try {
-          freeMarkerArea.setText(Files.readString(targetFile.toPath()));
-          markupFile = targetFile;
-          setText(targetFile.getName());
-          gui.setProjectTemplateFile(targetFile.toPath());
-          enableRunButton();
-        } catch (IOException e) {
-          ExceptionAlert.showAlert("Failed to load Freemarker template", e);
-        }
-      }
+      promptAndLoad();
     });
     return loadScriptButton;
   }
 
+  public void promptAndLoad() {
+    FileChooser fc = new FileChooser();
+    fc.setTitle("Select Freemarker template");
+    fc.setInitialDirectory(gui.getProjectDir());
+    File targetFile = fc.showOpenDialog(gui.getStage());
+    if (targetFile != null) {
+      try {
+        freeMarkerArea.setText(Files.readString(targetFile.toPath()));
+        file = targetFile;
+        setText(targetFile.getName());
+        gui.setProjectTemplateFile(targetFile.toPath());
+        enableRunButton();
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Failed to load Freemarker template", e);
+      }
+    }
+  }
+
   private Button createSaveTemplateButton() {
     Button saveTemplateButton = new Button("Save template");
-    saveTemplateButton.setOnAction(a -> {
-      if (markupFile != null) {
-        try {
-          Files.writeString(markupFile.toPath(), freeMarkerArea.getText());
-          setStatus("Saved " + markupFile);
-          gui.saveTemplateFileToProject(markupFile);
-          contentSaved();
-        } catch (IOException e) {
-          setStatus("Failed to write " + markupFile);
-          ExceptionAlert.showAlert("Failed to write " + markupFile, e);
-        }
-      } else {
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Save template");
-        fc.setInitialDirectory(gui.getProjectDir());
-        String template = templateNames.getSelectionModel().getSelectedItem();
-        if (template != null) {
-          String suggested = template.substring(0, template.lastIndexOf(".")) + ".ftl";
-          fc.setInitialFileName(suggested);
-        }
-        File targetFile = fc.showSaveDialog(gui.getStage());
-
-        if (targetFile != null) {
-          Path filePath = targetFile.toPath();
-          try {
-            setStatus("Writing " + filePath.toAbsolutePath());
-            Files.writeString(filePath, freeMarkerArea.getText());
-            setStatus("Saved " + markupFile);
-            contentSaved();
-            gui.saveTemplateFileToProject(markupFile);
-          } catch (IOException e) {
-            setStatus("Failed to write " + markupFile);
-            ExceptionAlert.showAlert("Failed to write " + filePath, e);
-          }
-        }
-      }
-    });
+    saveTemplateButton.setOnAction(a -> save());
     return saveTemplateButton;
   }
 
@@ -164,7 +131,7 @@ public class FreemarkerTab extends JournoTab {
     dirTf.setText(pdfDir.getAbsolutePath());
     gui.disableRunButtons();
     templateNames.getItems().clear();
-    markupFile = null;
+    file = null;
     FilenameFilter filter = (dir, name) -> name.endsWith(".ftl") || name.endsWith(".ftlh");
     String[] templateFileNames = pdfDir.list(filter);
     if (templateFileNames != null) {
@@ -187,7 +154,7 @@ public class FreemarkerTab extends JournoTab {
       String content = Files.readString(templateFile.toPath());
       templateNames.setValue(selectedItem);
       freeMarkerArea.setText(content);
-      this.markupFile = templateFile;
+      this.file = templateFile;
     } catch (IOException e) {
       ExceptionAlert.showAlert("Failed to read " + templateFile, e);
     }
@@ -197,7 +164,7 @@ public class FreemarkerTab extends JournoTab {
     return templateNames.getSelectionModel().getSelectedItem();
   }
 
-  public Path getTemplateFile() {
+  public Path getTemplatePath() {
     if (getSelectedTemplate() == null) {
       return null;
     }
@@ -219,5 +186,45 @@ public class FreemarkerTab extends JournoTab {
   @Override
   public CodeTextArea getCodeArea() {
     return freeMarkerArea;
+  }
+
+  @Override
+  public void save() {
+    if (file != null) {
+      try {
+        Files.writeString(file.toPath(), freeMarkerArea.getText());
+        setStatus("Saved " + file);
+        gui.saveTemplateFileToProject(file);
+        contentSaved();
+      } catch (IOException e) {
+        setStatus("Failed to write " + file);
+        ExceptionAlert.showAlert("Failed to write " + file, e);
+      }
+    } else {
+      FileChooser fc = new FileChooser();
+      fc.setTitle("Save template");
+      fc.setInitialDirectory(gui.getProjectDir());
+      String template = templateNames.getSelectionModel().getSelectedItem();
+      if (template != null) {
+        String suggested = template.substring(0, template.lastIndexOf(".")) + ".ftl";
+        fc.setInitialFileName(suggested);
+      }
+      File targetFile = fc.showSaveDialog(gui.getStage());
+
+      if (targetFile != null) {
+        Path filePath = targetFile.toPath();
+        try {
+          setStatus("Writing " + filePath.toAbsolutePath());
+          Files.writeString(filePath, freeMarkerArea.getText());
+          setFile(targetFile);
+          contentSaved();
+          gui.saveTemplateFileToProject(file);
+          setStatus("Saved " + file);
+        } catch (IOException e) {
+          setStatus("Failed to write " + file);
+          ExceptionAlert.showAlert("Failed to write " + filePath, e);
+        }
+      }
+    }
   }
 }

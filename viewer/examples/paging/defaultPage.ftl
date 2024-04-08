@@ -3,25 +3,10 @@
     <title>Alice's Adventures in Wonderland -- Chapter I</title>
     <style>
 
-        @page firstPage {
-            size: a5 landscape;
-            margin: 20px;
-            padding: 0;
-            background-color: lightblue;
-        }
-
-        @page secondPage {
+        @page {
             size: a5 portrait;
-            margin: 0;
+            margin: 50px;
             padding: 0;
-            background-color: yellow;
-            @bottom-right { content: element(footer) }
-        }
-
-        @page standardPage {
-            size: a5 portrait;
-            margin: 0px;
-            padding: 50px;
             @top-left { content: element(header) }
             @bottom-right { content: element(footer) }
         }
@@ -75,13 +60,6 @@
             width: .7em;
             font-size: 400%;
         }
-        #page1 {
-            page: firstPage;
-        }
-
-        #page2 {
-            page: secondPage;
-        }
 
         /* avoid an extra blank page to be inserted on named pages */
         body {
@@ -121,7 +99,7 @@ or by specifying an override file path using the -Dxr.conf=&lt;filename&gt; Syst
 If you specify the name of the override file on the command line, 
 we do not look for an override file in your home directory.</p>
 </div>
-<div class="content">
+<div class="content" class="content">
   <p>
   The fictional character of Alice lives a posh lifestyle in the mid- to late 1800s in London, England. 
   She is highly intelligent, and like any well-raised girl, she is sophisticated and a great thinker for a seven-and-a-half-year-old child. 
@@ -136,7 +114,7 @@ we do not look for an override file in your home directory.</p>
   always giving a polite curtsey when introducing herself. 
   </p>
 </div>
-<div class="content">
+<div class="content" class="content">
 For a little girl, she is very well spoken, having a natural English accent. 
   She can memorize things very quickly and recite poetry and nursery rhymes with ease. 
   Alice knows all of the rules of a young lady's etiquette because she was brought up by a rather wealthy family from a privileged upper-class lifestyle. 

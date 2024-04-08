@@ -1,0 +1,6 @@
+#Journo project file
+#Mon Apr 08 12:42:31 CEST 2024
+dataFile=defaultPage.groovy
+dependencies=
+name=defaultPage
+templateFile=defaultPage.ftl

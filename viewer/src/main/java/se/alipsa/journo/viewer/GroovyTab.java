@@ -12,7 +12,6 @@ import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +23,7 @@ import java.util.Map;
 public class GroovyTab extends JournoTab {
 
   private static final Logger log = LogManager.getLogger(GroovyTab.class);
-  private File groovyFile = null;
+
   private final Button codeRunButton;
   private final GroovyTextArea codeArea;
   private final ListView<Path> jarDependencies;
@@ -62,57 +61,10 @@ public class GroovyTab extends JournoTab {
     actionPane.setSpacing(5);
     Button loadScriptButton = new Button("Load groovy script");
     loadScriptButton.setOnAction(a -> {
-      FileChooser fc = new FileChooser();
-      fc.setTitle("Select Groovy Script");
-      fc.setInitialDirectory(gui.getProjectDir());
-      File targetFile = fc.showOpenDialog(gui.getStage());
-      if (targetFile != null) {
-        loadScript(targetFile);
-        gui.setProjectDataFile(targetFile.toPath());
-      }
+      promptAndLoad();
     });
     Button saveScriptButton = new Button("Save groovy script");
-    saveScriptButton.setOnAction(a -> {
-      if (groovyFile != null) {
-        try {
-          Files.writeString(groovyFile.toPath(), codeArea.getText());
-          setStatus("Saved " + groovyFile);
-          contentSaved();
-          gui.saveDataFileToProject(groovyFile);
-        } catch (IOException e) {
-          setStatus("Failed to write " + groovyFile);
-          ExceptionAlert.showAlert("Failed to write " + groovyFile, e);
-        }
-      } else {
-        log.info("Saving groovy script to new location");
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Save groovy script");
-        fc.setInitialDirectory(gui.getProjectDir());
-
-        String template = gui.getSelectedTemplate();
-        if (template != null) {
-          String suggested = template.substring(0, template.lastIndexOf(".")) + ".groovy";
-          fc.setInitialFileName(suggested);
-        }
-        File targetFile = fc.showSaveDialog(gui.getStage());
-
-        if (targetFile != null) {
-          Path filePath = targetFile.toPath();
-          try {
-            setStatus("Writing " + filePath.toAbsolutePath());
-            Files.writeString(filePath, codeArea.getText());
-            setStatus("Saved " + groovyFile);
-            groovyFile = targetFile;
-            setText(targetFile.getName());
-            contentSaved();
-            gui.saveDataFileToProject(groovyFile);
-          } catch (Exception e) {
-            setStatus("Failed to write " + groovyFile);
-            ExceptionAlert.showAlert("Failed to write " + filePath, e);
-          }
-        }
-      }
-    });
+    saveScriptButton.setOnAction(a -> save());
     codeRunButton = new Button("View PDF");
     codeRunButton.setOnAction(a -> gui.run());
 
@@ -137,10 +89,10 @@ public class GroovyTab extends JournoTab {
   private void loadScript(File targetFile) {
     try {
       codeArea.setText(Files.readString(targetFile.toPath()));
-      groovyFile = targetFile;
+      file = targetFile;
       setText(targetFile.getName());
     } catch (IOException e) {
-      ExceptionAlert.showAlert("Failed to read " + groovyFile, e);
+      ExceptionAlert.showAlert("Failed to read " + file, e);
     }
   }
 
@@ -187,13 +139,15 @@ public class GroovyTab extends JournoTab {
   }
 
   public Path getScriptFile() {
-    return groovyFile == null ? null : groovyFile.toPath();
+    return file == null ? null : file.toPath();
   }
 
   public void setDependencies(Collection<Path> dependencyList) {
     jarDependencies.getItems().clear();
     dependencyList.forEach(d -> jarDependencies.getItems().add(d));
   }
+
+
 
   private class FileCell extends ListCell<Path> {
 
@@ -221,5 +175,60 @@ public class GroovyTab extends JournoTab {
   @Override
   public CodeTextArea getCodeArea() {
     return codeArea;
+  }
+
+  @Override
+  public void promptAndLoad() {
+    FileChooser fc = new FileChooser();
+    fc.setTitle("Select Groovy Script");
+    fc.setInitialDirectory(gui.getProjectDir());
+    File targetFile = fc.showOpenDialog(gui.getStage());
+    if (targetFile != null) {
+      loadScript(targetFile);
+      gui.setProjectDataFile(targetFile.toPath());
+    }
+  }
+
+  @Override
+  public void save() {
+    if (file != null) {
+      try {
+        Files.writeString(file.toPath(), codeArea.getText());
+        setStatus("Saved " + file);
+        contentSaved();
+        gui.saveDataFileToProject(file);
+      } catch (IOException e) {
+        setStatus("Failed to write " + file);
+        ExceptionAlert.showAlert("Failed to write " + file, e);
+      }
+    } else {
+      log.info("Saving groovy script to new location");
+      FileChooser fc = new FileChooser();
+      fc.setTitle("Save groovy script");
+      fc.setInitialDirectory(gui.getProjectDir());
+
+      String template = gui.getSelectedTemplate();
+      if (template != null) {
+        String suggested = template.substring(0, template.lastIndexOf(".")) + ".groovy";
+        fc.setInitialFileName(suggested);
+      }
+      File targetFile = fc.showSaveDialog(gui.getStage());
+
+      if (targetFile != null) {
+        Path filePath = targetFile.toPath();
+        try {
+          setStatus("Writing " + filePath.toAbsolutePath());
+          Files.writeString(filePath, codeArea.getText());
+          setFile(targetFile);
+          setText(targetFile.getName());
+          contentSaved();
+          gui.saveDataFileToProject(file);
+          setStatus("Saved " + file);
+        } catch (Exception e) {
+          setStatus("Failed to write " + file);
+          ExceptionAlert.showAlert("Failed to write " + filePath, e);
+        }
+      }
+    }
   }
 }

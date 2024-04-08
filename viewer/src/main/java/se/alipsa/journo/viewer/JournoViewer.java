@@ -206,7 +206,7 @@ public class JournoViewer extends Application {
       Project p = new Project();
       Map<String, String> res = response.get();
       p.setName(res.get(KEY_NAME));
-      p.setTemplateFile(freeMarkerTab.getTemplateFile());
+      p.setTemplateFile(freeMarkerTab.getTemplatePath());
       p.setDataFile(codeTab.getScriptFile());
 
       try {
@@ -238,9 +238,19 @@ public class JournoViewer extends Application {
   private MenuBar createMenu() {
     MenuBar menuBar = new MenuBar();
     menuBar.setPadding(new Insets(5));
+
+    Menu fileMenu = new Menu("File");
+    menuBar.getMenus().add(fileMenu);
+    MenuItem loadMi = new MenuItem("load");
+    loadMi.setOnAction(a -> loadTabContent());
+    MenuItem saveMi = new MenuItem("save");
+    saveMi.setOnAction(a -> saveTabContent());
+    MenuItem saveAsMi = new MenuItem("save as");
+    saveAsMi.setOnAction(a -> saveAsTabContent());
+    fileMenu.getItems().addAll(loadMi, saveMi, saveAsMi);
+
     Menu graphicsMenu = new Menu("Graphics");
     menuBar.getMenus().add(graphicsMenu);
-
     MenuItem addSvgTabMi = new MenuItem("Add SVG tab");
     graphicsMenu.getItems().add(addSvgTabMi);
     addSvgTabMi.setOnAction(a -> {
@@ -251,6 +261,10 @@ public class JournoViewer extends Application {
 
     Menu editMenu = new Menu("Edit");
     menuBar.getMenus().add(editMenu);
+
+    MenuItem editProjectMi = new MenuItem("edit project");
+    editMenu.getItems().add(editProjectMi);
+    editProjectMi.setOnAction(a -> editProject());
 
     MenuItem undoMI = new MenuItem("undo  ctrl+Z");
     editMenu.getItems().add(undoMI);
@@ -303,6 +317,42 @@ public class JournoViewer extends Application {
       infoDialog.show();
     });
     return menuBar;
+  }
+
+  private void saveAsTabContent() {
+    Tab tab = tabPane.getSelectionModel().getSelectedItem();
+    if (tab instanceof JournoTab journoTab) {
+      journoTab.setFile((File)null);
+      journoTab.save();
+    }
+  }
+
+  private void saveTabContent() {
+    Tab tab = tabPane.getSelectionModel().getSelectedItem();
+    if (tab instanceof JournoTab journoTab) {
+      journoTab.save();
+    }
+  }
+
+  private void loadTabContent() {
+    Tab tab = tabPane.getSelectionModel().getSelectedItem();
+    if (tab instanceof JournoTab journoTab) {
+      journoTab.promptAndLoad();
+    }
+  }
+
+  private void editProject() {
+    Project p = projectCombo.getValue();
+    if (p == null) {
+      Alerts.info("Edit project", "Please select a project first");
+      return;
+    }
+    EditProjectDialog editProjectDialog = new EditProjectDialog(p);
+    Optional<Boolean> isChanged = editProjectDialog.showAndWait();
+    if(isChanged.isPresent() && isChanged.get()) {
+      freeMarkerTab.setFile(p.getTemplateFile());
+      codeTab.setFile(p.getDataFile());
+    }
   }
 
   private JournoTab getActiveTab() {

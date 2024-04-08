@@ -22,7 +22,6 @@ import java.util.Optional;
 
 public class SvgTab extends JournoTab {
   private final SvgTextArea textArea;
-  private File svgFile = null;
   public SvgTab(JournoViewer gui) {
     super(gui);
     textArea = new SvgTextArea(this);
@@ -67,59 +66,11 @@ public class SvgTab extends JournoTab {
     Button loadScriptButton = new Button("Load svg file");
     actionPane.getChildren().add(loadScriptButton);
     loadScriptButton.setOnAction(a -> {
-      FileChooser fc = new FileChooser();
-      fc.setTitle("Select Svg file");
-      fc.setInitialDirectory(gui.getProjectDir());
-      File targetFile = fc.showOpenDialog(gui.getStage());
-      if (targetFile != null) {
-        try {
-          textArea.setText(Files.readString(targetFile.toPath()));
-          svgFile = targetFile;
-          setText(targetFile.getName());
-        } catch (Exception e) {
-          ExceptionAlert.showAlert("Failed to read " + targetFile, e);
-        }
-      }
+      promptAndLoad();
     });
     Button saveScriptButton = new Button("Save svg");
     actionPane.getChildren().add(saveScriptButton);
-    saveScriptButton.setOnAction(a -> {
-      if (svgFile != null) {
-        try {
-          Files.writeString(svgFile.toPath(), textArea.getText());
-          setStatus("Saved " + svgFile);
-          contentSaved();
-        } catch (Exception e) {
-          setStatus("Failed to write " + svgFile);
-          ExceptionAlert.showAlert("Failed to write " + svgFile, e);
-        }
-      } else {
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Save svg");
-        fc.setInitialDirectory(gui.getProjectDir());
-
-        String template = gui.getSelectedTemplate();
-        if (template != null) {
-          String suggested = template.substring(0, template.lastIndexOf(".")) + ".svg";
-          fc.setInitialFileName(suggested);
-        }
-        File targetFile = fc.showSaveDialog(gui.getStage());
-
-        if (targetFile != null) {
-          Path filePath = targetFile.toPath();
-          try {
-            setStatus("Writing " + filePath.toAbsolutePath());
-            Files.writeString(filePath, textArea.getText());
-            setStatus("Saved " + targetFile);
-            setText(targetFile.getName());
-            svgFile = targetFile;
-          } catch (IOException e) {
-            setStatus("Failed to write " + targetFile);
-            ExceptionAlert.showAlert("Failed to write " + filePath, e);
-          }
-        }
-      }
-    });
+    saveScriptButton.setOnAction(a -> save());
     Button savePngButton = new Button("Export png");
     actionPane.getChildren().add(savePngButton);
     savePngButton.setOnAction(a -> {
@@ -132,5 +83,61 @@ public class SvgTab extends JournoTab {
   @Override
   public CodeTextArea getCodeArea() {
     return textArea;
+  }
+
+  @Override
+  public void promptAndLoad() {
+    FileChooser fc = new FileChooser();
+    fc.setTitle("Select Svg file");
+    fc.setInitialDirectory(gui.getProjectDir());
+    File targetFile = fc.showOpenDialog(gui.getStage());
+    if (targetFile != null) {
+      try {
+        textArea.setText(Files.readString(targetFile.toPath()));
+        setFile(targetFile);
+        setText(targetFile.getName());
+      } catch (Exception e) {
+        ExceptionAlert.showAlert("Failed to read " + targetFile, e);
+      }
+    }
+  }
+
+  @Override
+  public void save() {
+    if (file != null) {
+      try {
+        Files.writeString(file.toPath(), textArea.getText());
+        setStatus("Saved " + file);
+        contentSaved();
+      } catch (Exception e) {
+        setStatus("Failed to write " + file);
+        ExceptionAlert.showAlert("Failed to write " + file, e);
+      }
+    } else {
+      FileChooser fc = new FileChooser();
+      fc.setTitle("Save svg");
+      fc.setInitialDirectory(gui.getProjectDir());
+
+      String template = gui.getSelectedTemplate();
+      if (template != null) {
+        String suggested = template.substring(0, template.lastIndexOf(".")) + ".svg";
+        fc.setInitialFileName(suggested);
+      }
+      File targetFile = fc.showSaveDialog(gui.getStage());
+
+      if (targetFile != null) {
+        Path filePath = targetFile.toPath();
+        try {
+          setStatus("Writing " + filePath.toAbsolutePath());
+          Files.writeString(filePath, textArea.getText());
+          setText(targetFile.getName());
+          setFile(targetFile);
+          setStatus("Saved " + targetFile);
+        } catch (IOException e) {
+          setStatus("Failed to write " + targetFile);
+          ExceptionAlert.showAlert("Failed to write " + filePath, e);
+        }
+      }
+    }
   }
 }
