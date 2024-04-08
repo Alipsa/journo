@@ -2,7 +2,6 @@ package se.alipsa.journo.viewer;
 
 
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -10,32 +9,34 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Optional;
 
 public class CreateProjectDialog extends Dialog<Map<String, String>> {
 
   public static final String KEY_NAME = "name";
   public static final String KEY_PATH = "path";
 
-  public CreateProjectDialog() {
+  public CreateProjectDialog(JournoViewer gui) {
     setTitle("Create new Project");
     setHeaderText("Name of project");
     VBox root = new VBox();
+    root.setSpacing(5);
     getDialogPane().setContent(root);
     HBox nameRow = new HBox();
     root.getChildren().add(nameRow);
-    Label nameLabel = new Label("name");
+    Label nameLabel = new Label("name ");
     TextField nameField = new TextField();
     nameRow.getChildren().addAll(nameLabel, nameField);
     HBox locationRow = new HBox();
     root.getChildren().add(locationRow);
-    Label locationLabel = new Label("location");
+    Label locationLabel = new Label("location ");
     TextField locationField = new TextField();
     Button locationButton = new Button("...");
     locationButton.setOnAction(a -> {
       FileChooser fc = new FileChooser();
       fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Journo project(*.jpr)", "*.jpr"));
-      fc.setInitialFileName("*.jpr");
+      String fileNameSuggestion = nameField.getText() == null ? "*.jpr" : nameField.getText() + ".jpr";
+      fc.setInitialFileName(fileNameSuggestion);
+      fc.setInitialDirectory(gui.getProjectDir());
       File file = fc.showSaveDialog(null);
       if (file != null) {
         locationField.setText(ensureExtension(file.getAbsolutePath()));
@@ -57,7 +58,7 @@ public class CreateProjectDialog extends Dialog<Map<String, String>> {
   }
 
   String ensureExtension(String location) {
-    if (location.endsWith(".jpr")) {
+    if (!location.endsWith(".jpr")) {
       location = location + ".jpr";
     }
     return location;

@@ -4,23 +4,26 @@
     <style>
 
         @page firstPage {
-            size: 4.18in 6.88in;
+            size: a5 portrait;
             margin: 20px;
             padding: 0;
             background-color: lightblue;
         }
 
         @page secondPage {
-            size: 4.18in 6.88in;
+            size: a5 portrait;
             margin: 20px;
             padding: 10px;
             background-color: yellow;
+            @bottom-right { content: element(footer) }
         }
 
-        @page {
-            size: 4.18in 6.88in;
-            margin: 20px;
+        @page standardPage {
+            size: a5 portrait;
+            margin: 50px;
             padding: 0;
+            @top-left { content: element(header) }
+            @bottom-right { content: element(footer) }
         }
 
         div.header {
@@ -47,14 +50,15 @@
             margin: 0.25in;
             border: thin solid black;
             padding: 1em;
+            page: standardPage;
         }
-        div.lastpage {page-break-after: avoid;}
 
-        @page {
-            @top-left { content: element(header) }
-        }
-        @page {
-            @bottom-right { content: element(footer) }
+        div.lastpage {
+            page-break-after: avoid;
+            margin: 0.25in;
+            border: thin solid black;
+            padding: 1em;
+            page: standardPage;
         }
 
         #pagenumber:before {
@@ -89,7 +93,7 @@
 <body>
 <div class="header">Alice's Adventures in Wonderland</div>
 <div class="footer" style="">  Page <span id="pagenumber"/> of <span id="pagecount"/> </div>
-<div class="content" id="page1">
+<div id="page1">
     <h1>CHAPTER I</h1>
 
     <h2>Down the Rabbit-Hole</h2>
@@ -109,13 +113,38 @@
         with pink eyes ran close by her. </p>
 </div>
 <div id="page2">
-    <div class="content" >
-        Your override file should just re-assign values for properties originally given in xhtmlrenderer.conf. Please see the documentation in that file for a description of what each property affects.
+Your override file should just re-assign values for properties originally given in xhtmlrenderer.conf. 
+Please see the documentation in that file for a description of what each property affects.
 
-        You can override either by dropping a configuration file in a specific location in your home directory, or by specifying an override file path using the -Dxr.conf=<filename> System property. If you specify the name of the override file on the command line, we do not look for an override file in your home directory.
-    </div>
+<p>You can override either by dropping a configuration file in a specific location in your home directory, 
+or by specifying an override file path using the -Dxr.conf=&lt;filename&gt; System property. 
+If you specify the name of the override file on the command line, 
+we do not look for an override file in your home directory.</p>
 </div>
-<div class="lastpage" id="page3">
+<div class="content">
+  <p>
+  The fictional character of Alice lives a posh lifestyle in the mid- to late 1800s in London, England. 
+  She is highly intelligent, and like any well-raised girl, she is sophisticated and a great thinker for a seven-and-a-half-year-old child. 
+  Alice is extremely brave, not being afraid to venture far out into new places or the unknown, 
+  and she will become determined to investigate anything curious that makes her wonder.
+  </p>
+  <p>
+  Alice does not have any friends, nor is she an outcast or loner. Much of her time is spent with family, 
+  such as her older sister, who gives her daily lessons because Alice is homeschooled. 
+  Outwardly, Alice is proper, well-behaved, well-groomed, and poised. 
+  She has a charming elegance and grace beyond her years. She's a devoted lady, 
+  always giving a polite curtsey when introducing herself. 
+  </p>
+</div>
+<div class="content">
+For a little girl, she is very well spoken, having a natural English accent. 
+  She can memorize things very quickly and recite poetry and nursery rhymes with ease. 
+  Alice knows all of the rules of a young lady's etiquette because she was brought up by a rather wealthy family from a privileged upper-class lifestyle. 
+  It is quite likely that she is possibly even related to royalty through marriage or other aristocratic figures of high 
+  society and respected positions during the time the stories take place.
+</div>
+<div class="lastpage">
+    <h1>The last page</h1>
     <p class="figure">
         <img src="${imgAlice}" width="200px" height="300px" alt="rabbit"/>
         <br/>

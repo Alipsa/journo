@@ -42,6 +42,7 @@ public class ExportPngDialog extends Dialog<File> {
     browseButton.setOnAction(a -> {
       FileChooser fc = new FileChooser();
       fc.setTitle("PNG file name");
+      fc.setInitialDirectory(gui.getProjectDir());
       exportFile = fc.showSaveDialog(gui.getStage());
       if (exportFile != null) {
         getDialogPane().lookupButton(save).setDisable(false);

@@ -198,7 +198,7 @@ public class JournoViewer extends Application {
     Button newProjectButton = new Button("new");
     hbox.getChildren().add(newProjectButton);
     newProjectButton.setOnAction(a -> {
-      CreateProjectDialog cpd = new CreateProjectDialog();
+      CreateProjectDialog cpd = new CreateProjectDialog(this);
       Optional<Map<String, String>> response = cpd.showAndWait();
       if (response.isEmpty()) {
         return;
@@ -208,14 +208,15 @@ public class JournoViewer extends Application {
       p.setName(res.get(KEY_NAME));
       p.setTemplateFile(freeMarkerTab.getTemplateFile());
       p.setDataFile(codeTab.getScriptFile());
-      projectCombo.getItems().add(p);
-      projectCombo.setValue(p);
+
       try {
         saveProject(p, res.get(KEY_PATH));
+        projectCombo.getItems().add(p);
+        projectCombo.setValue(p);
+        setActiveProject(p);
       } catch (IOException e) {
         ExceptionAlert.showAlert("Failed to save project " + p, e);
       }
-      setActiveProject(p);
     });
 
     return hbox;
@@ -427,11 +428,12 @@ public class JournoViewer extends Application {
   void saveProject(Project p, String path) throws IOException {
     Preferences projects = preferences().node("projects");
     projects.node(p.getName()).put("projectFile", path);
-    saveProject(p);
+    Project.save(p, Paths.get(path));
   }
 
   void saveProject(Project p) throws IOException {
-    String projectFilePref = preferences().node(p.getName()).get("projectFile", null);
+    Preferences projects = preferences().node("projects");
+    String projectFilePref = projects.node(p.getName()).get("projectFile", null);
     Path projectFilePath;
     if (projectFilePref == null) {
       FileChooser fc = new FileChooser();
@@ -448,7 +450,6 @@ public class JournoViewer extends Application {
     }
     logger.debug("Saving project: " + p.values());
     Project.save(p, projectFilePath);
-    Preferences projects = preferences().node("projects");
     projects.node(p.getName()).put("projectFile", projectFilePath.toString());
   }
 
@@ -494,6 +495,7 @@ public class JournoViewer extends Application {
     Button saveButton = new Button("Save");
     saveButton.setOnAction(a -> {
       FileChooser fc = new FileChooser();
+      fc.setInitialDirectory(getProjectDir());
       File file = fc.showSaveDialog(stage);
       if (file != null) {
         try {

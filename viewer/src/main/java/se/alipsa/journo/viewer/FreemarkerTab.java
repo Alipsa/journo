@@ -77,13 +77,36 @@ public class FreemarkerTab extends JournoTab {
     HBox actionPane = new HBox();
     actionPane.setPadding(new Insets(5));
     actionPane.setSpacing(5);
+    Button loadTemplateButton = createLoadTemplateButton();
     Button saveTemplateButton = createSaveTemplateButton();
     templateRunButton = new Button("View PDF");
     templateRunButton.setOnAction(a -> gui.run());
-    actionPane.getChildren().addAll(saveTemplateButton, templateRunButton);
+    actionPane.getChildren().addAll(loadTemplateButton, saveTemplateButton, templateRunButton);
     root.setBottom(actionPane);
 
     setContent(root);
+  }
+
+  private Button createLoadTemplateButton() {
+    Button loadScriptButton = new Button("Load template");
+    loadScriptButton.setOnAction(a -> {
+      FileChooser fc = new FileChooser();
+      fc.setTitle("Select Freemarker template");
+      fc.setInitialDirectory(gui.getProjectDir());
+      File targetFile = fc.showOpenDialog(gui.getStage());
+      if (targetFile != null) {
+        try {
+          freeMarkerArea.setText(Files.readString(targetFile.toPath()));
+          markupFile = targetFile;
+          setText(targetFile.getName());
+          gui.setProjectTemplateFile(targetFile.toPath());
+          enableRunButton();
+        } catch (IOException e) {
+          ExceptionAlert.showAlert("Failed to load Freemarker template", e);
+        }
+      }
+    });
+    return loadScriptButton;
   }
 
   private Button createSaveTemplateButton() {

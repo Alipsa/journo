@@ -158,6 +158,7 @@ public class GroovyTab extends JournoTab {
       FileChooser fc = new FileChooser();
       fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Jar file", "*.jar"));
       fc.setTitle("Add jar dependency");
+      fc.setInitialDirectory(gui.getProjectDir());
       File jarFile = fc.showOpenDialog(gui.getStage());
       if (jarFile != null) {
         dependencies.getItems().add(jarFile.toPath());
