@@ -129,4 +129,10 @@ public abstract class CodeTextArea extends CodeArea {
     return String.join("\n", untabbed);
   }
 
+  @Override public void clear() {
+    blockChange = true;
+    super.clear();
+    blockChange = false;
+  }
+
 }

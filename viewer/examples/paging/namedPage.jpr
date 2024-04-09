@@ -1,0 +1,6 @@
+#Journo project file
+#Tue Apr 09 15:14:59 CEST 2024
+dataFile=namedPage.groovy
+dependencies=
+name=namedPage
+templateFile=namedPage.ftl

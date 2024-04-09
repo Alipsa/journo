@@ -27,8 +27,7 @@ public class GroovyTab extends JournoTab {
   private final ListView<Path> jarDependencies;
 
   public GroovyTab(JournoViewer gui) {
-    super(gui);
-    setText("Data");
+    super(gui, "Data");
     setClosable(false);
     BorderPane root = new BorderPane();
 
@@ -212,5 +211,12 @@ public class GroovyTab extends JournoTab {
         }
       }
     }
+  }
+
+  @Override
+  public void clear() {
+    file = null;
+    setTitle(defaultTitle);
+    codeArea.clear();
   }
 }

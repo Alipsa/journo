@@ -13,9 +13,13 @@ public abstract class JournoTab extends Tab {
 
   private Tooltip saveToolTip = new Tooltip("Save");
   protected JournoViewer gui;
-  public JournoTab(JournoViewer gui) {
+  public JournoTab(JournoViewer gui, String title) {
     this.gui = gui;
+    defaultTitle = title;
+    setTitle(title);
   }
+
+  protected String defaultTitle;
 
   protected void setStatus(String text) {
     gui.setStatus(text);
@@ -56,6 +60,9 @@ public abstract class JournoTab extends Tab {
 
   public void setFile(File file) {
     this.file = file;
+    if (file == null) {
+      setTitle(defaultTitle);
+    }
   }
 
   public void setFile(Path dataFile) {
@@ -63,4 +70,6 @@ public abstract class JournoTab extends Tab {
       file = dataFile.toFile();
     }
   }
+
+  public abstract void clear();
 }

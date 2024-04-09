@@ -1,6 +1,6 @@
 #Journo project file
-#Tue Apr 09 11:38:11 CEST 2024
+#Tue Apr 09 11:36:58 CEST 2024
 dataFile=defaultAndSpecificPages.groovy
 dependencies=
-name=paging
+name=defaultAndSpecificPages
 templateFile=defaultAndSpecificPages.ftl

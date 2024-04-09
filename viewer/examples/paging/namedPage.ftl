@@ -3,32 +3,17 @@
     <title>Alice's Adventures in Wonderland -- Chapter I</title>
     <style>
 
-        @page firstPage {
-            size: a4 landscape;
-            background-color: lightblue;
-            border: thin solid blue;
-            margin: 0;
-            paddin: 0;
-        }
-
-        @page secondPage {
-            size: a4 portrait;
-            margin-bottom: 20px;
+        @page defaultPage{
+            size: a5 portrait;
+            margin: 20px;
             padding: 0;
-            background-color: yellow;
-            @bottom-right { content: element(footer) }
-            border: thin solid blue;
-        }
-
-        @page standardPage {
-            size: a4 portrait;
             border: thin solid blue;
             @top-left { content: element(header) }
             @bottom-right { content: element(footer) }
         }
 
         div.header {
-            font-size: 10px;
+            font-size: 9px;
             font-style: italic;
             font-family: serif;
             text-align: left;
@@ -38,7 +23,7 @@
         }
 
         div.footer {
-            font-size: 9px;
+            font-size: 90%;
             font-style: italic;
             text-align: right;
             display: block;
@@ -48,10 +33,10 @@
 
         div.content {
             page-break-after: always;
-            margin: 10px;
+            margin: 0.25in;
             border: thin solid black;
-            padding: 15px;
-            page: standardPage;
+            padding: 1em;
+            page: defaultPage;
         }
 
         div.lastpage {
@@ -59,7 +44,7 @@
             margin: 0.25in;
             border: thin solid black;
             padding: 1em;
-            page: standardPage;
+            page: defaultPage;
         }
 
         #pagenumber:before {
@@ -77,33 +62,16 @@
             font-size: 400%;
         }
 
-        #coverPage {
-            page: firstPage;
-            page-break-after: always;
-            font-size: 60px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        #page2 {
-            page: secondPage;
-        }
-
         /* avoid an extra blank page to be inserted on named pages */
         body {
-            margin: 0;
-            padding: 0;
-            border: thick dotted green;
+            margin-top: 0;
         }
     </style>
 </head>
 
 <body>
 <div class="header">Alice's Adventures in Wonderland</div>
-<div class="footer">  Page <span id="pagenumber"/> of <span id="pagecount"/> </div>
-<div id="coverPage">
-  Alice's Adventures in Wonderland
-</div>
+<div class="footer" style="">  Page <span id="pagenumber"/> of <span id="pagecount"/> </div>
 <div id="page1" class="content">
     <h1>CHAPTER I</h1>
 
@@ -123,16 +91,7 @@
         getting up and picking the daisies, when suddenly a White Rabbit
         with pink eyes ran close by her. </p>
 </div>
-<div id="page2" class="content">
-Your override file should just re-assign values for properties originally given in xhtmlrenderer.conf. 
-Please see the documentation in that file for a description of what each property affects.
-
-<p>You can override either by dropping a configuration file in a specific location in your home directory, 
-or by specifying an override file path using the -Dxr.conf=&lt;filename&gt; System property. 
-If you specify the name of the override file on the command line, 
-we do not look for an override file in your home directory.</p>
-</div>
-<div class="content">
+<div class="lastpage">
   <p>
   The fictional character of Alice lives a posh lifestyle in the mid- to late 1800s in London, England. 
   She is highly intelligent, and like any well-raised girl, she is sophisticated and a great thinker for a seven-and-a-half-year-old child. 
@@ -146,21 +105,6 @@ we do not look for an override file in your home directory.</p>
   She has a charming elegance and grace beyond her years. She's a devoted lady, 
   always giving a polite curtsey when introducing herself. 
   </p>
-</div>
-<div class="content">
-For a little girl, she is very well spoken, having a natural English accent. 
-  She can memorize things very quickly and recite poetry and nursery rhymes with ease. 
-  Alice knows all of the rules of a young lady's etiquette because she was brought up by a rather wealthy family from a privileged upper-class lifestyle. 
-  It is quite likely that she is possibly even related to royalty through marriage or other aristocratic figures of high 
-  society and respected positions during the time the stories take place.
-</div>
-<div class="lastpage">
-    <h1>The last page</h1>
-    <p class="figure">
-        <img src="${imgAlice}" width="200px" height="300px" alt="rabbit"/>
-        <br/>
-        <b>White Rabbit checking watch</b>
-    </p>
 </div>
 </body>
 </html>

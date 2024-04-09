@@ -218,9 +218,8 @@ public class JournoViewer extends Application {
       Project p = new Project();
       Map<String, String> res = response.get();
       p.setName(res.get(KEY_NAME));
-      p.setTemplateFile(freeMarkerTab.getTemplatePath());
-      p.setDataFile(codeTab.getScriptFile());
-
+      freeMarkerTab.clear();
+      codeTab.clear();
       try {
         saveProject(p, res.get(KEY_PATH));
         projectCombo.getItems().add(p);

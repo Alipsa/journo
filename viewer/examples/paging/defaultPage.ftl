@@ -5,8 +5,9 @@
 
         @page {
             size: a5 portrait;
-            margin: 50px;
+            margin: 20px;
             padding: 0;
+            border: thin solid blue;
             @top-left { content: element(header) }
             @bottom-right { content: element(footer) }
         }
@@ -35,7 +36,6 @@
             margin: 0.25in;
             border: thin solid black;
             padding: 1em;
-            page: standardPage;
         }
 
         div.lastpage {
@@ -43,7 +43,6 @@
             margin: 0.25in;
             border: thin solid black;
             padding: 1em;
-            page: standardPage;
         }
 
         #pagenumber:before {
@@ -90,16 +89,7 @@
         getting up and picking the daisies, when suddenly a White Rabbit
         with pink eyes ran close by her. </p>
 </div>
-<div id="page2" class="content">
-Your override file should just re-assign values for properties originally given in xhtmlrenderer.conf. 
-Please see the documentation in that file for a description of what each property affects.
-
-<p>You can override either by dropping a configuration file in a specific location in your home directory, 
-or by specifying an override file path using the -Dxr.conf=&lt;filename&gt; System property. 
-If you specify the name of the override file on the command line, 
-we do not look for an override file in your home directory.</p>
-</div>
-<div class="content" class="content">
+<div class="lastpage">
   <p>
   The fictional character of Alice lives a posh lifestyle in the mid- to late 1800s in London, England. 
   She is highly intelligent, and like any well-raised girl, she is sophisticated and a great thinker for a seven-and-a-half-year-old child. 
@@ -113,21 +103,6 @@ we do not look for an override file in your home directory.</p>
   She has a charming elegance and grace beyond her years. She's a devoted lady, 
   always giving a polite curtsey when introducing herself. 
   </p>
-</div>
-<div class="content" class="content">
-For a little girl, she is very well spoken, having a natural English accent. 
-  She can memorize things very quickly and recite poetry and nursery rhymes with ease. 
-  Alice knows all of the rules of a young lady's etiquette because she was brought up by a rather wealthy family from a privileged upper-class lifestyle. 
-  It is quite likely that she is possibly even related to royalty through marriage or other aristocratic figures of high 
-  society and respected positions during the time the stories take place.
-</div>
-<div class="lastpage">
-    <h1>The last page</h1>
-    <p class="figure">
-        <img src="${imgAlice}" width="200px" height="300px" alt="rabbit"/>
-        <br/>
-        <b>White Rabbit checking watch</b>
-    </p>
 </div>
 </body>
 </html>

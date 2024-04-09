@@ -23,7 +23,7 @@ import java.util.Optional;
 public class SvgTab extends JournoTab {
   private final SvgTextArea textArea;
   public SvgTab(JournoViewer gui) {
-    super(gui);
+    super(gui, "Svg");
     textArea = new SvgTextArea(this);
     BorderPane root = new BorderPane();
     FlowPane actionPane = new FlowPane();
@@ -33,7 +33,6 @@ public class SvgTab extends JournoTab {
     root.setCenter(textArea);
     root.setBottom(actionPane);
     setContent(root);
-    setText("Svg");
   }
 
   private void addButtons(FlowPane actionPane) {
@@ -139,5 +138,12 @@ public class SvgTab extends JournoTab {
         }
       }
     }
+  }
+
+  @Override
+  public void clear() {
+    file = null;
+    setText(defaultTitle);
+    textArea.clear();
   }
 }

@@ -23,8 +23,7 @@ public class FreemarkerTab extends JournoTab {
   private FreemarkerTextArea freeMarkerArea;
 
   public FreemarkerTab(JournoViewer gui) {
-    super(gui);
-    setText("Template");
+    super(gui, "Template");
     setClosable(false);
     BorderPane root = new BorderPane();
 
@@ -68,7 +67,7 @@ public class FreemarkerTab extends JournoTab {
     }
     try {
       freeMarkerArea.setText(Files.readString(templateFile));
-      setText(templateFile.getFileName().toString());
+      setTitle(templateFile.getFileName().toString());
       gui.enableRunButton();
       setFile(templateFile.toFile());
     } catch (IOException e) {
@@ -135,5 +134,12 @@ public class FreemarkerTab extends JournoTab {
       }
     }
     super.setFile(file);
+  }
+
+  @Override
+  public void clear() {
+    file = null;
+    setText(defaultTitle);
+    freeMarkerArea.clear();
   }
 }
