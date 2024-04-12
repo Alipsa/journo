@@ -1,5 +1,6 @@
 package se.alipsa.journo.viewer;
 
+import javafx.application.Platform;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -12,9 +13,12 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class CodeTextArea extends CodeArea {
   public static final String INDENT = "  ";
+  private final Pattern whiteSpace = Pattern.compile( "^\\s+" );
 
   /**
    * A flag that indicates whether a change of text should be considered
@@ -84,6 +88,12 @@ public abstract class CodeTextArea extends CodeArea {
             replaceText(start, end, backIndentText(line));
             moveTo(orgPos - INDENT.length());
           }
+        }
+      } else if (KeyCode.ENTER.equals(keyCode)) {
+        // Maintain indentation from the previous line
+        Matcher m = whiteSpace.matcher( getParagraph( getCurrentParagraph() -1 ).getSegments().get( 0 ) );
+        if ( m.find() ) {
+          Platform.runLater( () -> insertText( getCaretPosition(), m.group() ) );
         }
       }
     });
