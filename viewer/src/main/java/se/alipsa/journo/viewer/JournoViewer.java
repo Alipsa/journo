@@ -156,43 +156,20 @@ public class JournoViewer extends Application {
     hbox.setStyle("-fx-border-color: lightgray");
 
     viewButton = new Button("View PDF");
-    hbox.getChildren().add(viewButton);
     viewButton.setOnAction(a -> run());
 
     projectLabel.setStyle("-fx-background-color: transparent;");
     projectLabel.setPadding(new Insets(4, 0, 0, 5));
     projectLabel.setAlignment(Pos.BOTTOM_CENTER);
-    hbox.getChildren().add(projectLabel);
-    hbox.getChildren().add(projectCombo);
     try {
-      populateProjectCombo(
-          projectCombo);
+      populateProjectCombo(projectCombo);
     } catch (Exception e) {
       ExceptionAlert.showAlert("Failed to load project from preferences", e);
     }
     projectCombo.setOnAction(a -> setActiveProject(projectCombo.getValue()));
-    Button loadButton = new Button("load");
-    hbox.getChildren().add(loadButton);
-    loadButton.setOnAction(a -> {
-      FileChooser fc = new FileChooser();
-      fc.setInitialDirectory(getProjectDir());
-      fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Journo project files", ".jpr"));
-      File projectFile = fc.showOpenDialog(getStage());
-      if (projectFile != null) {
-        try {
-          Project p = Project.load(projectFile.toPath());
-          projectCombo.getItems().add(p);
-          projectCombo.setValue(p);
-          setActiveProject(p);
-        } catch (Exception e) {
-          ExceptionAlert.showAlert("Failed to load " + projectFile, e);
-        }
-      }
-    });
     Button saveButton = new Button("save");
-    hbox.getChildren().add(saveButton);
     saveButton.setOnAction(a -> {
-      if (projectCombo.getValue() != null) {
+      if (getActiveProject() != null) {
         try {
           if (freeMarkerTab.isChanged()) {
             freeMarkerTab.save();
@@ -204,33 +181,54 @@ public class JournoViewer extends Application {
         } catch (IOException e) {
           ExceptionAlert.showAlert("Failed to save project", e);
         }
+      } else {
+        CreateProjectDialog cpd = new CreateProjectDialog(this);
+        Optional<Map<String, String>> response = cpd.showAndWait();
+        if (response.isEmpty()) {
+          return;
+        }
+        Project p = new Project();
+        Map<String, String> res = response.get();
+        p.setName(res.get(KEY_NAME));
+        try {
+          saveProject(p, res.get(KEY_PATH));
+          projectCombo.getItems().add(p);
+          projectCombo.setValue(p);
+          setActiveProject(p);
+        } catch (IOException e) {
+          ExceptionAlert.showAlert("Failed to save project " + p, e);
+        }
+        if (freeMarkerTab.isChanged()) {
+          freeMarkerTab.save();
+        }
+        if (codeTab.isChanged()) {
+          codeTab.save();
+        }
       }
     });
-
-    Button newProjectButton = new Button("new");
-    hbox.getChildren().add(newProjectButton);
-    newProjectButton.setOnAction(a -> {
-      CreateProjectDialog cpd = new CreateProjectDialog(this);
-      Optional<Map<String, String>> response = cpd.showAndWait();
-      if (response.isEmpty()) {
-        return;
-      }
-      Project p = new Project();
-      Map<String, String> res = response.get();
-      p.setName(res.get(KEY_NAME));
-      freeMarkerTab.clear();
-      codeTab.clear();
-      try {
-        saveProject(p, res.get(KEY_PATH));
-        projectCombo.getItems().add(p);
-        projectCombo.setValue(p);
-        setActiveProject(p);
-      } catch (IOException e) {
-        ExceptionAlert.showAlert("Failed to save project " + p, e);
-      }
-    });
-
+    hbox.getChildren().addAll(saveButton, viewButton, projectLabel, projectCombo);
     return hbox;
+  }
+
+  private void createProject() {
+    CreateProjectDialog cpd = new CreateProjectDialog(this);
+    Optional<Map<String, String>> response = cpd.showAndWait();
+    if (response.isEmpty()) {
+      return;
+    }
+    Project p = new Project();
+    Map<String, String> res = response.get();
+    p.setName(res.get(KEY_NAME));
+    freeMarkerTab.clear();
+    codeTab.clear();
+    try {
+      saveProject(p, res.get(KEY_PATH));
+      projectCombo.getItems().add(p);
+      projectCombo.setValue(p);
+      setActiveProject(p);
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to save project " + p, e);
+    }
   }
 
   private void setActiveProject(Project p) {
@@ -259,6 +257,26 @@ public class JournoViewer extends Application {
     MenuItem saveAsMi = new MenuItem("save as");
     saveAsMi.setOnAction(a -> saveAsTabContent());
     fileMenu.getItems().addAll(loadMi, saveMi, saveAsMi);
+
+    Menu projectMenu = new Menu("Project");
+    menuBar.getMenus().add(projectMenu);
+    MenuItem saveProjectMi = new MenuItem("save");
+    saveProjectMi.setOnAction(a -> {
+      if (getActiveProject() != null) {
+        try {
+          saveProject(getActiveProject());
+        } catch (IOException e) {
+          ExceptionAlert.showAlert("Failed to save project", e);
+        }
+      }
+    });
+    MenuItem openProjectMi = new MenuItem("open");
+    openProjectMi.setOnAction(a -> openProject());
+    MenuItem newProjectMi = new MenuItem("new");
+    newProjectMi.setOnAction(a -> createProject());
+    projectMenu.getItems().addAll(saveProjectMi, openProjectMi, newProjectMi);
+
+
 
     Menu graphicsMenu = new Menu("Graphics");
     menuBar.getMenus().add(graphicsMenu);
@@ -328,6 +346,23 @@ public class JournoViewer extends Application {
       infoDialog.show();
     });
     return menuBar;
+  }
+
+  private void openProject() {
+    FileChooser fc = new FileChooser();
+    fc.setInitialDirectory(getProjectDir());
+    fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Journo project files", ".jpr"));
+    File projectFile = fc.showOpenDialog(getStage());
+    if (projectFile != null) {
+      try {
+        Project p = Project.load(projectFile.toPath());
+        projectCombo.getItems().add(p);
+        projectCombo.setValue(p);
+        setActiveProject(p);
+      } catch (Exception e) {
+        ExceptionAlert.showAlert("Failed to load " + projectFile, e);
+      }
+    }
   }
 
   private void saveAsTabContent() {
@@ -472,6 +507,10 @@ public class JournoViewer extends Application {
     ObservableList<Project> list = projectCombo.getItems();
     for (String name : projects.childrenNames()) {
       String path = projects.node(name).get("projectFile", null);
+      if (path == null) {
+        projects.node(name).removeNode();
+        continue;
+      }
       Path projectFilePath = Paths.get(path);
       if (Files.exists(projectFilePath)) {
         try {

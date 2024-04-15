@@ -5,7 +5,7 @@
 
         @page {
             size: a5 portrait;
-            margin: 20px;
+            margin: 20px 1px 20px 0;
             padding: 0;
             border: thin solid blue;
             @top-left { content: element(header) }

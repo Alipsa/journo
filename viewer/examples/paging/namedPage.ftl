@@ -5,8 +5,7 @@
 
         @page defaultPage{
             size: a5 portrait;
-            margin: 20px;
-            padding: 0;
+            margin: 20px 1px 20px 0;
             border: thin solid blue;
             @top-left { content: element(header) }
             @bottom-right { content: element(footer) }
@@ -64,7 +63,39 @@
 
         /* avoid an extra blank page to be inserted on named pages */
         body {
+        /* For a5 portrait */
             margin-top: 0;
+            margin-right: 149.5px;
+
+
+        /* for a4 portrait 
+            margin-top: 0;
+            margin-right: -85px;
+         */
+        
+
+          /* for letter portrait 
+            margin-top: 0;
+            margin-right: -107.4px;
+          */
+         
+
+          /* for letter landscape 
+            margin-top: 0;
+            margin-right: -347px;
+          */
+          
+          /* for a4 landscape 
+            margin-top: 0;
+            margin-right: -414px;
+          */
+           
+          /* for a5 landscape   
+          margin-top: 0;
+          margin-right: -86px;
+          */
+          
+          
         }
     </style>
 </head>

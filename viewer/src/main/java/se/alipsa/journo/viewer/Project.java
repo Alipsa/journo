@@ -78,7 +78,7 @@ public class Project {
     p.setName(props.getProperty("name"));
     String templateFile = props.getProperty("templateFile");
     if (templateFile == null) {
-      Alerts.warn("Problem loading project file", "templateFile does not exist");
+      Alerts.warn("Problem loading project file", "templateFile for project " + p.getName() + " does not exist");
     } else {
       p.setTemplateFile(absolutePath(Paths.get(templateFile), projectPath));
     }
