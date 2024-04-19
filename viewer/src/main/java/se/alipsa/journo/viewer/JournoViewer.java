@@ -12,9 +12,16 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -22,12 +29,14 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.appender.FileAppender;
 
+import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -57,7 +66,9 @@ public class JournoViewer extends Application {
 
   private static URL styleSheetUrl;
 
-  private Button viewButton;
+  private Button viewPdfButton;
+  private Button viewHtmlButton;
+  private Button viewExternalButton;
 
   public static void main(String[] args) {
     launch();
@@ -155,8 +166,16 @@ public class JournoViewer extends Application {
     hbox.setPadding(new Insets(3,2,0,2));
     hbox.setStyle("-fx-border-color: lightgray");
 
-    viewButton = new Button("View PDF");
-    viewButton.setOnAction(a -> run());
+    viewPdfButton = new Button("View PDF");
+    viewPdfButton.setOnAction(a -> run());
+
+    viewHtmlButton = new Button("View HTML");
+    viewHtmlButton.setTooltip(new Tooltip("View html in Javafx WebView"));
+    viewHtmlButton.setOnAction(a -> viewHtml());
+
+    viewExternalButton = new Button("View external");
+    viewExternalButton.setTooltip(new Tooltip("View in default PDF viewer"));
+    viewExternalButton.setOnAction(a -> viewExternal());
 
     projectLabel.setStyle("-fx-background-color: transparent;");
     projectLabel.setPadding(new Insets(4, 0, 0, 5));
@@ -206,7 +225,7 @@ public class JournoViewer extends Application {
         }
       }
     });
-    hbox.getChildren().addAll(saveButton, viewButton, projectLabel, projectCombo);
+    hbox.getChildren().addAll(saveButton, viewPdfButton, viewHtmlButton, viewExternalButton, projectLabel, projectCombo);
     return hbox;
   }
 
@@ -555,12 +574,16 @@ public class JournoViewer extends Application {
 
 
   void disableRunButton() {
-    viewButton.setDisable(true);
+    viewPdfButton.setDisable(true);
+    viewHtmlButton.setDisable(true);
+    viewExternalButton.setDisable(true);
   }
 
   void enableRunButton() {
     if (!freeMarkerTab.isChanged() && !codeTab.isChanged()) {
-      viewButton.setDisable(false);
+      viewPdfButton.setDisable(false);
+      viewHtmlButton.setDisable(false);
+      viewExternalButton.setDisable(false);
     }
   }
 
@@ -608,7 +631,7 @@ public class JournoViewer extends Application {
 
     root.setTop(buttonPane);
 
-    pdfViewer = new PDFViewer();
+    pdfViewer = new PDFViewer(this);
     root.setCenter(pdfViewer);
 
     pdfTab.setContent(root);
@@ -628,6 +651,43 @@ public class JournoViewer extends Application {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
     }  catch (Throwable e) {
+      scene.setCursor(Cursor.DEFAULT);
+      ExceptionAlert.showAlert("Failed to execute groovy script", e);
+    }
+  }
+
+  void viewHtml() {
+    scene.setCursor(Cursor.WAIT);
+    try {
+      Map<String, Object> data = codeTab.runScript();
+      // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
+      String html = freeMarkerTab.renderHtml(data);
+      WebView webView = new WebView();
+      webView.getEngine().loadContent(html);
+      Popup.display(webView, this);
+      scene.setCursor(Cursor.DEFAULT);
+    } catch (IOException | TemplateException e) {
+      scene.setCursor(Cursor.DEFAULT);
+      ExceptionAlert.showAlert("Failed to render the pdf", e);
+    }  catch (Throwable e) {
+      scene.setCursor(Cursor.DEFAULT);
+      ExceptionAlert.showAlert("Failed to execute groovy script", e);
+    }
+  }
+
+  void viewExternal() {
+    scene.setCursor(Cursor.WAIT);
+    try {
+      Map<String, Object> data = codeTab.runScript();
+      // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
+      File file = File.createTempFile(projectCombo.getValue().getName(), ".pdf");
+      freeMarkerTab.renderPdf(data, file);
+      Desktop.getDesktop().open(file);
+      file.deleteOnExit();
+    } catch (IOException | TemplateException e) {
+      scene.setCursor(Cursor.DEFAULT);
+      ExceptionAlert.showAlert("Failed to render the pdf", e);
+    } catch (Throwable e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
     }

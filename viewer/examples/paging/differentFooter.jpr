@@ -1,0 +1,5 @@
+#Journo project file
+#Tue Apr 09 17:02:34 CEST 2024
+dependencies=
+name=differentFooter
+templateFile=differentFooter.ftl

@@ -14,15 +14,17 @@ import java.nio.file.Files;
 
 public class PDFViewer extends Pagination {
 
-  byte[] content;
+  private byte[] content;
+  private final JournoViewer gui;
 
-  public PDFViewer() {
-
+  public PDFViewer(JournoViewer gui) {
+    this.gui = gui;
   }
 
   public void load(File pdfFile) throws IOException {
     load(Files.readAllBytes(pdfFile.toPath()));
   }
+
   public void load(byte[] content) throws IOException {
     PDDocument document = Loader.loadPDF(content);
     PDFRenderer renderer = new PDFRenderer(document);

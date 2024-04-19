@@ -29,3 +29,4 @@ replay_pid*
 /journo-viewer/dependency-reduced-pom.xml
 /viewer/target/
 /viewer/dependency-reduced-pom.xml
+.DS_Store

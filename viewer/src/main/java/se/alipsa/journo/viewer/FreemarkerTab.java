@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FileUtils;
 import se.alipsa.journo.ReportEngine;
 
 import java.io.File;
@@ -54,11 +55,21 @@ public class FreemarkerTab extends JournoTab {
     }
   }
 
-  public Path getTemplatePath() {
+  /* public Path getTemplatePath() {
     return file == null ? null : file.toPath();
-  }
+  }*/
+
   public byte[] renderPdf(Map<String, Object> data) throws TemplateException, IOException {
     return reportEngine.renderPdf(file.getName(), data);
+  }
+
+  public void renderPdf(Map<String, Object> data, File toFile) throws TemplateException, IOException {
+    byte[] content = renderPdf(data);
+    FileUtils.writeByteArrayToFile(toFile, content);
+  }
+
+  public String renderHtml(Map<String, Object> data) throws TemplateException, IOException {
+    return reportEngine.renderHtml(file.getName(), data);
   }
 
   public void loadFile(Path templateFile) {
