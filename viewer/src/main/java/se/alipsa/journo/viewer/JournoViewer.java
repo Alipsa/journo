@@ -5,6 +5,7 @@ import groovy.lang.GroovySystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -682,8 +683,9 @@ public class JournoViewer extends Application {
       // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       File file = File.createTempFile(projectCombo.getValue().getName(), ".pdf");
       freeMarkerTab.renderPdf(data, file);
-      Desktop.getDesktop().open(file);
+      openInExternalApp(file);
       file.deleteOnExit();
+      scene.setCursor(Cursor.DEFAULT);
     } catch (IOException | TemplateException e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
@@ -691,6 +693,19 @@ public class JournoViewer extends Application {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
     }
+  }
+
+  private void openInExternalApp(File file) {
+    Task<Void> task = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        Desktop.getDesktop().open(file);
+        return null;
+      }
+    };
+    task.setOnFailed(e -> ExceptionAlert.showAlert("Failed to open " + file, task.getException()));
+    Thread appthread = new Thread(task);
+    appthread.start();
   }
 
   public void setStatus(String status) {

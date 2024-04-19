@@ -62,7 +62,14 @@ public class GroovyTab extends JournoTab {
       TextArea ta = new TextArea();
       StringBuilder sb = new StringBuilder();
       try {
-        runScript().forEach((k, v) -> sb.append(k).append(": ").append(v).append('\n'));
+        Object result = codeArea.executeGroovyScript();
+        if (result instanceof Map map) {
+          sb.append("[\n");
+          map.forEach((k, v) -> sb.append(k).append(": ").append(v).append('\n'));
+          sb.append("]");
+        } else {
+          sb.append(result);
+        }
         ta.setText(sb.toString());
         Popup.display(ta, gui, "Groovy script result");
       } catch (Exception e) {
@@ -112,23 +119,25 @@ public class GroovyTab extends JournoTab {
 
   public Map<String, Object> runScript() {
     try {
-      return codeArea.executeGroovyScript();
+      Object result = codeArea.executeGroovyScript();
+      if (result instanceof Map) {
+        return (Map<String, Object>)result;
+      } else {
+        Alerts.warn(
+            "The script does not return a Map<String, Object> but a " + result.getClass(),
+            String.valueOf(result)
+        );
+      }
     } catch (Exception e) {
       ExceptionAlert.showAlert("Failed to run groovy script", e);
-      return Collections.emptyMap();
     }
-  }
-
-  public Path getScriptFile() {
-    return file == null ? null : file.toPath();
+    return Collections.emptyMap();
   }
 
   public void setDependencies(Collection<Path> dependencyList) {
     jarDependencies.getItems().clear();
     dependencyList.forEach(d -> jarDependencies.getItems().add(d));
   }
-
-
 
   private class FileCell extends ListCell<Path> {
 
