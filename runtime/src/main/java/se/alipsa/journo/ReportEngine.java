@@ -6,8 +6,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import org.apache.batik.css.engine.CSSEngine;
-import org.apache.batik.css.engine.FontFaceRule;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,14 +24,14 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * THis is the core class of the Journo library, used to create output
+ * This is the core class of the Journo library, used to create html or pdf output
  */
 public class ReportEngine {
 
   private static final Logger log = LoggerFactory.getLogger(ReportEngine.class);
   private Configuration cfg;
   private final ITextRenderer renderer = new ITextRenderer();
-  Set<String> addedFonts;
+  Set<String> addedFontsCache = new HashSet<>();
 
   /**
    * Creates a ReportEngine
@@ -46,7 +44,6 @@ public class ReportEngine {
     createGenericConfig();
     cfg.setClassForTemplateLoading(caller.getClass(), templatesPath);
     configureRenderers();
-    addedFonts = new HashSet<>();
   }
 
   /**
@@ -101,26 +98,28 @@ public class ReportEngine {
    *
    * @param template the Freemarker template relative file path
    * @param data the data to bind to the template when rendering the html
+   * @param addFonts an optional param whether to add @font-face declared fonts or not, defaults to true
    * @return a PDF in the form of a byte array
    * @throws IOException if creating the pdf byte array fails
    * @throws TemplateException it there is some syntax issue in the template
    */
-  public byte[] renderPdf(String template, Map<String, Object> data) throws IOException, TemplateException {
+  public byte[] renderPdf(String template, Map<String, Object> data, boolean... addFonts) throws IOException, TemplateException {
     String html = renderHtml(template, data);
     String xhtml = htmlToXhtml(html);
-    return xhtmlToPdf(xhtml);
+    return xhtmlToPdf(xhtml, addFonts);
   }
 
   /**
    * Render html as a pdf
    *
    * @param html the html (will be converted to xhtml by jsoup) to render
+   * @param addFonts an optional param whether to add @font-face declared fonts or not, defaults to true
    * @return a PDF in the form of a byte array
    * @throws IOException if creating the pdf byte array fails
    */
-  public byte[] renderPdf(String html) throws IOException {
+  public byte[] renderPdf(String html, boolean... addFonts) throws IOException {
     String xhtml = htmlToXhtml(html);
-    return xhtmlToPdf(xhtml);
+    return xhtmlToPdf(xhtml, addFonts);
   }
 
   /**
@@ -129,12 +128,13 @@ public class ReportEngine {
    * @param template the Freemarker template relative file path
    * @param data the data to bind to the template when rendering the html
    * @param path the path to the pdf file to create
+   * @param addFonts an optional param whether to add @font-face declared fonts or not, defaults to true
    * @throws IOException if creating the byte array or writing the file fails
    * @throws TemplateException it there is some syntax issue in the template
    */
-  public void renderPdf(String template, Map<String, Object> data, Path path) throws IOException, TemplateException {
+  public void renderPdf(String template, Map<String, Object> data, Path path, boolean... addFonts) throws IOException, TemplateException {
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(path))) {
-      fos.write(renderPdf(template, data));
+      fos.write(renderPdf(template, data, addFonts));
       log.debug("Wrote " + path.toAbsolutePath());
     }
   }
@@ -144,11 +144,12 @@ public class ReportEngine {
    *
    * @param xhtml the xhtml string to render
    * @param path the path to the pdf file to create
+   * @param addFonts an optional param whether to add @font-face declared fonts or not, defaults to true
    * @throws IOException if creating the byte array or writing the file fails
    */
-  public void renderPdf(String xhtml, Path path) throws IOException {
+  public void renderPdf(String xhtml, Path path, boolean... addFonts) throws IOException {
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(path))) {
-      fos.write(xhtmlToPdf(xhtml));
+      fos.write(xhtmlToPdf(xhtml, addFonts));
       log.debug("Wrote " + path.toAbsolutePath());
     }
   }
@@ -158,11 +159,12 @@ public class ReportEngine {
    *
    * @param xhtml the xhtml string to render
    * @param file the file of to the pdf file to create
+   * @param addFonts an optional param whether to add @font-face declared fonts or not, defaults to true
    * @throws IOException if creating the byte array or writing the file fails
    */
-  public void renderPdf(String xhtml, File file) throws IOException {
+  public void renderPdf(String xhtml, File file, boolean... addFonts) throws IOException {
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
-      fos.write(xhtmlToPdf(xhtml));
+      fos.write(xhtmlToPdf(xhtml, addFonts));
       log.debug("Wrote " + file.getAbsolutePath());
     }
   }
@@ -189,14 +191,12 @@ public class ReportEngine {
     Elements styles = doc.select("style");
     for (Element style : styles) {
       for (String fontUrl : parseStyle(style.html())) {
-        if (!addedFonts.contains(fontUrl)) {
+        if (addedFontsCache.add(fontUrl)) {
           fontUrls.add(fontUrl);
-          addedFonts.add(fontUrl);
         }
       }
     }
     for (String fontUrl : fontUrls) {
-      //System.out.println("Adding font " + fontUrl);
       addFont(fontUrl);
     }
     return fontUrls;
@@ -209,7 +209,7 @@ public class ReportEngine {
    * @throws IOException if the font cannot be found
    */
   public void addFont(URL fontPath) throws IOException {
-    addFont(fontPath.toExternalForm(), true);
+    addFont(fontPath.toExternalForm());
   }
 
   /**
@@ -237,13 +237,16 @@ public class ReportEngine {
    * Convert a xhtml string into a pdf byte array
    *
    * @param xhtml the xhtml string to render
+   * @param addFonts an optional param whether to add @font-face declared fonts or not, defaults to true
    * @return a PDF in the form of a byte array
    * @throws IOException if creating the pdf byte array fails
    */
-  public byte[] xhtmlToPdf(String xhtml) throws IOException {
-    Set<String> fonts = addHtmlFonts(xhtml);
-    if (!fonts.isEmpty()) {
-      System.out.println("Added fonts:\n\t" + String.join("\n\t", fonts));
+  public byte[] xhtmlToPdf(String xhtml, boolean... addFonts) throws IOException {
+    if (addFonts.length == 0 || addFonts[0]) {
+      Set<String> fonts = addHtmlFonts(xhtml);
+      if (!fonts.isEmpty()) {
+        log.info("Added fonts: {}", String.join(", ", fonts));
+      }
     }
     renderer.setDocumentFromString(xhtml);
     renderer.layout();
@@ -273,6 +276,13 @@ public class ReportEngine {
     return document.html();
   }
 
+  /**
+   * Extract the font urls declared in the style section of the html
+   *
+   * @param style the style section content
+   * @return a list of urls for each font declaration
+   * @throws IOException if parsing failed
+   */
   private List<String> parseStyle(String style) throws IOException {
     org.w3c.css.sac.InputSource source = new org.w3c.css.sac.InputSource(new java.io.StringReader(style));
     CSSOMParser parser = new CSSOMParser(new SACParserCSS3());
