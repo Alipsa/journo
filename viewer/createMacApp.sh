@@ -2,7 +2,7 @@
 
 DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-source "$DIR"/build.sh
+source "$DIR"/build.sh || exit 1
 
 appName="journo.app"
 targetDir="$DIR/target/${appName}"

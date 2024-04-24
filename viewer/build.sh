@@ -16,5 +16,5 @@ else
   exit 1
 fi
 
-cd "$DIR" || exit
-mvn clean package
+cd "$DIR" || exit 1
+mvn clean package || exit 1

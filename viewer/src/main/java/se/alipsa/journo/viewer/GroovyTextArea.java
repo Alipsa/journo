@@ -265,7 +265,10 @@ public class GroovyTextArea extends CodeTextArea {
     return groovyScriptEngine;
   }
 
-  Object executeGroovyScript() throws Exception {
+  Object executeGroovyScript(boolean... entireScript) throws Exception {
+    if (entireScript.length > 0 && entireScript[0]) {
+      return getGroovyEngine().eval(textProperty().getValue());
+    }
     return getGroovyEngine().eval(getText());
   }
 

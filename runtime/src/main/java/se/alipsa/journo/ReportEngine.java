@@ -1,20 +1,29 @@
 package se.alipsa.journo;
 
+import com.steadystate.css.parser.CSSOMParser;
+import com.steadystate.css.parser.SACParserCSS3;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import org.apache.batik.css.engine.CSSEngine;
+import org.apache.batik.css.engine.FontFaceRule;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.css.CSSRule;
+import org.w3c.dom.css.CSSRuleList;
+import org.w3c.dom.css.CSSStyleSheet;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * THis is the core class of the Journo library, used to create output
@@ -24,6 +33,7 @@ public class ReportEngine {
   private static final Logger log = LoggerFactory.getLogger(ReportEngine.class);
   private Configuration cfg;
   private final ITextRenderer renderer = new ITextRenderer();
+  Set<String> addedFonts;
 
   /**
    * Creates a ReportEngine
@@ -36,6 +46,7 @@ public class ReportEngine {
     createGenericConfig();
     cfg.setClassForTemplateLoading(caller.getClass(), templatesPath);
     configureRenderers();
+    addedFonts = new HashSet<>();
   }
 
   /**
@@ -101,6 +112,18 @@ public class ReportEngine {
   }
 
   /**
+   * Render html as a pdf
+   *
+   * @param html the html (will be converted to xhtml by jsoup) to render
+   * @return a PDF in the form of a byte array
+   * @throws IOException if creating the pdf byte array fails
+   */
+  public byte[] renderPdf(String html) throws IOException {
+    String xhtml = htmlToXhtml(html);
+    return xhtmlToPdf(xhtml);
+  }
+
+  /**
    * Render the Freemarker template to a pdf file
    *
    * @param template the Freemarker template relative file path
@@ -128,6 +151,65 @@ public class ReportEngine {
       fos.write(xhtmlToPdf(xhtml));
       log.debug("Wrote " + path.toAbsolutePath());
     }
+  }
+
+  /**
+   * Render xhtml to a pdf file
+   *
+   * @param xhtml the xhtml string to render
+   * @param file the file of to the pdf file to create
+   * @throws IOException if creating the byte array or writing the file fails
+   */
+  public void renderPdf(String xhtml, File file) throws IOException {
+    try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
+      fos.write(xhtmlToPdf(xhtml));
+      log.debug("Wrote " + file.getAbsolutePath());
+    }
+  }
+
+  /**
+   * Parses the html and adds all declared fonts with an url specified, e.g:
+   * <code>
+   *    {@literal @}font-face {
+   *      font-family: "Jersey 25";
+   *      src: url(file:/usr/local/fonts/Jacquard24-Regular.ttf);
+   *    }
+   * </code>
+   * This way, you do not have to add fonts explicitly to the engine but can rely on
+   * declaring the in the template only. Note that external stylesheets are not (yet)
+   * supported.
+   *
+   * @param html the html to parse
+   * @throws IOException if parsing goes wrong
+   * @return the font paths that were added
+   */
+  public Set<String> addHtmlFonts(String html) throws IOException {
+    Document doc = Jsoup.parse(html);
+    Set<String> fontUrls = new HashSet<>();
+    Elements styles = doc.select("style");
+    for (Element style : styles) {
+      for (String fontUrl : parseStyle(style.html())) {
+        if (!addedFonts.contains(fontUrl)) {
+          fontUrls.add(fontUrl);
+          addedFonts.add(fontUrl);
+        }
+      }
+    }
+    for (String fontUrl : fontUrls) {
+      //System.out.println("Adding font " + fontUrl);
+      addFont(fontUrl);
+    }
+    return fontUrls;
+  }
+
+  /**
+   * Add a font
+   *
+   * @param fontPath the path to the font to add
+   * @throws IOException if the font cannot be found
+   */
+  public void addFont(URL fontPath) throws IOException {
+    addFont(fontPath.toExternalForm(), true);
   }
 
   /**
@@ -159,12 +241,25 @@ public class ReportEngine {
    * @throws IOException if creating the pdf byte array fails
    */
   public byte[] xhtmlToPdf(String xhtml) throws IOException {
+    Set<String> fonts = addHtmlFonts(xhtml);
+    if (!fonts.isEmpty()) {
+      System.out.println("Added fonts:\n\t" + String.join("\n\t", fonts));
+    }
     renderer.setDocumentFromString(xhtml);
     renderer.layout();
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
       renderer.createPDF(baos);
       return baos.toByteArray();
     }
+  }
+
+  /**
+   * Allows you to look under the hood
+   *
+   * @return the underlying ITextRenderer
+   */
+  public ITextRenderer getRenderer() {
+    return renderer;
   }
 
   /**
@@ -176,5 +271,30 @@ public class ReportEngine {
     Document document = Jsoup.parse(html);
     document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
     return document.html();
+  }
+
+  private List<String> parseStyle(String style) throws IOException {
+    org.w3c.css.sac.InputSource source = new org.w3c.css.sac.InputSource(new java.io.StringReader(style));
+    CSSOMParser parser = new CSSOMParser(new SACParserCSS3());
+
+    CSSStyleSheet sheet = parser.parseStyleSheet(source, null, null);
+    List<String> fontUrls = new ArrayList<>();
+    CSSRuleList rules = sheet.getCssRules();
+    for (int i = 0; i < rules.getLength(); i++) {
+      final CSSRule rule = rules.item(i);
+      if (CSSRule.FONT_FACE_RULE == rule.getType()) {
+        String fontFace = rule.getCssText();
+        if (fontFace.contains("url")) {
+          String urlString = fontFace.substring(fontFace.indexOf("url") + 3);
+          if (urlString.contains("(") && urlString.contains(")")) {
+            urlString = urlString
+                .substring(urlString.indexOf("(")+1, urlString.indexOf(")"))
+                .trim();
+            fontUrls.add(urlString);
+          }
+        }
+      }
+    }
+    return fontUrls;
   }
 }

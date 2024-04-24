@@ -642,7 +642,7 @@ public class JournoViewer extends Application {
   void run() {
     scene.setCursor(Cursor.WAIT);
     try {
-      Map<String, Object> data = codeTab.runScript();
+      Map<String, Object> data = codeTab.runScript(true);
       // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       byte[] pdf = freeMarkerTab.renderPdf(data);
       pdfViewer.load(pdf);
@@ -660,7 +660,7 @@ public class JournoViewer extends Application {
   void viewHtml() {
     scene.setCursor(Cursor.WAIT);
     try {
-      Map<String, Object> data = codeTab.runScript();
+      Map<String, Object> data = codeTab.runScript(true);
       // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       String html = freeMarkerTab.renderHtml(data);
       WebView webView = new WebView();
@@ -679,7 +679,7 @@ public class JournoViewer extends Application {
   void viewExternal() {
     scene.setCursor(Cursor.WAIT);
     try {
-      Map<String, Object> data = codeTab.runScript();
+      Map<String, Object> data = codeTab.runScript(true);
       // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       File file = File.createTempFile(projectCombo.getValue().getName(), ".pdf");
       freeMarkerTab.renderPdf(data, file);

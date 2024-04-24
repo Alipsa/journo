@@ -44,6 +44,13 @@ public class ImageUtil {
     return asDataUrl(resource, mediaType, ImageUtil.class);
   }
 
+  /**
+   * Convert the url content into a data url (base 64 encoded string)
+   * @param resource the url to convert
+   * @param mediaType the mime type of the image (e.g. image/png)
+   * @return a data url (base 64 encoded string)
+   * @throws IOException if the resource cannot be read
+   */
   public static String asDataUrl(URL resource, String mediaType) throws IOException {
     return asDataUrl(readBytes(resource), mediaType);
   }
@@ -60,6 +67,12 @@ public class ImageUtil {
     return asDataUrl(readBytes(resource, caller), mediaType);
   }
 
+  /**
+   * Convert the byte array a data url (base 64 encoded string)
+   * @param bytes the bytes to convert
+   * @param mediaType the mime type of the image (e.g. image/png)
+   * @return a data url (base 64 encoded string)
+   */
   public static String asDataUrl(byte[] bytes, String mediaType) {
     String content = Base64.getEncoder().encodeToString(bytes);
     return "data:" + mediaType + ";base64," + content;

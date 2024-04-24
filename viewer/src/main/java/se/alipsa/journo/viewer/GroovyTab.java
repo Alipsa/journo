@@ -117,9 +117,9 @@ public class GroovyTab extends JournoTab {
     return outsideContextMenu;
   }
 
-  public Map<String, Object> runScript() {
+  public Map<String, Object> runScript(boolean... entireScript) {
     try {
-      Object result = codeArea.executeGroovyScript();
+      Object result = codeArea.executeGroovyScript(entireScript);
       if (result instanceof Map) {
         return (Map<String, Object>)result;
       } else {
