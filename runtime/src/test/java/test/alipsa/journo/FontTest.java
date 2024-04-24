@@ -21,8 +21,8 @@ public class FontTest {
     URL urlJacquard = getClass().getResource("/fonts/Jacquard24-Regular.ttf");
 
     Map<String, Object> data = new HashMap<>();
-    data.put("jerseyUrl", urlJersey.toExternalForm());
-    data.put("jacquardUrl", urlJacquard.toExternalForm());
+    data.put("jerseyUrl", urlJersey);
+    data.put("jacquardUrl", urlJacquard);
     String xhtml = engine.renderHtml("font.ftl", data);
     assertNotNull(xhtml);
     byte[] pdf = engine.renderPdf(xhtml);
@@ -33,5 +33,6 @@ public class FontTest {
     File file = File.createTempFile("font", ".pdf");
     engine.renderPdf(xhtml, file);
     System.out.println("Wrote " + file.getAbsolutePath());
+    file.deleteOnExit();
   }
 }
