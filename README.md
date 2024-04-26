@@ -42,7 +42,7 @@ To use it, add the following dependency to your maven pom.xml (or equivalent for
 <dependency>
     <groupId>se.alipsa</groupId>
     <artifactId>journo</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.1</version>
 </dependency>
 ```
 
@@ -210,6 +210,39 @@ data.put("externalCssPath", externalCssPath);
 
 Of course if you either make your css available from some url or put your style inline in the
 xhtml document you don't need to do any of this.
+
+## Fonts
+Starting with version 0.6.1, Journo now detects and adds declared fonts. I.e. if you do:
+```html
+<style>
+
+        /* declared fonts are automatically added to the Journo Engine */
+        @font-face {
+            font-family: "Jersey 25";
+            src: url(${jerseyUrl});
+        }
+</style>
+```
+And the Jersey font is in src/main/resources/fonts you can insert the location
+```groovy
+import se.alipsa.journo.ReportEngine;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+ReportEngine engine = new ReportEngine(this, "/templates");
+URL urlJersey = getClass().getResource("/fonts/Jersey25-Regular.ttf");
+Map<String, Object> data = new HashMap<>();
+data.put("jerseyUrl", urlJersey);
+byte[] pdf = engine.renderPdf("someReport.ftl", data);
+
+// if you do not want this behavior, but prefer to register fonts "manually"
+// with the engine.addFont(urlJersey) globally, you can do 
+byte[] pdf2 = engine.renderPdf("someReport.ftl", data, false);
+```
+
+Note that currently, declaring fonts in an external css will not result in them being automatically 
+loaded. In those cases you must use `engine.addFont(fontPathOrUrl)` prior to calling renderPdf
 
 ## Javascript
 if you need to use Javascript to manipulate the DOM you must run the html code in a browser (e.g. Javafx WebView)
