@@ -64,9 +64,7 @@ public class SvgTab extends JournoTab {
 
     Button loadScriptButton = new Button("Load svg file");
     actionPane.getChildren().add(loadScriptButton);
-    loadScriptButton.setOnAction(a -> {
-      promptAndLoad();
-    });
+    loadScriptButton.setOnAction(a -> promptAndLoad());
     Button saveScriptButton = new Button("Save svg");
     actionPane.getChildren().add(saveScriptButton);
     saveScriptButton.setOnAction(a -> save());
@@ -115,12 +113,16 @@ public class SvgTab extends JournoTab {
     } else {
       FileChooser fc = new FileChooser();
       fc.setTitle("Save svg");
-      fc.setInitialDirectory(gui.getProjectDir());
+      if (gui.getProjectDir() != null && gui.getProjectDir().exists()) {
+        fc.setInitialDirectory(gui.getProjectDir());
+      }
 
-      String projectName = gui.getActiveProject().getName();
-      if (projectName != null) {
-        String suggested = projectName + ".svg";
-        fc.setInitialFileName(suggested);
+      if (gui.getActiveProject() != null) {
+        String projectName = gui.getActiveProject().getName();
+        if (projectName != null) {
+          String suggested = projectName + ".svg";
+          fc.setInitialFileName(suggested);
+        }
       }
       File targetFile = fc.showSaveDialog(gui.getStage());
 
