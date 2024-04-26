@@ -273,6 +273,10 @@ LGPL (Flying Saucer) respectively.
 - Used to convert html to xhtml
 - MIT license
 
+### CSS Parser (https://cssparser.sourceforge.net/)
+- Used to detect font declaration in the style section(s).
+- Apache License, Version 2.0
+
 ### Batik (https://xmlgraphics.apache.org/batik/)
 - Used to convert SVG to bitmaps
 - Apache License, Version 2.0
