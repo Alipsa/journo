@@ -9,3 +9,10 @@ Usage of this could be as a reporting engine in an application server (Spring Bo
 java gui (Swing, JavaFx or SWT).
 
 See [the main readme file](../README.md) for more!
+
+# Building the journo runtime
+Journo uses maven. The prerequisites for building are
+1. A JDK  version 17 or later
+2. Maven version 3.8.4 installed
+
+Then it's just a matter of `mvn install`!

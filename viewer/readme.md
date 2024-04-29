@@ -4,7 +4,24 @@ The Journo Viewer is a javafx application simplifying the workflow of creating F
 are rendered into a PDF using Journo. It requires a JDK version 17 or higher with JavaFx included (such as the [Bellsoft full distribution](https://bell-sw.com/pages/downloads/#jdk-17-lts))
 for both compilation and running.
 
-You start the application with e.g. `java -jar journo-viewer-0.6.0.jar`.  
+You start the application with e.g. `java -jar journo-viewer-0.6.1.jar`.  
+
+## Installing the zipped release package
+Zipped releases are available on [github](https://github.com/Alipsa/journo/releases)
+
+### Mac
+1. Downloaded the mac release (journo-viewer-mac.zip) 
+2. move the journo.app to your applications folder
+3. The first time you run it you must right click and choose open to establish it
+as a trusted application
+
+### Linux
+1. Downloaded the mac release (journo-viewer-linux.zip)
+2. move the journoViewer folder to a location of choice
+3. Run the createLauncher.sh script to create a launcher (shortcut)
+
+### Windows
+There is no windows release at the moment. If you have bash, you should be able to run the linux release.
 
 ## Groovy code to generate data
 Using groovy scripts makes it easy to create mock data to provide input data to Freemarker.
@@ -47,3 +64,10 @@ def number = phoneNumberUtil.parseAndKeepRawInput('070-1232345', "SE")
   isValidNumber: phoneNumberUtil.isPossibleNumber(number)
 ]
 ```
+
+# Building the journo viewer
+Journo uses maven. The prerequisites for building are
+1. A JDK version 17 or later with javafx included (e.g. the Bellsoft full distro)
+2. Maven version 3.8.4 installed
+
+Then it's just a matter of `mvn install`!
