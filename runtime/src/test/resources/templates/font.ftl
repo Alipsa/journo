@@ -2,7 +2,7 @@
 <head>
     <title>Alice's Adventures in Wonderland -- Chapter I</title>
     <!-- there is no automatic handling of fonts in external css yet, so this will not work -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia" />
+    <link href="https://fonts.googleapis.com/css?family=Sofia"/>
     <style>
         @page {
             size: letter;
@@ -11,15 +11,16 @@
             padding: 1em;
         }
 
-        /* declared fonts are automatically added to the Journo Engine */
         @font-face {
             font-family: "Jersey 25";
             src: url(${jerseyUrl});
+            -fs-pdf-font-embed: embed;
         }
 
         @font-face {
             font-family: "Jacquard 24";
             src: url(${jacquardUrl});
+            -fs-pdf-font-embed: embed;
         }
 
         body {
@@ -31,7 +32,7 @@
         }
 
         .sofia {
-            font-family: "Sofia", sans-serif;
+            font-family: "Sofia", serif;
         }
 
         .jersey {

@@ -1,8 +1,4 @@
 # Release history
 
-## v 0.6.0 (in progress)
-- Downgrade to Java 17
-- Add docs and tests
-
-## v 0.5.0 (2024-01-28)
-- Initial release requiring java 21
+see [runtime release history](runtime/release.md)
+or [Viewer release history](viewer/release.md) respectively.

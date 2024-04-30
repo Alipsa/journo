@@ -212,7 +212,7 @@ Of course if you either make your css available from some url or put your style 
 xhtml document you don't need to do any of this.
 
 ## Fonts
-Starting with version 0.6.1, Journo now detects and adds declared fonts. I.e. if you do:
+Journo detects and adds declared fonts if you specify it. I.e. if you do:
 ```html
 <style>
 
@@ -220,6 +220,7 @@ Starting with version 0.6.1, Journo now detects and adds declared fonts. I.e. if
         @font-face {
             font-family: "Jersey 25";
             src: url(${jerseyUrl});
+            -fs-pdf-font-embed: embed;
         }
 </style>
 ```
@@ -235,14 +236,14 @@ URL urlJersey = getClass().getResource("/fonts/Jersey25-Regular.ttf");
 Map<String, Object> data = new HashMap<>();
 data.put("jerseyUrl", urlJersey);
 byte[] pdf = engine.renderPdf("someReport.ftl", data);
-
-// if you do not want this behavior, but prefer to register fonts "manually"
-// with the engine.addFont(urlJersey) globally, you can do 
-byte[] pdf2 = engine.renderPdf("someReport.ftl", data, false);
 ```
 
-Note that currently, declaring fonts in an external css will not result in them being automatically 
-loaded. In those cases you must use `engine.addFont(fontPathOrUrl)` prior to calling renderPdf
+If you do not want to add the special `-fs-pdf-font-embed` property,
+you can instead ask the report engine to load and embed all declared fonts
+using `engine.addHtmlFonts(xhtml)` prior to rendering the PDF.
+
+Note that currently, declaring fonts in an external css will not result in them being loaded.
+In those cases you must use `engine.addFont(fontPathOrUrl)` prior to calling renderPdf
 
 ## Javascript
 if you need to use Javascript to manipulate the DOM you must run the html code in a browser (e.g. Javafx WebView)

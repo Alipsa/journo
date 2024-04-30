@@ -30,9 +30,8 @@ public class FontTest {
     //File htmlFile = File.createTempFile("font", ".html");
     //FileUtils.writeStringToFile(htmlFile, xhtml);
     //System.out.println("Wrote " + htmlFile.getAbsolutePath());
-    File file = File.createTempFile("font", ".pdf");
+    File file = new File("target/testLoadFont.pdf");
     engine.renderPdf(xhtml, file);
     System.out.println("Wrote " + file.getAbsolutePath());
-    file.deleteOnExit();
   }
 }
