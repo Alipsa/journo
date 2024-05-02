@@ -243,7 +243,29 @@ you can instead ask the report engine to load and embed all declared fonts
 using `engine.addHtmlFonts(xhtml)` prior to rendering the PDF.
 
 Note that currently, declaring fonts in an external css will not result in them being loaded.
-In those cases you must use `engine.addFont(fontPathOrUrl)` prior to calling renderPdf
+In those cases you must use `engine.addFont(fontPathOrUrl)` prior to calling renderPdf.
+
+### Google fonts
+The woff2 format, which many of the Google fonts default to is not supported in Flying Saucer. Ttf fonts works just fine though,
+so what you can do after finding a nice font you want to use is to look up the ttf location of that font e.g. 
+[here](https://gist.githubusercontent.com/karimnaaji/b6c9c9e819204113e9cabf290d580551/raw/ed71595a691320ba63e48335c7c77818336cb1c2/GoogleFonts.txt)
+and search for the font family. E.g: if google fonts advices you to 
+```html
+<link href="https://fonts.googleapis.com/css2?family=Sofia&display=swap" rel="stylesheet">
+```
+You can navigate to the css `https://fonts.googleapis.com/css2?family=Sofia` and you will see that this is a woff2 font
+`src: url(https://fonts.gstatic.com/s/sofia/v14/8QIHdirahM3j_su5uI0Orbjl.woff2) format('woff2');`. When looking it up in 
+the list of [google ttf fonts](https://gist.githubusercontent.com/karimnaaji/b6c9c9e819204113e9cabf290d580551/raw/ed71595a691320ba63e48335c7c77818336cb1c2/GoogleFonts.txt)
+you will find that there is a ttf version here: http://fonts.gstatic.com/s/sofia/v5/Imnvx0Ag9r6iDBFUY5_RaQ.ttf. Armed with that you can declare the font as follows:
+```css
+        @font-face {
+          font-family: "Sofia";
+          src: url(http://fonts.gstatic.com/s/sofia/v5/Imnvx0Ag9r6iDBFUY5_RaQ.ttf):
+          font-weight: normal;
+          font-style: normal;
+          -fs-pdf-font-embed: embed;
+        }
+```
 
 ## Javascript
 if you need to use Javascript to manipulate the DOM you must run the html code in a browser (e.g. Javafx WebView)
