@@ -277,7 +277,7 @@ The [Journo Viewer](viewer/readme.md) is a simple but powerful gui tool to short
 You need a JDK 17 or higher with javafx bundled to run it (e.g. the Bellsoft Full JDK distribution)
 
 ## Documentation etc.
-For more information please see [the wiki](./wiki/)
+For more information please see [the wiki](/Alipsa/journo/wiki)
 
 ## License
 The journo code is licensed under the MIT license.
