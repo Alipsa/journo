@@ -11,17 +11,19 @@ Zipped releases are available on [github](https://github.com/Alipsa/journo/relea
 
 ### Mac
 1. Downloaded the mac release (journo-viewer-mac.zip) 
-2. move the journo.app to your applications folder
+2. Move the journo.app to your applications folder
 3. The first time you run it you must right click and choose open to establish it
 as a trusted application
 
 ### Linux
-1. Downloaded the mac release (journo-viewer-linux.zip)
-2. move the journoViewer folder to a location of choice
+1. Downloaded the linux release (journo-viewer-linux.zip)
+2. Move the journoViewer folder to a location of choice
 3. Run the createLauncher.sh script to create a launcher (shortcut)
 
 ### Windows
-There is no windows release at the moment. If you have bash, you should be able to run the linux release.
+1. Downloaded the windows release (journo-viewer-win.zip)
+2. Move the journoViewer folder to a location of choice
+3. Run the createShortcut.ps1 script to create a shortcut
 
 ## Groovy code to generate data
 Using groovy scripts makes it easy to create mock data to provide input data to Freemarker.

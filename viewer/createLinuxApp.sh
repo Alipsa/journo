@@ -15,5 +15,8 @@ cp src/main/assembly/linux/* "$targetDir"/
 cp src/main/resources/journo-rounded.png "$targetDir"/
 chmod +x "$targetDir"/*.sh
 
+cd "$DIR/target" || exit 1
+zip -r journo-viewer-linux.zip "${appName}"
+
 echo "Done! Drag the $appName folder in $targetDir to your applications folder and run createLauncher.sh to install!"
 

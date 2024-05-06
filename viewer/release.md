@@ -1,5 +1,9 @@
 # Release history
 
+## v 0.6.2 (2024-05-06)
+- add windows support
+- upgrade dependencies
+
 ## v 0.6.1 (2024-04-26)
 - add render to html option
 - add view pdf in external app option

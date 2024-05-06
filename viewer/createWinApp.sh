@@ -16,5 +16,8 @@ cp src/main/assembly/linux/run.sh "$targetDir"/
 cp src/main/resources/journo-rounded.* "$targetDir"/
 chmod +x "$targetDir"/*.sh
 
+cd "$DIR/target" || exit 1
+zip -r journo-viewer-win.zip "${appName}"
+
 echo "Done! Drag the $appName folder in $targetDir to your applications folder and run createShortcut.ps1 to install!"
 
