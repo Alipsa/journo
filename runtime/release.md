@@ -1,8 +1,10 @@
 # Release history
 
-## v 0.6.2 (in progress)
+## v 0.6.2 (2024-05-06)
 - revert auto installation of declared fonts and document "the flying saucer approach"
 - Include the static bean wrapper as par of default config
+- Expose access to the Freemarker Configuration and the Flying Saucer renderer from the ReportEngine
+  to allow for customizations not available from the ReportEngine api.
 
 ## v 0.6.1 (2024-04-26)
 - Change scope of slf4j-simple to test (it should not be part of the published jar)
