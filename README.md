@@ -276,6 +276,9 @@ an example of using a WebView to do just this).
 The [Journo Viewer](viewer/readme.md) is a simple but powerful gui tool to shorten the report creation lifecycle.
 You need a JDK 17 or higher with javafx bundled to run it (e.g. the Bellsoft Full JDK distribution)
 
+## Documentation etc.
+For more information please see [the wiki](./wiki/)
+
 ## License
 The journo code is licensed under the MIT license.
 Note that it heavily depends on Freemarker and Flying Saucer which are

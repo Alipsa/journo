@@ -2,10 +2,8 @@ package se.alipsa.journo;
 
 import com.steadystate.css.parser.CSSOMParser;
 import com.steadystate.css.parser.SACParserCSS3;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.template.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -68,13 +66,17 @@ public class ReportEngine {
   }
 
   private void createGenericConfig() {
-    cfg = new Configuration(Configuration.VERSION_2_3_32);
+    Version version = Configuration.VERSION_2_3_32;
+    cfg = new Configuration(version);
     cfg.setDefaultEncoding("UTF-8");
     cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     cfg.setLogTemplateExceptions(false);
     cfg.setWrapUncheckedExceptions(true);
     cfg.setFallbackOnNullLoopVariable(false);
     cfg.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
+    BeansWrapper wrapper = new BeansWrapper(version);
+    TemplateModel statics = wrapper.getStaticModels();
+    cfg.setSharedVariable("statics", statics);
   }
 
   /**
@@ -254,12 +256,22 @@ public class ReportEngine {
   }
 
   /**
-   * Allows you to look under the hood
+   * Allows you to look under the hood of the PDF generator
    *
    * @return the underlying ITextRenderer
    */
   public ITextRenderer getRenderer() {
     return renderer;
+  }
+
+  /**
+   * Allows you to look under the hood of Freemarker
+   *
+   * @return the Freemarker Configuration
+   *
+   */
+  public Configuration getFreemarkerConfiguration() {
+    return cfg;
   }
 
   /**

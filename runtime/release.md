@@ -1,7 +1,8 @@
 # Release history
 
-## v 0.6.1 (in progress)
+## v 0.6.2 (in progress)
 - revert auto installation of declared fonts and document "the flying saucer approach"
+- Include the static bean wrapper as par of default config
 
 ## v 0.6.1 (2024-04-26)
 - Change scope of slf4j-simple to test (it should not be part of the published jar)

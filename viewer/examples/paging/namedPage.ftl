@@ -10,6 +10,14 @@
             @top-left { content: element(header) }
             @bottom-right { content: element(footer) }
         }
+        
+        @font-face {
+          font-family: "Sofia";
+          src: url(http://fonts.gstatic.com/s/sofia/v5/Imnvx0Ag9r6iDBFUY5_RaQ.ttf):
+          font-weight: normal;
+          font-style: normal;
+          -fs-pdf-font-embed: embed;
+        }
 
         div.header {
             font-size: 9px;
@@ -44,6 +52,7 @@
             border: thin solid black;
             padding: 1em;
             page: defaultPage;
+            font-family: Sofia, monospace;
         }
 
         #pagenumber:before {
