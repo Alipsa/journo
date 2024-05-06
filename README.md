@@ -42,7 +42,7 @@ To use it, add the following dependency to your maven pom.xml (or equivalent for
 <dependency>
     <groupId>se.alipsa</groupId>
     <artifactId>journo</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
 </dependency>
 ```
 
