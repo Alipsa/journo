@@ -22,4 +22,8 @@ chmod +x "${MACOS_DIR}/journo"
 # cd to the target so we dont have to allow full disk access in Settings -> Privacy and Security
 cd "${targetDir}/.." || exit 1
 SetFile -a B "${appName}"
+
+cd "$DIR/target" || exit 1
+zip -r journo-viewer-mac.zip "${appName}"
+
 echo "Done! Drag the app in $targetDir to your applications folder to install!"
