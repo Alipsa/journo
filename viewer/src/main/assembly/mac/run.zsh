@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
-JV=21
+JV=17
 
 if command -v java ; then
 	javaVersion=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
@@ -28,10 +28,9 @@ else
   exit 1
 fi
 
-DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+DIR="${0:A:h}"
 cd "$DIR" || exit
 
-JAVA_OPTS="-Xmx8g -Xdock:name=journo -Xdock:icon=./Contents/Resources/journo.icns"
 JAR=$(ls -1 -t journo-viewer-*.jar | head -1)
-java $JAVA_OPTS -jar ./$JAR
+java -Xmx8g -Xdock:name=journo -Xdock:icon=./Contents/Resources/journo.icns -jar ./$JAR
 

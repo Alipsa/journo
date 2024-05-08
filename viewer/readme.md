@@ -8,22 +8,25 @@ You start the application with e.g. `java -jar journo-viewer-0.6.2.jar`.
 
 ## Installing the zipped release package
 Zipped releases are available on [github](https://github.com/Alipsa/journo/releases)
+Note: prior to version 0.6.3 the journo viewer was packaged into 3 different zip files,
+one for each platform, but from version 0.6.3 all platform have been combined into a single 
+zip file.
 
 ### Mac
-1. Downloaded the mac release (journo-viewer-mac.zip) 
-2. Move the journo.app to your applications folder
-3. The first time you run it you must right click and choose open to establish it
+1. Downloaded the release (journo-viewer.zip) and unzip it
+2. Move the unzipped `journo.app` to your applications folder
+3. The first time you run it you must right-click and choose `open` to establish it
 as a trusted application
 
 ### Linux
-1. Downloaded the linux release (journo-viewer-linux.zip)
-2. Move the journoViewer folder to a location of choice
-3. Run the createLauncher.sh script to create a launcher (shortcut)
+1. Downloaded the release (journo-viewer.zip)
+2. Move the unzipped `journo.app` folder to a location of choice
+3. Run the `journo.app/createLauncher.sh` script to create a launcher (shortcut)
 
 ### Windows
-1. Downloaded the windows release (journo-viewer-win.zip)
-2. Move the journoViewer folder to a location of choice
-3. Run the createShortcut.ps1 script to create a shortcut
+1. Downloaded the release (journo-viewer.zip)
+2. Move the unzipped `journo.app` folder to a location of choice
+3. Run the `journo.app\createShortcut.ps1` script to create a shortcut
 
 ## Groovy code to generate data
 Using groovy scripts makes it easy to create mock data to provide input data to Freemarker.

@@ -1,5 +1,8 @@
 # Release history
 
+## V 0.6.3 (In progress)
+- Combine all 3 release packages into one.
+
 ## v 0.6.2 (2024-05-06)
 - add windows support
 - upgrade dependencies
