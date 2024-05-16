@@ -27,8 +27,8 @@ import java.util.*;
 public class ReportEngine {
 
   private static final Logger log = LoggerFactory.getLogger(ReportEngine.class);
-  private Configuration cfg;
-  private final ITextRenderer renderer = new ITextRenderer();
+  private Configuration templateEngineCfg;
+  private final ITextRenderer pdfRenderer = new ITextRenderer();
   Set<String> addedFontsCache = new HashSet<>();
 
   /**
@@ -39,9 +39,9 @@ public class ReportEngine {
    *                      then "/templates" is the templatesPath
    */
   public ReportEngine(Object caller, String templatesPath) {
-    createGenericConfig();
-    cfg.setClassForTemplateLoading(caller.getClass(), templatesPath);
-    configureRenderers();
+    createGenericFreemarkerConfig();
+    templateEngineCfg.setClassForTemplateLoading(caller.getClass(), templatesPath);
+    configurePdfRenderers();
   }
 
   /**
@@ -51,32 +51,32 @@ public class ReportEngine {
    * @throws IOException if there was some problem accessing the directory
    */
   public ReportEngine(File templateDir) throws IOException {
-    createGenericConfig();
-    cfg.setDirectoryForTemplateLoading(templateDir);
-    configureRenderers();
+    createGenericFreemarkerConfig();
+    templateEngineCfg.setDirectoryForTemplateLoading(templateDir);
+    configurePdfRenderers();
   }
 
-  private void configureRenderers() {
+  private void configurePdfRenderers() {
     // Enable SVG handling
     ChainingReplacedElementFactory chainingReplacedElementFactory = new ChainingReplacedElementFactory();
     // Add the default factory that handles "normal" images to the chain
-    chainingReplacedElementFactory.addReplacedElementFactory(renderer.getSharedContext().getReplacedElementFactory());
+    chainingReplacedElementFactory.addReplacedElementFactory(pdfRenderer.getSharedContext().getReplacedElementFactory());
     chainingReplacedElementFactory.addReplacedElementFactory(new SVGReplacedElementFactory());
-    renderer.getSharedContext().setReplacedElementFactory(chainingReplacedElementFactory);
+    pdfRenderer.getSharedContext().setReplacedElementFactory(chainingReplacedElementFactory);
   }
 
-  private void createGenericConfig() {
+  private void createGenericFreemarkerConfig() {
     Version version = Configuration.VERSION_2_3_32;
-    cfg = new Configuration(version);
-    cfg.setDefaultEncoding("UTF-8");
-    cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-    cfg.setLogTemplateExceptions(false);
-    cfg.setWrapUncheckedExceptions(true);
-    cfg.setFallbackOnNullLoopVariable(false);
-    cfg.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
+    templateEngineCfg = new Configuration(version);
+    templateEngineCfg.setDefaultEncoding("UTF-8");
+    templateEngineCfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    templateEngineCfg.setLogTemplateExceptions(false);
+    templateEngineCfg.setWrapUncheckedExceptions(true);
+    templateEngineCfg.setFallbackOnNullLoopVariable(false);
+    templateEngineCfg.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
     BeansWrapper wrapper = new BeansWrapper(version);
     TemplateModel statics = wrapper.getStaticModels();
-    cfg.setSharedVariable("statics", statics);
+    templateEngineCfg.setSharedVariable("statics", statics);
   }
 
   /**
@@ -89,7 +89,7 @@ public class ReportEngine {
    * @throws TemplateException it there is some syntax issue in the template
    */
   public String renderHtml(String template, Map<String, Object> data) throws IOException, TemplateException {
-    Template temp = cfg.getTemplate(template);
+    Template temp = templateEngineCfg.getTemplate(template);
     StringWriter sw = new StringWriter();
     temp.process(data, sw);
     return sw.toString();
@@ -236,7 +236,7 @@ public class ReportEngine {
    */
   public void addFont(String fontPath, boolean embedded) throws IOException {
     // "MyFont.ttf"
-    renderer.getFontResolver().addFont(fontPath, embedded);
+    pdfRenderer.getFontResolver().addFont(fontPath, embedded);
   }
 
   /**
@@ -247,10 +247,10 @@ public class ReportEngine {
    * @throws IOException if creating the pdf byte array fails
    */
   public byte[] xhtmlToPdf(String xhtml) throws IOException {
-    renderer.setDocumentFromString(xhtml);
-    renderer.layout();
+    pdfRenderer.setDocumentFromString(xhtml);
+    pdfRenderer.layout();
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-      renderer.createPDF(baos);
+      pdfRenderer.createPDF(baos);
       return baos.toByteArray();
     }
   }
@@ -260,8 +260,8 @@ public class ReportEngine {
    *
    * @return the underlying ITextRenderer
    */
-  public ITextRenderer getRenderer() {
-    return renderer;
+  public ITextRenderer getPdfRenderer() {
+    return pdfRenderer;
   }
 
   /**
@@ -270,8 +270,8 @@ public class ReportEngine {
    * @return the Freemarker Configuration
    *
    */
-  public Configuration getFreemarkerConfiguration() {
-    return cfg;
+  public Configuration getTemplateEngineConfiguration() {
+    return templateEngineCfg;
   }
 
   /**
