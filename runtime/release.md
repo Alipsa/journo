@@ -1,5 +1,8 @@
 # Release history
 
+## v 0.6.3
+- Synchronize xhtmlToPdf to avoid concurrent modification issues on the pdf renderer
+- upgrade flying saucer 9.7.2 -> 9.8.0
 ## v 0.6.2 (2024-05-06)
 - revert auto installation of declared fonts and document "the flying saucer approach"
 - Include the static bean wrapper as par of default config

@@ -246,7 +246,7 @@ public class ReportEngine {
    * @return a PDF in the form of a byte array
    * @throws IOException if creating the pdf byte array fails
    */
-  public byte[] xhtmlToPdf(String xhtml) throws IOException {
+  public synchronized byte[] xhtmlToPdf(String xhtml) throws IOException {
     pdfRenderer.setDocumentFromString(xhtml);
     pdfRenderer.layout();
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

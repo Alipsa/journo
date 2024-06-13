@@ -6,7 +6,7 @@
 
     <groupId>se.alipsa</groupId>
     <artifactId>journo-viewer</artifactId>
-    <version>0.6.3-SNAPSHOT</version>
+    <version>0.6.3</version>
     <packaging>jar</packaging>
 
     <name>Journo Viewer</name>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>journo-runtime</artifactId>
-            <version>0.6.2</version>
+            <version>0.6.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
@@ -108,7 +108,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>enforce-releases-maven-java</id>
@@ -163,7 +163,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>3.6.0</version>
                 <configuration>
                     <filters>
                         <filter>
