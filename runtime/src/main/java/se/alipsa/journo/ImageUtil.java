@@ -26,9 +26,9 @@ public class ImageUtil {
    *
    * @param resource the resource to convert
    * @return a data url (base 64 encoded string)
-   * @throws IOException if the resource cannot be read
+   * @throws JournoException if the resource cannot be read
    */
-  public static String asDataUrl(String resource) throws IOException {
+  public static String asDataUrl(String resource) throws JournoException {
     return asDataUrl(resource, getMediaType(resource));
   }
 
@@ -38,9 +38,9 @@ public class ImageUtil {
    * @param resource the resource to convert
    * @param mediaType the mime type of the image (e.g. image/png)
    * @return a data url (base 64 encoded string)
-   * @throws IOException if the resource cannot be read
+   * @throws JournoException if the resource cannot be read
    */
-  public static String asDataUrl(String resource, String mediaType) throws IOException {
+  public static String asDataUrl(String resource, String mediaType) throws JournoException {
     return asDataUrl(resource, mediaType, ImageUtil.class);
   }
 
@@ -49,9 +49,9 @@ public class ImageUtil {
    * @param resource the url to convert
    * @param mediaType the mime type of the image (e.g. image/png)
    * @return a data url (base 64 encoded string)
-   * @throws IOException if the resource cannot be read
+   * @throws JournoException if the resource cannot be read
    */
-  public static String asDataUrl(URL resource, String mediaType) throws IOException {
+  public static String asDataUrl(URL resource, String mediaType) throws JournoException {
     return asDataUrl(readBytes(resource), mediaType);
   }
 
@@ -61,9 +61,9 @@ public class ImageUtil {
    * @param mediaType the mime type of the image (e.g. image/png)
    * @param caller the calling class where the classloader can reach the resource specified
    * @return a data url (base 64 encoded string)
-   * @throws IOException if the resource cannot be read
+   * @throws JournoException if the resource cannot be read
    */
-  public static String asDataUrl(String resource, String mediaType, Class<?> caller) throws IOException {
+  public static String asDataUrl(String resource, String mediaType, Class<?> caller) throws JournoException {
     return asDataUrl(readBytes(resource, caller), mediaType);
   }
 
@@ -78,41 +78,51 @@ public class ImageUtil {
     return "data:" + mediaType + ";base64," + content;
   }
 
-  private static byte[] readBytes(URL resource) throws IOException {
+  private static byte[] readBytes(URL resource) throws JournoException {
     try(InputStream is = resource.openStream()) {
       if (is == null) {
-        throw new IOException("Failed to create input stream from " + resource);
+        throw new JournoException("Failed to create input stream from " + resource);
       }
       return IOUtils.toByteArray(is);
+    } catch (IOException e) {
+      throw new JournoException("Failed to read " + resource, e);
     }
   }
 
-  private static byte[] readBytes(String resource, Class<?> clazz) throws IOException {
-    try(InputStream is = locateResource(resource, clazz)) {
+  private static byte[] readBytes(String resource, Class<?> clazz) throws JournoException {
+    try {
+      try(InputStream is = locateResource(resource, clazz)) {
+        if (is == null) {
+          throw new JournoException("Failed to create input stream from " + resource);
+        }
+        return IOUtils.toByteArray(is);
+      }
+    } catch (IOException e) {
+      throw new JournoException(e);
+    }
+  }
+
+  private static InputStream locateResource(String resource, Class<?> clazz) throws JournoException {
+    try {
+      InputStream is = clazz.getResourceAsStream(resource);
       if (is == null) {
-        throw new IOException("Failed to create input stream from " + resource);
+        File file = new File(System.getProperty("user.dir"), resource);
+        if (file.exists()) {
+            is = new FileInputStream(file);
+        } else {
+          is = clazz.getClassLoader().getResourceAsStream(resource);
+        }
       }
-      return IOUtils.toByteArray(is);
-    }
-  }
-
-  private static InputStream locateResource(String resource, Class<?> clazz) throws IOException {
-    InputStream is = clazz.getResourceAsStream(resource);
-    if (is == null) {
-      File file = new File(System.getProperty("user.dir"), resource);
-      if (file.exists()) {
-          is = new FileInputStream(file);
-      } else {
-        is = clazz.getClassLoader().getResourceAsStream(resource);
+      if (is == null) {
+        Path path = Paths.get(resource);
+        if (Files.exists(path)) {
+          is = Files.newInputStream(path);
+        }
       }
+      return is;
+    } catch (IOException e) {
+      throw new JournoException(e);
     }
-    if (is == null) {
-      Path path = Paths.get(resource);
-      if (Files.exists(path)) {
-        is = Files.newInputStream(path);
-      }
-    }
-    return is;
   }
 
   private static String getMediaType(String resource) {

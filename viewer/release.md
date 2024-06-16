@@ -1,6 +1,10 @@
 # Release history
+(Note, dates are in yyyy-MM-dd format)
 
-## V 0.6.3 (In progress)
+## v0.6.4
+- Upgrade classgraph 4.8.172 -> 4.8.173
+
+## V 0.6.3 (2024-06-13)
 - Combine all 3 release packages into one.
 
 ## v 0.6.2 (2024-05-06)

@@ -10,6 +10,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
+import se.alipsa.journo.JournoException;
 import se.alipsa.journo.ReportEngine;
 
 import java.io.File;
@@ -59,16 +60,16 @@ public class FreemarkerTab extends JournoTab {
     return file == null ? null : file.toPath();
   }*/
 
-  public byte[] renderPdf(Map<String, Object> data) throws TemplateException, IOException {
+  public byte[] renderPdf(Map<String, Object> data) throws JournoException {
     return reportEngine.renderPdf(file.getName(), data);
   }
 
-  public void renderPdf(Map<String, Object> data, File toFile) throws TemplateException, IOException {
+  public void renderPdf(Map<String, Object> data, File toFile) throws JournoException, IOException {
     byte[] content = renderPdf(data);
     FileUtils.writeByteArrayToFile(toFile, content);
   }
 
-  public String renderHtml(Map<String, Object> data) throws TemplateException, IOException {
+  public String renderHtml(Map<String, Object> data) throws JournoException {
     return reportEngine.renderHtml(file.getName(), data);
   }
 

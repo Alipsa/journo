@@ -2,6 +2,7 @@ package test.alipsa.journo;
 
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;
+import se.alipsa.journo.JournoException;
 import se.alipsa.journo.ReportEngine;
 
 import java.io.File;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SvgImageTest {
 
   @Test
-  public void testSVGIMage() throws TemplateException, IOException {
+  public void testSVGIMage() throws JournoException {
     ReportEngine engine = new ReportEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();

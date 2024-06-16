@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.appender.FileAppender;
+import se.alipsa.journo.JournoException;
 
 import java.awt.*;
 import java.io.*;
@@ -648,7 +649,7 @@ public class JournoViewer extends Application {
       pdfViewer.load(pdf);
       tabPane.getSelectionModel().select(pdfTab);
       scene.setCursor(Cursor.DEFAULT);
-    } catch (IOException | TemplateException e) {
+    } catch (IOException | JournoException e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
     }  catch (Throwable e) {
@@ -667,7 +668,7 @@ public class JournoViewer extends Application {
       webView.getEngine().loadContent(html);
       Popup.display(webView, this);
       scene.setCursor(Cursor.DEFAULT);
-    } catch (IOException | TemplateException e) {
+    } catch (JournoException e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
     }  catch (Throwable e) {
@@ -686,7 +687,7 @@ public class JournoViewer extends Application {
       openInExternalApp(file);
       file.deleteOnExit();
       scene.setCursor(Cursor.DEFAULT);
-    } catch (IOException | TemplateException e) {
+    } catch (IOException | JournoException e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
     } catch (Throwable e) {

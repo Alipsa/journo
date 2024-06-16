@@ -3,6 +3,7 @@ package test.alipsa.journo;
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.ImageUtil;
+import se.alipsa.journo.JournoException;
 import se.alipsa.journo.ReportEngine;
 
 import java.io.*;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HtmlTest {
 
   @Test
-  public void testTest() throws TemplateException, IOException {
+  public void testTest() throws JournoException, IOException {
     ReportEngine engine = new ReportEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
