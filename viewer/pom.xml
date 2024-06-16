@@ -42,6 +42,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>${javafx.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>journo-runtime</artifactId>
             <version>0.6.4-SNAPSHOT</version>
