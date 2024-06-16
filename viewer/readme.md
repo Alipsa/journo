@@ -72,7 +72,7 @@ def number = phoneNumberUtil.parseAndKeepRawInput('070-1232345', "SE")
 
 # Building the journo viewer
 Journo uses maven. The prerequisites for building are
-1. A JDK version 17 or later with javafx included (e.g. the Bellsoft full distro)
-2. Maven version 3.8.4 installed
+1. A JDK version 17 or later (a jvm with javafx included (e.g. the Bellsoft full distro) is recommended)
+2. Maven version 3.8.4 or later installed
 
 Then it's just a matter of `mvn install`!
