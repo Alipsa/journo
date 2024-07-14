@@ -16,10 +16,7 @@ import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xhtmlrenderer.resource.XMLResource;
-import org.xml.sax.InputSource;
 
-import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
