@@ -1,13 +1,11 @@
 package test.alipsa.journo;
 
-import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.ImageUtil;
 import se.alipsa.journo.JournoException;
 import se.alipsa.journo.ReportEngine;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -34,7 +32,7 @@ public class HeaderFooterImageTest {
     engine.renderPdf(html, path);
     File file = path.toFile();
     assertTrue(file.exists());
-    //file.deleteOnExit();
+    file.deleteOnExit();
 
   }
 }

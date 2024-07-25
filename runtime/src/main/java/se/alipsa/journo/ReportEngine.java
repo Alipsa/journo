@@ -42,8 +42,19 @@ public class ReportEngine {
    *                      then "/templates" is the templatesPath
    */
   public ReportEngine(Object caller, String templatesPath) {
+    this(caller.getClass(), templatesPath);
+  }
+
+  /**
+   * Creates a ReportEngine
+   *
+   * @param caller a class that is in the same jar as the report templates
+   * @param templatesPath the path to the folder containing reports e.g. if reports are in src/main/resources/templates
+   *                      then "/templates" is the templatesPath
+   */
+  public ReportEngine(Class<?> caller, String templatesPath) {
     createGenericFreemarkerConfig();
-    templateEngineCfg.setClassForTemplateLoading(caller.getClass(), templatesPath);
+    templateEngineCfg.setClassForTemplateLoading(caller, templatesPath);
     configurePdfRenderers();
   }
 
@@ -179,6 +190,20 @@ public class ReportEngine {
   }
 
   /**
+   * Render the Freemarker template into a pdf sent to the outputstream specified
+   *
+   * @param template the Freemarker template relative file path
+   * @param data the data to bind to the template when rendering the html
+   * @param out the outputstream to render to, closing the stream is the responsibility of the caller
+   * @throws JournoException if creating the pdf fails or there is some syntax issue in the template
+   */
+  public void renderPdf(String template, Map<String, Object> data, OutputStream out) throws JournoException {
+    String html = renderHtml(template, data);
+    String xhtml = htmlToXhtml(html);
+    xhtmlToPdf(xhtml, out);
+  }
+
+  /**
    * Parses the html and adds all declared fonts with an url specified, e.g:
    * <code>
    *    {@literal @}font-face {
@@ -275,6 +300,23 @@ public class ReportEngine {
         return baos.toByteArray();
       }
     } catch (DocumentException | IOException e) {
+      throw new JournoException(e);
+    }
+  }
+
+  /**
+   * Convert a xhtml string into a pdf byte array that will be streamed to the outputstream specified
+   *
+   * @param xhtml the xhtml string to render
+   * @param out the outputstream to write to
+   * @throws JournoException if creating the pdf byte array fails
+   */
+  public synchronized void xhtmlToPdf(String xhtml, OutputStream out) throws JournoException {
+    try {
+      pdfRenderer.setDocumentFromString(xhtml);
+      pdfRenderer.layout();
+      pdfRenderer.createPDF(out);
+    } catch (DocumentException e) {
       throw new JournoException(e);
     }
   }

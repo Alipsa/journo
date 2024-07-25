@@ -2,13 +2,11 @@ package test.alipsa.journo;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.ImageUtil;
 import se.alipsa.journo.JournoException;
 import se.alipsa.journo.ReportEngine;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -22,7 +20,7 @@ public class ExternalCssTest {
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");
-    HtmlTest.Product prod = new HtmlTest.Product("https://some.url.se/", "Hello world");
+    Product prod = new Product("https://some.url.se/", "Hello world");
     data.put("latestProduct", prod);
 
     data.put("image", ImageUtil.asDataUrl("/images/1e.jpg"));
