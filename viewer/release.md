@@ -1,6 +1,10 @@
 # Release history
 (Note, dates are in yyyy-MM-dd format)
 
+## v0.6.5
+- fix npe bug when opening a project for the first time
+- upgrade javafx version 22.0.1 -> 22.0.2
+
 ## v0.6.4
 - Upgrade classgraph 4.8.172 -> 4.8.173
 
