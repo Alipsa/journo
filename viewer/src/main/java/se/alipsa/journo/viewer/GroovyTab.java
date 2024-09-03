@@ -145,7 +145,10 @@ public class GroovyTab extends JournoTab {
       ContextMenu contextMenu = new ContextMenu();
       MenuItem deleteItem = new MenuItem();
       deleteItem.textProperty().bind(Bindings.format("Remove \"%s\"", itemProperty()));
-      deleteItem.setOnAction(event -> jarDependencies.getItems().remove(getItem()));
+      deleteItem.setOnAction(event -> {
+        jarDependencies.getItems().remove(getItem());
+        gui.setProjectDependencies(jarDependencies.getItems());
+      });
       contextMenu.getItems().addAll(deleteItem);
       emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
         if (isNowEmpty) {

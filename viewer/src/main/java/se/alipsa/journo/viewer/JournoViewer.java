@@ -264,6 +264,8 @@ public class JournoViewer extends Application {
       Path projectFilePath = Paths.get(path);
       setProjectDir(projectFilePath.getParent().toFile());
       projectCombo.setTooltip(new Tooltip(projectFilePath.toString()));
+    } else {
+      Alerts.warn("BUG! Missing project path", "Project path should have been saved but was null");
     }
   }
 
@@ -381,6 +383,8 @@ public class JournoViewer extends Application {
         Project p = Project.load(projectFile.toPath());
         projectCombo.getItems().add(p);
         projectCombo.setValue(p);
+        Preferences projects = preferences().node("projects");
+        projects.node(p.getName()).put("projectFile", projectFile.toPath().toString());
         setActiveProject(p);
       } catch (Exception e) {
         ExceptionAlert.showAlert("Failed to load " + projectFile, e);
