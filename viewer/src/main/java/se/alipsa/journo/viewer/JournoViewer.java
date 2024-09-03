@@ -212,10 +212,11 @@ public class JournoViewer extends Application {
         Map<String, String> res = response.get();
         p.setName(res.get(KEY_NAME));
         try {
-          saveProject(p, res.get(KEY_PATH));
+          String path = res.get(KEY_PATH);
+          saveProject(p, path);
           projectCombo.getItems().add(p);
           projectCombo.setValue(p);
-          setActiveProject(p);
+          setActiveProject(p, path);
         } catch (IOException e) {
           ExceptionAlert.showAlert("Failed to save project " + p, e);
         }
@@ -243,23 +244,24 @@ public class JournoViewer extends Application {
     freeMarkerTab.clear();
     codeTab.clear();
     try {
-      saveProject(p, res.get(KEY_PATH));
+      String path = res.get(KEY_PATH);
+      saveProject(p, path);
       projectCombo.getItems().add(p);
       projectCombo.setValue(p);
-      setActiveProject(p);
+      setActiveProject(p, path);
     } catch (IOException e) {
       ExceptionAlert.showAlert("Failed to save project " + p, e);
     }
   }
 
-  private void setActiveProject(Project p) {
+  private void setActiveProject(Project p, String... pathOpt) {
     logger.info("Setting active project to {}: {}", p, p.values());
     freeMarkerTab.loadFile(p.getTemplateFile());
     codeTab.loadFile(p.getDataFile());
     logger.debug("setActiveProject(), Dependencies are: {}", p.getDependencies());
     codeTab.setDependencies(p.getDependencies());
     Preferences projects = preferences().node("projects");
-    String path = projects.node(p.getName()).get("projectFile", null);
+    String path = projects.node(p.getName()).get("projectFile", pathOpt.length > 0 ? pathOpt[0] : null);
     if (path != null) {
       Path projectFilePath = Paths.get(path);
       setProjectDir(projectFilePath.getParent().toFile());
@@ -376,7 +378,7 @@ public class JournoViewer extends Application {
   private void openProject() {
     FileChooser fc = new FileChooser();
     fc.setInitialDirectory(getProjectDir());
-    fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Journo project files", ".jpr"));
+    fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Journo project files", "*.jpr"));
     File projectFile = fc.showOpenDialog(getStage());
     if (projectFile != null) {
       try {
@@ -384,8 +386,9 @@ public class JournoViewer extends Application {
         projectCombo.getItems().add(p);
         projectCombo.setValue(p);
         Preferences projects = preferences().node("projects");
-        projects.node(p.getName()).put("projectFile", projectFile.toPath().toString());
-        setActiveProject(p);
+        String path = projectFile.toPath().toString();
+        projects.node(p.getName()).put("projectFile", path);
+        setActiveProject(p, path);
       } catch (Exception e) {
         ExceptionAlert.showAlert("Failed to load " + projectFile, e);
       }
