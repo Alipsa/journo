@@ -253,16 +253,18 @@ public class JournoViewer extends Application {
   }
 
   private void setActiveProject(Project p) {
-    logger.info("Setting active project to {}", p);
+    logger.info("Setting active project to {}: {}", p, p.values());
     freeMarkerTab.loadFile(p.getTemplateFile());
     codeTab.loadFile(p.getDataFile());
     logger.debug("setActiveProject(), Dependencies are: {}", p.getDependencies());
     codeTab.setDependencies(p.getDependencies());
     Preferences projects = preferences().node("projects");
     String path = projects.node(p.getName()).get("projectFile", null);
-    Path projectFilePath = Paths.get(path);
-    setProjectDir(projectFilePath.getParent().toFile());
-    projectCombo.setTooltip(new Tooltip(projectFilePath.toString()));
+    if (path != null) {
+      Path projectFilePath = Paths.get(path);
+      setProjectDir(projectFilePath.getParent().toFile());
+      projectCombo.setTooltip(new Tooltip(projectFilePath.toString()));
+    }
   }
 
   private MenuBar createMenu() {
