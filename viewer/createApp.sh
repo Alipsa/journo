@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ###
 ### Create a joint zip release for macos, linux and windows
-### This script must be run from a mac since SetFile only exists on Mac
+### This script should be run from a mac since SetFile only exists on Mac
 ###
 
 DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -28,12 +28,19 @@ cp src/main/assembly/win/* "$targetDir"/
 
 chmod +x "${MACOS_DIR}/journo"
 
-cp -r "$DIR/target/platform" "${RESOURCE_DIR}/"
 # cd to the target so we dont have to allow full disk access in Settings -> Privacy and Security
 cd "${targetDir}/.." || exit 1
-SetFile -a B "${appName}"
+if command -v Setfile; then
+  SetFile -a B "${appName}"
+else
+  echo "Not building from a Mac so cannot set application props with SetFile"
+fi
 
 cd "$DIR/target" || exit 1
 zip -r journo-viewer.zip "${appName}"
 
-echo "Done! Drag the app in $targetDir to your applications folder to install!"
+echo "Done!"
+echo "To install the journo-viewer.zip do the following"
+echo "Linux: Unzip the journo-viewer.zip to your applications folder and run createLauncher.sh to install!"
+echo "MacOs: Unzip the journo-viewer.zip and drag the $appName to your applications folder to install!"
+echo "Windows: Unzip the journo-viewer.zip to your applications folder and run createShortcut.ps1 to install!"

@@ -41,8 +41,8 @@ To use it, add the following dependency to your maven pom.xml (or equivalent for
 ```xml
 <dependency>
     <groupId>se.alipsa</groupId>
-    <artifactId>journo</artifactId>
-    <version>0.6.2</version>
+    <artifactId>journo-runtime</artifactId>
+    <version>0.6.3</version>
 </dependency>
 ```
 
