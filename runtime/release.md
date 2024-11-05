@@ -14,7 +14,7 @@
 
 ## v0.6.2 (2024-05-06)
 - revert auto installation of declared fonts and document "the flying saucer approach"
-- Include the static bean wrapper as par of default config
+- Include the static bean wrapper as part of default config
 - Expose access to the Freemarker Configuration and the Flying Saucer renderer from the ReportEngine
   to allow for customizations not available from the ReportEngine api.
 
