@@ -1,10 +1,11 @@
 # Release history
 
-### v0.6.4 (in progress)
+### v0.7.0 (in progress)
 - Throw JournoException on errors instead of exposing the underlying exception directly
 - upgrade freemarker 2.3.32 -> 2.3.33
 - upgrade flying saucer 9.8.0 -> 9.9.0
 - Add stream method for rendering output
+- Add ReportEngine constructor for a custom TemplateLoader
 
 ## v0.6.3 (2024-06-13)
 - Synchronize xhtmlToPdf to avoid concurrent modification issues on the pdf renderer

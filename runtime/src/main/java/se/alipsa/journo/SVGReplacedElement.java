@@ -102,9 +102,9 @@ public class SVGReplacedElement implements ITextReplacedElement {
     g2d.dispose();
 
     PageBox page = renderingContext.getPage();
-    float x = blockBox.getAbsX() + page.getMarginBorderPadding(renderingContext, CalculatedStyle.LEFT);
+    float x = blockBox.getAbsX() + page.getMarginBorderPadding(renderingContext, CalculatedStyle.Edge.LEFT);
     float y = (page.getBottom() - (blockBox.getAbsY() + cssHeight)) + page.getMarginBorderPadding(
-        renderingContext, CalculatedStyle.BOTTOM);
+        renderingContext, CalculatedStyle.Edge.BOTTOM);
     x /= outputDevice.getDotsPerPoint();
     y /= outputDevice.getDotsPerPoint();
 

@@ -3,6 +3,7 @@ package se.alipsa.journo;
 import com.lowagie.text.DocumentException;
 import com.steadystate.css.parser.CSSOMParser;
 import com.steadystate.css.parser.SACParserCSS3;
+import freemarker.cache.TemplateLoader;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.*;
 import org.jsoup.Jsoup;
@@ -67,6 +68,17 @@ public class ReportEngine {
   public ReportEngine(File templateDir) throws IOException {
     createGenericFreemarkerConfig();
     templateEngineCfg.setDirectoryForTemplateLoading(templateDir);
+    configurePdfRenderers();
+  }
+
+  /**
+   * Creates a ReportEngine
+   *
+   * @param templateLoader a custom TemplateLoader that can handle access to your freemarker templates
+   */
+  public ReportEngine(TemplateLoader templateLoader) {
+    createGenericFreemarkerConfig();
+    templateEngineCfg.setTemplateLoader(templateLoader);
     configurePdfRenderers();
   }
 

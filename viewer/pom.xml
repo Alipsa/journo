@@ -17,8 +17,16 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <groovy-version>4.0.22</groovy-version>
+
+        <batik.version>1.18</batik.version>
+        <classgraph.version>4.8.177</classgraph.version>
+        <fxsvgimage.version>1.1</fxsvgimage.version>
+        <groovy-version>4.0.23</groovy-version>
         <javafx.version>22.0.2</javafx.version>
+        <journo-runtime.version>0.7.0-SNAPSHOT</journo-runtime.version>
+        <log4j.version>2.24.1</log4j.version>
+        <pdfbox.version>3.0.3</pdfbox.version>
+        <richtextfx.version>0.11.3</richtextfx.version>
     </properties>
 
     <repositories>
@@ -50,17 +58,17 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>journo-runtime</artifactId>
-            <version>0.6.4-SNAPSHOT</version>
+            <version>${journo-runtime.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>3.0.2</version>
+            <version>${pdfbox.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-codec</artifactId>
-            <version>1.17</version>
+            <version>${batik.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.groovy</groupId>
@@ -71,22 +79,22 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.11.3</version>
+            <version>${richtextfx.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.174</version>
+            <version>${classgraph.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.hervegirod</groupId>
             <artifactId>fxsvgimage</artifactId>
-            <version>1.1</version>
+            <version>${fxsvgimage.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.23.1</version>
+            <version>${log4j.version}</version>
         </dependency>
     </dependencies>
     <licenses>
