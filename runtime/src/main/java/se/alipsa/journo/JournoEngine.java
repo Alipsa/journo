@@ -28,9 +28,9 @@ import java.util.List;
 /**
  * This is the core class of the Journo library, used to create html or pdf output
  */
-public class ReportEngine {
+public class JournoEngine {
 
-  private static final Logger log = LoggerFactory.getLogger(ReportEngine.class);
+  private static final Logger log = LoggerFactory.getLogger(JournoEngine.class);
   private Configuration templateEngineCfg;
   private final ITextRenderer pdfRenderer = new ITextRenderer();
   Set<String> addedFontsCache = new HashSet<>();
@@ -42,7 +42,7 @@ public class ReportEngine {
    * @param templatesPath the path to the folder containing reports e.g. if reports are in src/main/resources/templates
    *                      then "/templates" is the templatesPath
    */
-  public ReportEngine(Object caller, String templatesPath) {
+  public JournoEngine(Object caller, String templatesPath) {
     this(caller.getClass(), templatesPath);
   }
 
@@ -53,7 +53,7 @@ public class ReportEngine {
    * @param templatesPath the path to the folder containing reports e.g. if reports are in src/main/resources/templates
    *                      then "/templates" is the templatesPath
    */
-  public ReportEngine(Class<?> caller, String templatesPath) {
+  public JournoEngine(Class<?> caller, String templatesPath) {
     createGenericFreemarkerConfig();
     templateEngineCfg.setClassForTemplateLoading(caller, templatesPath);
     configurePdfRenderers();
@@ -65,7 +65,7 @@ public class ReportEngine {
    * @param templateDir the dir where your freemarker templates resides
    * @throws IOException if there was some problem accessing the directory
    */
-  public ReportEngine(File templateDir) throws IOException {
+  public JournoEngine(File templateDir) throws IOException {
     createGenericFreemarkerConfig();
     templateEngineCfg.setDirectoryForTemplateLoading(templateDir);
     configurePdfRenderers();
@@ -76,7 +76,7 @@ public class ReportEngine {
    *
    * @param templateLoader a custom TemplateLoader that can handle access to your freemarker templates
    */
-  public ReportEngine(TemplateLoader templateLoader) {
+  public JournoEngine(TemplateLoader templateLoader) {
     createGenericFreemarkerConfig();
     templateEngineCfg.setTemplateLoader(templateLoader);
     configurePdfRenderers();
@@ -100,6 +100,8 @@ public class ReportEngine {
     templateEngineCfg.setWrapUncheckedExceptions(true);
     templateEngineCfg.setFallbackOnNullLoopVariable(false);
     templateEngineCfg.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
+    templateEngineCfg.setLocalizedLookup(false);
+    templateEngineCfg.setIncompatibleImprovements(version);
     BeansWrapper wrapper = new BeansWrapper(version);
     TemplateModel statics = wrapper.getStaticModels();
     templateEngineCfg.setSharedVariable("statics", statics);

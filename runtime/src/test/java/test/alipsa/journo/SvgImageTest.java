@@ -2,7 +2,7 @@ package test.alipsa.journo;
 
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.JournoException;
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -16,7 +16,7 @@ public class SvgImageTest {
 
   @Test
   public void testSVGIMage() throws JournoException {
-    ReportEngine engine = new ReportEngine(this, "/templates");
+    JournoEngine engine = new JournoEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
 

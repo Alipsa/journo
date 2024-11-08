@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.ImageUtil;
 import se.alipsa.journo.JournoException;
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class OutputTest {
 
-  static ReportEngine engine = new ReportEngine(OutputTest.class, "/templates");
+  static JournoEngine engine = new JournoEngine(OutputTest.class, "/templates");
 
   @BeforeAll
   public static void warmup() {
@@ -68,7 +68,7 @@ public class OutputTest {
 
   @Test
   public void testRenderToByteArray() throws JournoException, IOException {
-    ReportEngine engine = new ReportEngine(this, "/templates");
+    JournoEngine engine = new JournoEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");
@@ -82,7 +82,7 @@ public class OutputTest {
 
   @Test
   public void testRenderToStream() throws JournoException, IOException {
-    ReportEngine engine = new ReportEngine(this, "/templates");
+    JournoEngine engine = new JournoEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");

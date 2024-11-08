@@ -22,9 +22,9 @@ Below is a short introduction, for more comprehensive documentation, see [the wi
 Example usage:
 
 ```groovy
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 
-ReportEngine engine = new ReportEngine(this, "/templates");
+JournoEngine engine = new JournoEngine(this, "/templates");
 
 Map<String, Object> data = new HashMap<>();
 data.put("user", "Per");
@@ -42,7 +42,7 @@ To use it, add the following dependency to your maven pom.xml (or equivalent for
 <dependency>
     <groupId>se.alipsa</groupId>
     <artifactId>journo-runtime</artifactId>
-    <version>0.6.3</version>
+    <version>0.7.0</version>
 </dependency>
 ```
 
@@ -58,12 +58,12 @@ Assuming you have an image like this in your Freemarker template saved as a file
 You can then convert the image to a data url using the Image util:
 
 ```groovy
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 import se.alipsa.journo.ImageUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-ReportEngine engine = new ReportEngine(this, "/templates");
+JournoEngine engine = new JournoEngine(this, "/templates");
 Map<String, Object> data = new HashMap<>();
 
 // fetch the image from the classloader, in this case its in src/main/resources/alice2.png
@@ -109,11 +109,11 @@ Assuming your Freemarker markup saved as a file called svgImage.ftlh with the fo
 You can then do:
 
 ```groovy
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 import java.util.HashMap;
 import java.util.Map;
 
-ReportEngine engine = new ReportEngine(this, "/templates");
+JournoEngine engine = new JournoEngine(this, "/templates");
 Map<String, Object> data = new HashMap<>();
 data.put("svgImage", """
         <h2>A big blue circle</h2>
@@ -226,12 +226,12 @@ Journo detects and adds declared fonts if you specify it. I.e. if you do:
 ```
 And the Jersey font is in src/main/resources/fonts you can insert the location
 ```groovy
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-ReportEngine engine = new ReportEngine(this, "/templates");
+JournoEngine engine = new JournoEngine(this, "/templates");
 URL urlJersey = getClass().getResource("/fonts/Jersey25-Regular.ttf");
 Map<String, Object> data = new HashMap<>();
 data.put("jerseyUrl", urlJersey);

@@ -7,6 +7,7 @@
 - upgrade batik-transcoder 1.17 -> 1.18
 - Add stream method for rendering output
 - Add ReportEngine constructor for a custom TemplateLoader
+- Rename ReportEngine to JournoEngine
 
 ## v0.6.3 (2024-06-13)
 - Synchronize xhtmlToPdf to avoid concurrent modification issues on the pdf renderer

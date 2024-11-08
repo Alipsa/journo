@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.ImageUtil;
 import se.alipsa.journo.JournoException;
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,7 +16,7 @@ public class ExternalCssTest {
 
   @Test
   public void testExternalCss() throws JournoException {
-    ReportEngine engine = new ReportEngine(this, "/templates");
+    JournoEngine engine = new JournoEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");

@@ -1,17 +1,13 @@
 package se.alipsa.journo.viewer;
 
-import static se.alipsa.journo.viewer.JournoViewer.*;
-
-import freemarker.template.TemplateException;
 import javafx.geometry.Insets;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import se.alipsa.journo.JournoException;
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +17,7 @@ import java.util.Map;
 
 public class FreemarkerTab extends JournoTab {
 
-  private ReportEngine reportEngine;
+  private JournoEngine journoEngine;
   private FreemarkerTextArea freeMarkerArea;
 
   public FreemarkerTab(JournoViewer gui) {
@@ -61,7 +57,7 @@ public class FreemarkerTab extends JournoTab {
   }*/
 
   public byte[] renderPdf(Map<String, Object> data) throws JournoException {
-    return reportEngine.renderPdf(file.getName(), data);
+    return journoEngine.renderPdf(file.getName(), data);
   }
 
   public void renderPdf(Map<String, Object> data, File toFile) throws JournoException, IOException {
@@ -70,7 +66,7 @@ public class FreemarkerTab extends JournoTab {
   }
 
   public String renderHtml(Map<String, Object> data) throws JournoException {
-    return reportEngine.renderHtml(file.getName(), data);
+    return journoEngine.renderHtml(file.getName(), data);
   }
 
   public void loadFile(Path templateFile) {
@@ -136,11 +132,11 @@ public class FreemarkerTab extends JournoTab {
   @Override
   public void setFile(File file) {
     if (super.file != null && file != null && !super.file.getParentFile().equals(file.getParentFile())) {
-      reportEngine = null;
+      journoEngine = null;
     }
-    if (reportEngine == null && file != null) {
+    if (journoEngine == null && file != null) {
       try {
-        reportEngine = new ReportEngine(file.getParentFile());
+        journoEngine = new JournoEngine(file.getParentFile());
       } catch (IOException e) {
         ExceptionAlert.showAlert("Failed to re-initialize the reportEngine", e);
       }

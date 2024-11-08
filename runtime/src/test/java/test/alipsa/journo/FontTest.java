@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.JournoException;
-import se.alipsa.journo.ReportEngine;
+import se.alipsa.journo.JournoEngine;
 
 import java.io.File;
 import java.net.URL;
@@ -15,7 +15,7 @@ public class FontTest {
 
   @Test
   public void testLoadFont() throws JournoException {
-    ReportEngine engine = new ReportEngine(this, "/templates");
+    JournoEngine engine = new JournoEngine(this, "/templates");
     URL urlJersey = getClass().getResource("/fonts/Jersey25-Regular.ttf");
     URL urlJacquard = getClass().getResource("/fonts/Jacquard24-Regular.ttf");
 
