@@ -1,12 +1,17 @@
 package se.alipsa.journo;
 
-import com.lowagie.text.DocumentException;
+import com.openhtmltopdf.mathmlsupport.MathMLDrawer;
+import com.openhtmltopdf.pdfboxout.PdfBoxRenderer;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
 import com.steadystate.css.parser.CSSOMParser;
 import com.steadystate.css.parser.SACParserCSS3;
 import freemarker.cache.TemplateLoader;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.*;
+import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -16,14 +21,13 @@ import org.w3c.css.sac.CSSException;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleSheet;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.List;
 
 /**
  * This is the core class of the Journo library, used to create html or pdf output
@@ -32,8 +36,8 @@ public class JournoEngine {
 
   private static final Logger log = LoggerFactory.getLogger(JournoEngine.class);
   private Configuration templateEngineCfg;
-  private final ITextRenderer pdfRenderer = new ITextRenderer();
-  Set<String> addedFontsCache = new HashSet<>();
+  private final Map<String, File> fontsCache = new HashMap<>();
+  private final File cacheDir = new File(".journoCache");
 
   /**
    * Creates a ReportEngine
@@ -56,7 +60,7 @@ public class JournoEngine {
   public JournoEngine(Class<?> caller, String templatesPath) {
     createGenericFreemarkerConfig();
     templateEngineCfg.setClassForTemplateLoading(caller, templatesPath);
-    configurePdfRenderers();
+    cacheDir.mkdirs();
   }
 
   /**
@@ -68,7 +72,7 @@ public class JournoEngine {
   public JournoEngine(File templateDir) throws IOException {
     createGenericFreemarkerConfig();
     templateEngineCfg.setDirectoryForTemplateLoading(templateDir);
-    configurePdfRenderers();
+    cacheDir.mkdirs();
   }
 
   /**
@@ -79,16 +83,7 @@ public class JournoEngine {
   public JournoEngine(TemplateLoader templateLoader) {
     createGenericFreemarkerConfig();
     templateEngineCfg.setTemplateLoader(templateLoader);
-    configurePdfRenderers();
-  }
-
-  private void configurePdfRenderers() {
-    // Enable SVG handling
-    ChainingReplacedElementFactory chainingReplacedElementFactory = new ChainingReplacedElementFactory();
-    // Add the default factory that handles "normal" images to the chain
-    chainingReplacedElementFactory.addReplacedElementFactory(pdfRenderer.getSharedContext().getReplacedElementFactory());
-    chainingReplacedElementFactory.addReplacedElementFactory(new SVGReplacedElementFactory());
-    pdfRenderer.getSharedContext().setReplacedElementFactory(chainingReplacedElementFactory);
+    cacheDir.mkdirs();
   }
 
   private void createGenericFreemarkerConfig() {
@@ -242,23 +237,17 @@ public class JournoEngine {
    * @throws JournoException if parsing goes wrong
    * @return the font paths that were added
    */
-  public Set<String> addHtmlFonts(String html) throws JournoException {
+  public void addHtmlFonts(String html) throws JournoException {
     try {
       Document doc = Jsoup.parse(html);
-      Set<String> fontUrls = new HashSet<>();
       Elements styles = doc.select("style");
       for (Element style : styles) {
-        for (String fontUrl : parseStyle(style.html())) {
-          if (addedFontsCache.add(fontUrl)) {
-            fontUrls.add(fontUrl);
-          }
+        for (Map.Entry<String, String> entry : parseStyle(style.html()).entrySet()) {
+          URL fontUrl = new URL(entry.getValue());
+          addFont(fontUrl, entry.getKey());
         }
       }
-      for (String fontUrl : fontUrls) {
-        addFont(fontUrl);
-      }
-      return fontUrls;
-    } catch (RuntimeException e) {
+    } catch (MalformedURLException e) {
       throw new JournoException(e);
     }
   }
@@ -266,36 +255,35 @@ public class JournoEngine {
   /**
    * Add a font
    *
-   * @param fontPath the path to the font to add
+   * @param fontPath the url to the font to add
    * @throws JournoException if the font cannot be found
    */
-  public void addFont(URL fontPath) throws JournoException {
-    addFont(fontPath.toExternalForm());
-  }
-
-  /**
-   * Add a font
-   *
-   * @param fontPath the path to the font to add
-   * @throws JournoException if the font cannot be found
-   */
-  public void addFont(String fontPath) throws JournoException {
-    addFont(fontPath, true);
+  public void addFont(URL fontPath, String fontFamily) throws JournoException {
+      addFont(getOrDownload(fontPath), fontFamily);
   }
 
   /**
    * Add a font
    * @param fontPath the path to the font to add
-   * @param embedded whether to embed the font in the pdf or not
+   * @param fontFamily the named alias of the font
    * @throws JournoException if the font cannot be found
    */
-  public void addFont(String fontPath, boolean embedded) throws JournoException {
-    try {
-      // "MyFont.ttf"
-      pdfRenderer.getFontResolver().addFont(fontPath, embedded);
-    } catch (IOException e) {
-      throw new JournoException(e);
+  public void addFont(String fontPath, String fontFamily) throws JournoException {
+    File file = new File(fontPath);
+    if (!file.exists()) {
+      throw new JournoException("The file " + fontPath + " does not exist");
     }
+    addFont(file, fontFamily);
+  }
+
+  /**
+   * Add a font
+   * @param fontFile the font file to add
+   * @param fontFamily the named alias of the font
+   * @throws JournoException if the font cannot be found
+   */
+  public void addFont(File fontFile, String fontFamily) {
+      fontsCache.put(fontFamily, fontFile);
   }
 
   /**
@@ -307,13 +295,11 @@ public class JournoEngine {
    */
   public synchronized byte[] xhtmlToPdf(String xhtml) throws JournoException {
     try {
-      pdfRenderer.setDocumentFromString(xhtml);
-      pdfRenderer.layout();
       try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-        pdfRenderer.createPDF(baos);
+        xhtmlToPdf(xhtml, baos);
         return baos.toByteArray();
       }
-    } catch (DocumentException | IOException e) {
+    } catch (IOException e) {
       throw new JournoException(e);
     }
   }
@@ -322,26 +308,27 @@ public class JournoEngine {
    * Convert a xhtml string into a pdf byte array that will be streamed to the outputstream specified
    *
    * @param xhtml the xhtml string to render
-   * @param out the outputstream to write to
+   * @param os the outputstream to write to
    * @throws JournoException if creating the pdf byte array fails
    */
-  public synchronized void xhtmlToPdf(String xhtml, OutputStream out) throws JournoException {
+  public synchronized void xhtmlToPdf(String xhtml, OutputStream os) throws JournoException {
     try {
-      pdfRenderer.setDocumentFromString(xhtml);
-      pdfRenderer.layout();
-      pdfRenderer.createPDF(out);
-    } catch (DocumentException e) {
+      var jsDoc = Jsoup.parse(xhtml);
+      org.w3c.dom.Document doc = new W3CDom().fromJsoup(jsDoc);
+      PdfRendererBuilder builder = new PdfRendererBuilder()
+          .withW3cDocument(doc, new File(".").toURI().toString())
+          .useSVGDrawer(new BatikSVGDrawer())
+          .useMathMLDrawer(new MathMLDrawer())
+          .toStream(os);
+      if (!fontsCache.isEmpty()) {
+        fontsCache.forEach((k,v) -> {
+          builder.useFont(v, k);
+        });
+      }
+      builder.run();
+    } catch (IOException e) {
       throw new JournoException(e);
     }
-  }
-
-  /**
-   * Allows you to look under the hood of the PDF generator
-   *
-   * @return the underlying ITextRenderer
-   */
-  public ITextRenderer getPdfRenderer() {
-    return pdfRenderer;
   }
 
   /**
@@ -369,34 +356,59 @@ public class JournoEngine {
    * Extract the font urls declared in the style section of the html
    *
    * @param style the style section content
-   * @return a list of urls for each font declaration
+   * @return a Map of fontFamily and url for each font declaration
    * @throws JournoException if parsing failed
    */
-  private List<String> parseStyle(String style) throws JournoException {
+  private Map<String, String> parseStyle(String style) throws JournoException {
     try {
       org.w3c.css.sac.InputSource source = new org.w3c.css.sac.InputSource(new java.io.StringReader(style));
       CSSOMParser parser = new CSSOMParser(new SACParserCSS3());
 
       CSSStyleSheet sheet = parser.parseStyleSheet(source, null, null);
-      List<String> fontUrls = new ArrayList<>();
+      Map<String, String> fonts = new HashMap<>();
       CSSRuleList rules = sheet.getCssRules();
       for (int i = 0; i < rules.getLength(); i++) {
         final CSSRule rule = rules.item(i);
         if (CSSRule.FONT_FACE_RULE == rule.getType()) {
           String fontFace = rule.getCssText();
+          String fontUrl = null;
+          String fontFamily = null;
           if (fontFace.contains("url")) {
             String urlString = fontFace.substring(fontFace.indexOf("url") + 3);
             if (urlString.contains("(") && urlString.contains(")")) {
               urlString = urlString
                   .substring(urlString.indexOf("(") + 1, urlString.indexOf(")"))
                   .trim();
-              fontUrls.add(urlString);
+              fontUrl = urlString;
             }
+          }
+          if (fontFace.contains("font-family")) {
+            fontFamily = fontFace.substring(fontFace.indexOf("font-family") + 9);
+            fontFamily = fontFamily.replace('"', ' ').trim();
+          }
+          if (fontFamily != null && fontUrl != null) {
+            fonts.put(fontFamily, fontUrl);
           }
         }
       }
-      return fontUrls;
+      return fonts;
     } catch (IOException | CSSException e) {
+      throw new JournoException(e);
+    }
+  }
+
+  File getOrDownload(URL fontPath) throws JournoException {
+    try {
+      String fileName = fontPath.getFile();
+      if (fileName.contains("/")) {
+        fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+      }
+      File file = new File(cacheDir, fileName);
+      if (!file.exists()) {
+        IOUtils.copy(fontPath, file);
+      }
+      return file;
+    } catch (IOException e) {
       throw new JournoException(e);
     }
   }
