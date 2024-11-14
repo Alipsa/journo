@@ -1,5 +1,6 @@
 package test.alipsa.journo;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.ImageUtil;
@@ -7,6 +8,7 @@ import se.alipsa.journo.JournoException;
 import se.alipsa.journo.JournoEngine;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -68,7 +70,7 @@ public class OutputTest {
 
   @Test
   public void testRenderToByteArray() throws JournoException, IOException {
-    JournoEngine engine = new JournoEngine(this, "/templates");
+    //JournoEngine engine = new JournoEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");
@@ -82,7 +84,7 @@ public class OutputTest {
 
   @Test
   public void testRenderToStream() throws JournoException, IOException {
-    JournoEngine engine = new JournoEngine(this, "/templates");
+    //JournoEngine engine = new JournoEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");
@@ -94,5 +96,15 @@ public class OutputTest {
       engine.renderPdf("test.ftlh", data, out);
       assertTrue(out.toByteArray().length > 0, "Byte array length should be greater than 0");
     }
+  }
+
+  @Test
+  void testMathmlToPDF() throws JournoException {
+    var pdfFile = new File("target/mathml.pdf");
+    String html = engine.renderHtml("mathml.ftlh", new HashMap<>());
+    engine.renderPdf(html, pdfFile);
+    assertTrue(pdfFile.exists());
+    System.out.println("Wrote " + pdfFile.getAbsolutePath());
+    //pdfFile.delete()
   }
 }

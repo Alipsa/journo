@@ -17,6 +17,9 @@ import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.xhtmlrenderer.util.XRRuntimeException;
+import se.alipsa.journo.math.MathReplacedElementFactory;
+import se.alipsa.journo.svg.SVGReplacedElementFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -83,10 +86,11 @@ public class JournoEngine {
   }
 
   private void configurePdfRenderers() {
-    // Enable SVG handling
+    // Enable SVG and MathML handling
     ChainingReplacedElementFactory chainingReplacedElementFactory = new ChainingReplacedElementFactory();
     // Add the default factory that handles "normal" images to the chain
     chainingReplacedElementFactory.addReplacedElementFactory(pdfRenderer.getSharedContext().getReplacedElementFactory());
+    chainingReplacedElementFactory.addReplacedElementFactory(new MathReplacedElementFactory());
     chainingReplacedElementFactory.addReplacedElementFactory(new SVGReplacedElementFactory());
     pdfRenderer.getSharedContext().setReplacedElementFactory(chainingReplacedElementFactory);
   }
@@ -313,7 +317,8 @@ public class JournoEngine {
         pdfRenderer.createPDF(baos);
         return baos.toByteArray();
       }
-    } catch (DocumentException | IOException e) {
+    } catch (DocumentException | IOException | XRRuntimeException e) {
+      System.out.println("Failed to render " + xhtml);
       throw new JournoException(e);
     }
   }

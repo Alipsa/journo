@@ -1,4 +1,4 @@
-package se.alipsa.journo;
+package se.alipsa.journo.svg;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
