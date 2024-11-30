@@ -1,12 +1,7 @@
 package se.alipsa.journo;
 
-import com.steadystate.css.parser.CSSOMParser;
-import com.steadystate.css.parser.SACParserCSS3;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.css.CSSRule;
-import org.w3c.dom.css.CSSRuleList;
-import org.w3c.dom.css.CSSStyleSheet;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
@@ -14,9 +9,6 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -24,12 +16,12 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Replace the svg tags
  */
-public class SVGReplacedElementFactory implements ReplacedElementFactory {
+public class ImageReplacedElementFactory implements ReplacedElementFactory {
 
   /**
    * default ctor
    */
-  public SVGReplacedElementFactory() {
+  public ImageReplacedElementFactory() {
   }
 
   @Override
@@ -37,23 +29,32 @@ public class SVGReplacedElementFactory implements ReplacedElementFactory {
                                                UserAgentCallback uac, int cssWidth, int cssHeight) {
     Element element = box.getElement();
     if (element != null) {
+      System.out.println("Checking " + element.getNodeName());
       if ("svg".equals(element.getNodeName())) {
-
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder;
-
-        try {
-          documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-          throw new RuntimeException(e);
-        }
-        Document svgDocument = documentBuilder.newDocument();
-        Element svgElement = (Element) svgDocument.importNode(element, true);
-        svgDocument.appendChild(svgElement);
+        Document svgDocument = createDocumentFromPart(element);
         return new SVGReplacedElement(svgDocument, cssWidth, cssHeight);
+      }
+      if ("math".equals(element.getNodeName())) {
+        Document mathDocument = createDocumentFromPart(element);
+        return new MathReplacedElement(mathDocument, cssWidth, cssHeight);
       }
     }
     return null;
+  }
+
+  private static Document createDocumentFromPart(Element element) {
+    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder documentBuilder;
+
+    try {
+      documentBuilder = documentBuilderFactory.newDocumentBuilder();
+    } catch (ParserConfigurationException e) {
+      throw new RuntimeException(e);
+    }
+    Document document = documentBuilder.newDocument();
+    Element svgElement = (Element) document.importNode(element, true);
+    document.appendChild(svgElement);
+    return document;
   }
 
   @Override

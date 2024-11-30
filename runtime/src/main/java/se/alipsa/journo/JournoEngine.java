@@ -83,16 +83,17 @@ public class JournoEngine {
   }
 
   private void configurePdfRenderers() {
-    // Enable SVG handling
+    // Enable multiple ReplacedElementFactories
     ChainingReplacedElementFactory chainingReplacedElementFactory = new ChainingReplacedElementFactory();
     // Add the default factory that handles "normal" images to the chain
     chainingReplacedElementFactory.addReplacedElementFactory(pdfRenderer.getSharedContext().getReplacedElementFactory());
-    chainingReplacedElementFactory.addReplacedElementFactory(new SVGReplacedElementFactory());
+    // Handles SVG and Math conversion to bitmap images
+    chainingReplacedElementFactory.addReplacedElementFactory(new ImageReplacedElementFactory());
     pdfRenderer.getSharedContext().setReplacedElementFactory(chainingReplacedElementFactory);
   }
 
   private void createGenericFreemarkerConfig() {
-    Version version = Configuration.VERSION_2_3_32;
+    Version version = Configuration.VERSION_2_3_33;
     templateEngineCfg = new Configuration(version);
     templateEngineCfg.setDefaultEncoding("UTF-8");
     templateEngineCfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);

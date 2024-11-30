@@ -41,6 +41,7 @@
         <batik-transcoder.version>1.18</batik-transcoder.version>
         <cssparser.version>0.9.30</cssparser.version>
         <flying-saucer.version>9.10.2</flying-saucer.version>
+        <jeuclid.version>3.1.15-SNAPSHOT</jeuclid.version>
         <freemarker.version>2.3.33</freemarker.version>
         <jsoup.version>1.18.1</jsoup.version>
         <junit-jupiter.version>5.11.3</junit-jupiter.version>
@@ -62,6 +63,11 @@
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-pdf</artifactId>
             <version>${flying-saucer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>se.alipsa.jeuclid</groupId>
+            <artifactId>jeuclid-core</artifactId>
+            <version>${jeuclid.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -206,7 +212,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.21.1</version>
+                <version>3.21.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
