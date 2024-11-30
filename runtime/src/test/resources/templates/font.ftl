@@ -11,16 +11,20 @@
             padding: 1em;
         }
 
+        /* instead, we look up the ttf equivalent font https://gist.github.com/karimnaaji/b6c9c9e819204113e9cabf290d580551 */
+        @font-face {
+            font-family: "Sofia";
+            src: url(https://fonts.gstatic.com/s/sofia/v5/Imnvx0Ag9r6iDBFUY5_RaQ.ttf);
+        }
+
         @font-face {
             font-family: "Jersey 25";
             src: url(${jerseyUrl});
-            -fs-pdf-font-embed: embed;
         }
 
         @font-face {
             font-family: "Jacquard 24";
             src: url(${jacquardUrl});
-            -fs-pdf-font-embed: embed;
         }
 
         body {

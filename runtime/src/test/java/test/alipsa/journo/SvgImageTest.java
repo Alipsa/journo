@@ -35,11 +35,10 @@ public class SvgImageTest {
     assertTrue(html.contains("<circle cx=\"150\" cy=\"90\" r=\"80\" stroke=\"black\" stroke-width=\"3\""));
 
     // Create a pdf file from the html
-    Path path = Paths.get("svgImage.pdf");
+    Path path = Paths.get("target/svgImage.pdf");
     engine.renderPdf("svgImage.ftlh", data, path);
-    //System.out.println("Wrote " + path.toAbsolutePath());
+    System.out.println("Wrote " + path.toAbsolutePath());
     File file = path.toFile();
     assertTrue(file.exists());
-    file.deleteOnExit();
   }
 }

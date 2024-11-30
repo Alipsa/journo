@@ -95,4 +95,13 @@ public class OutputTest {
       assertTrue(out.toByteArray().length > 0, "Byte array length should be greater than 0");
     }
   }
+
+  @Test
+  void testMathMlToPdf() throws JournoException {
+    var pdfFile = Paths.get("target/mathml.pdf");
+    String html = engine.renderHtml("mathml.ftlh", new HashMap<>());
+    engine.renderPdf(html, pdfFile);
+    assertTrue(pdfFile.toFile().exists());
+    System.out.println("Wrote " + pdfFile.toFile().getAbsolutePath());
+  }
 }
