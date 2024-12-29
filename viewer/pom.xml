@@ -23,14 +23,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <batik.version>1.18</batik.version>
-        <classgraph.version>4.8.177</classgraph.version>
+        <classgraph.version>4.8.179</classgraph.version>
         <fxsvgimage.version>1.1</fxsvgimage.version>
         <groovy-version>4.0.24</groovy-version>
-        <javafx.version>22.0.2</javafx.version>
+        <javafx.version>23.0.1</javafx.version>
         <journo-runtime.version>0.7.0-SNAPSHOT</journo-runtime.version>
-        <log4j.version>2.24.1</log4j.version>
+        <log4j.version>2.24.3</log4j.version>
         <pdfbox.version>3.0.3</pdfbox.version>
-        <richtextfx.version>0.11.3</richtextfx.version>
+        <richtextfx.version>0.11.4</richtextfx.version>
     </properties>
 
     <repositories>
@@ -153,7 +153,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.17.1</version>
+                <version>2.18.0</version>
                 <configuration>
                     <rulesUri>file://${basedir}/version-plugin-rules.xml</rulesUri>
                 </configuration>

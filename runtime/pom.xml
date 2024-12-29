@@ -45,10 +45,10 @@
         <batik-transcoder.version>1.18</batik-transcoder.version>
         <cssparser.version>0.9.30</cssparser.version>
         <flying-saucer.version>9.10.2</flying-saucer.version>
-        <freemarker.version>2.3.33</freemarker.version>
-        <jsoup.version>1.18.2</jsoup.version>
-        <junit-jupiter.version>5.11.3</junit-jupiter.version>
-        <openhtmltopdfVersion>1.1.22</openhtmltopdfVersion>
+        <freemarker.version>2.3.34</freemarker.version>
+        <jsoup.version>1.18.3</jsoup.version>
+        <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <openhtmltopdfVersion>1.1.23</openhtmltopdfVersion>
         <slf4j.version>2.0.16</slf4j.version>
     </properties>
 
@@ -207,7 +207,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.1</version>
+                <version>3.11.2</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

@@ -20,4 +20,5 @@ if [[ "${OS}" == "mac" ]]; then
 fi
 
 mvn package || exit 1
-java $JAVA_OPTS -jar target/journo-viewer-0.6.0-SNAPSHOT.jar
+jarFilePath=$(ls -t target/journo-viewer-*.jar)
+java $JAVA_OPTS -jar "$jarFilePath"
