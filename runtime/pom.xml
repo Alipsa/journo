@@ -43,7 +43,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <batik-transcoder.version>1.18</batik-transcoder.version>
-        <cssparser.version>0.9.30</cssparser.version>
+        <!--cssparser.version>0.9.30</cssparser.version-->
         <flying-saucer.version>9.10.2</flying-saucer.version>
         <freemarker.version>2.3.34</freemarker.version>
         <jsoup.version>1.18.3</jsoup.version>
@@ -58,18 +58,6 @@
             <artifactId>freemarker</artifactId>
             <version>${freemarker.version}</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>flying-saucer-core</artifactId>
-            <version>${flying-saucer.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>flying-saucer-pdf</artifactId>
-            <version>${flying-saucer.version}</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>io.github.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-core</artifactId>
@@ -95,11 +83,11 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>net.sourceforge.cssparser</groupId>
             <artifactId>cssparser</artifactId>
             <version>${cssparser.version}</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

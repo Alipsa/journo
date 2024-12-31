@@ -5,7 +5,7 @@
 ###
 
 DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-
+skipInstructions=${1:-false}
 source "$DIR"/build.sh || exit 1
 
 appName="journo.app"
@@ -27,6 +27,8 @@ cp src/main/resources/journo-rounded.* "$targetDir"/
 cp src/main/assembly/win/* "$targetDir"/
 
 chmod +x "${MACOS_DIR}/journo"
+chmod +x  "$targetDir"/*.sh
+chmod +x  "$targetDir"/*.zsh
 
 # cd to the target so we dont have to allow full disk access in Settings -> Privacy and Security
 cd "${targetDir}/.." || exit 1
@@ -40,7 +42,9 @@ cd "$DIR/target" || exit 1
 zip -r journo-viewer.zip "${appName}"
 
 echo "Done!"
-echo "To install the journo-viewer.zip do the following"
-echo "Linux: Unzip the journo-viewer.zip to your applications folder and run createLauncher.sh to install!"
-echo "MacOs: Unzip the journo-viewer.zip and drag the $appName to your applications folder to install!"
-echo "Windows: Unzip the journo-viewer.zip to your applications folder and run createShortcut.ps1 to install!"
+if [[ "$skipInstructions" == "false" ]]; then
+  echo "To install the journo-viewer.zip do the following"
+  echo "Linux: Unzip the journo-viewer.zip to your applications folder and run createLauncher.sh to install!"
+  echo "MacOs: Unzip the journo-viewer.zip and drag the $appName to your applications folder to install!"
+  echo "Windows: Unzip the journo-viewer.zip to your applications folder and run createShortcut.ps1 to install!"
+fi

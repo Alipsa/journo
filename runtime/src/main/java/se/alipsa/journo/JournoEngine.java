@@ -1,5 +1,6 @@
 package se.alipsa.journo;
 
+import com.openhtmltopdf.extend.SVGDrawer;
 import com.openhtmltopdf.mathmlsupport.MathMLDrawer;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
@@ -25,6 +26,8 @@ public class JournoEngine {
 
   private static final Logger log = LoggerFactory.getLogger(JournoEngine.class);
   private Configuration templateEngineCfg;
+  private BatikSVGDrawer svgDrawer;
+  private MathMLDrawer mathMLDrawer;
 
   /**
    * Creates a ReportEngine
@@ -144,7 +147,7 @@ public class JournoEngine {
   public void renderPdf(String template, Map<String, Object> data, Path path) throws JournoException {
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(path))) {
       fos.write(renderPdf(template, data));
-      log.debug("Wrote " + path.toAbsolutePath());
+      log.debug("Wrote {}", path.toAbsolutePath());
     } catch (IOException e) {
       throw new JournoException(e);
     }
@@ -160,7 +163,7 @@ public class JournoEngine {
   public void renderPdf(String xhtml, Path path) throws JournoException {
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(path))) {
       fos.write(xhtmlToPdf(xhtml));
-      log.debug("renderPdf: Wrote " + path.toAbsolutePath());
+      log.debug("renderPdf: Wrote {}", path.toAbsolutePath());
     } catch (IOException e) {
       throw new JournoException(e);
     }
@@ -176,7 +179,7 @@ public class JournoEngine {
   public void renderPdf(String xhtml, File file) throws JournoException {
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
       fos.write(xhtmlToPdf(xhtml));
-      log.debug("renderPdf: Wrote " + file.getAbsolutePath());
+      log.debug("renderPdf: Wrote {}", file.getAbsolutePath());
     } catch (IOException e) {
       throw new JournoException(e);
     }
@@ -227,13 +230,27 @@ public class JournoEngine {
       org.w3c.dom.Document doc = new W3CDom().fromJsoup(jsDoc);
       PdfRendererBuilder builder = new PdfRendererBuilder()
           .withW3cDocument(doc, new File(".").toURI().toString())
-          .useSVGDrawer(new BatikSVGDrawer())
-          .useMathMLDrawer(new MathMLDrawer())
+          .useSVGDrawer(getSvgDrawer())
+          .useMathMLDrawer(getMathMLDrawer())
           .toStream(os);
       builder.run();
     } catch (IOException e) {
       throw new JournoException(e);
     }
+  }
+
+  private SVGDrawer getMathMLDrawer() {
+    if (mathMLDrawer == null) {
+      mathMLDrawer = new MathMLDrawer();
+    }
+    return mathMLDrawer;
+  }
+
+  private SVGDrawer getSvgDrawer() {
+    if (svgDrawer == null) {
+      svgDrawer = new BatikSVGDrawer();
+    }
+    return svgDrawer;
   }
 
   /**

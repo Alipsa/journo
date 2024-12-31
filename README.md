@@ -8,14 +8,11 @@ creates PDF documents from Freemarker markup.
 Usage of this could be as a reporting engine in an application server (Spring Boot, Play, Quarkus etc.) or a
 java gui (Swing, JavaFx or SWT).
 
-The freemarker markup should ideally generate xhtml. If it does not you need to convert
-the html code into xhtml e.g. using `reportEngine.htmlToXhtml(html)`
+This library uses [OpenHTMLtoPDF](https://github.com/openhtmltopdf/openhtmltopdf) to generate the PDF so the html produced by the Freemarker
+template needs to take into account the xhtml requirements posed.
+[See the disclaimer section of OpenHTMLtoPDF](https://github.com/openhtmltopdf/openhtmltopdf?tab=readme-ov-file#disclaimer) for details.
 
-This library uses Flying Saucer to generate the PDF so the html produced by the Freemarker
-template needs to take into account the xhtml requirements posed by Flying Saucer.
-[See the Flying Saucer user guide for details](https://flyingsaucerproject.github.io/flyingsaucer/r8/guide/users-guide-R8.html)
-
-Journo requires JDK 17 or later.
+Journo runtime requires JDK 17 or later.
 
 Below is a short introduction, for more comprehensive documentation, see [the wiki](https://github.com/Alipsa/journo/wiki/Journo-Wiki-Home)
 
@@ -220,7 +217,6 @@ Journo detects and adds declared fonts if you specify it. I.e. if you do:
         @font-face {
             font-family: "Jersey 25";
             src: url(${jerseyUrl});
-            -fs-pdf-font-embed: embed;
         }
 </style>
 ```
@@ -238,16 +234,10 @@ data.put("jerseyUrl", urlJersey);
 byte[] pdf = engine.renderPdf("someReport.ftl", data);
 ```
 
-If you do not want to add the special `-fs-pdf-font-embed` property,
-you can instead ask the report engine to load and embed all declared fonts
-using `engine.addHtmlFonts(xhtml)` prior to rendering the PDF.
-
-Note that currently, declaring fonts in an external css will not result in them being loaded.
-In those cases you must use `engine.addFont(fontPathOrUrl)` prior to calling renderPdf.
-
 ### Google fonts
-The woff2 format, which many of the Google fonts default to is not supported in Flying Saucer. Ttf fonts works just fine though,
-so what you can do after finding a nice font you want to use is to look up the ttf location of that font e.g. 
+The woff2 format, which many of the Google fonts default to is not supported in OpenHTMLtoPDF. 
+Ttf fonts works just fine though, so what you can do after finding a nice font you want to use 
+is to look up the ttf location of that font e.g. 
 [here](https://gist.githubusercontent.com/karimnaaji/b6c9c9e819204113e9cabf290d580551/raw/ed71595a691320ba63e48335c7c77818336cb1c2/GoogleFonts.txt)
 and search for the font family. E.g: if google fonts advices you to 
 ```html
@@ -260,10 +250,9 @@ you will find that there is a ttf version here: http://fonts.gstatic.com/s/sofia
 ```css
         @font-face {
           font-family: "Sofia";
-          src: url(http://fonts.gstatic.com/s/sofia/v5/Imnvx0Ag9r6iDBFUY5_RaQ.ttf):
+          src: url(http://fonts.gstatic.com/s/sofia/v5/Imnvx0Ag9r6iDBFUY5_RaQ.ttf);
           font-weight: normal;
           font-style: normal;
-          -fs-pdf-font-embed: embed;
         }
 ```
 
@@ -274,16 +263,16 @@ an example of using a WebView to do just this).
 
 ## Journo viewer
 The [Journo Viewer](viewer/readme.md) is a simple but powerful gui tool to shorten the report creation lifecycle.
-You need a JDK 17 or higher with javafx bundled to run it (e.g. the Bellsoft Full JDK distribution)
+You need a JDK 21 or higher with javafx bundled to run it (e.g. the Bellsoft Full JDK distribution)
 
 ## Documentation etc.
 For more information please see [the wiki](https://github.com/Alipsa/journo/wiki/Journo-Wiki-Home)
 
 ## License
 The journo code is licensed under the MIT license.
-Note that it heavily depends on Freemarker and Flying Saucer which are
+Note that it heavily depends on Freemarker and OpenHTMLtoPDF which are
 licenced under the Apache License (Freemarker) and
-LGPL (Flying Saucer) respectively.
+LGPL (OpenHTMLtoPDF) respectively.
 
 ## 3:rd party libraries used
 
@@ -291,17 +280,13 @@ LGPL (Flying Saucer) respectively.
 - Used to create the (x)html
 - Apache License Version 2.0
 
-### Flying Saucer (https://github.com/flyingsaucerproject/flyingsaucer)
+### OpenHTMLtoPDF (https://github.com/openhtmltopdf/openhtmltopdf)
 - Used to create PDFs
 - GNU Lesser General Public License, version 2.1 or later
 
 ### Jsoup (https://jsoup.org/)
 - Used to convert html to xhtml
 - MIT license
-
-### CSS Parser (https://cssparser.sourceforge.net/)
-- Used to detect font declaration in the style section(s).
-- Apache License, Version 2.0
 
 ### Batik (https://xmlgraphics.apache.org/batik/)
 - Used to convert SVG to bitmaps

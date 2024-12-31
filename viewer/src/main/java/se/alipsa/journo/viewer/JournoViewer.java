@@ -1,6 +1,5 @@
 package se.alipsa.journo.viewer;
 
-import freemarker.template.TemplateException;
 import groovy.lang.GroovySystem;
 import javafx.application.Application;
 import javafx.application.Platform;
