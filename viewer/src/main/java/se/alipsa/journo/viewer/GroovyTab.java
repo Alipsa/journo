@@ -184,9 +184,10 @@ public class GroovyTab extends JournoTab {
 
   @Override
   public void save() {
+    String content = codeArea.getAllText();
     if (file != null) {
       try {
-        Files.writeString(file.toPath(), codeArea.getText());
+        Files.writeString(file.toPath(), content);
         setStatus("Saved " + file);
         contentSaved();
         gui.saveDataFileToProject(file);
@@ -211,7 +212,7 @@ public class GroovyTab extends JournoTab {
         Path filePath = targetFile.toPath();
         try {
           setStatus("Writing " + filePath.toAbsolutePath());
-          Files.writeString(filePath, codeArea.getText());
+          Files.writeString(filePath, content);
           setFile(targetFile);
           setText(targetFile.getName());
           contentSaved();
