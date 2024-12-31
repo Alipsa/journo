@@ -6,7 +6,10 @@
 
 DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 skipInstructions=${1:-false}
-source "$DIR"/build.sh || exit 1
+skipBuild=${2:-false}
+if [[ "$skipBuild" == "false" ]]; then
+  source "$DIR"/build.sh || exit 1
+fi
 
 appName="journo.app"
 targetDir="$DIR/target/${appName}"

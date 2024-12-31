@@ -350,13 +350,17 @@ public class JournoViewer extends Application {
       StringBuilder content = new StringBuilder();
       String version = "unknown";
       String buildTime = "unknown";
+      String batikVersion = "unknown";
+      String jsoupVersion = "unknown";
+      String openHtmlVersion = "unknown";
+      String freeMarkerVersion = "unknown";
       try (InputStream is = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
         if (is != null) {
           BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
           String line;
           while ((line = bufferedReader.readLine()) != null) {
             if (line.startsWith("Implementation-Version")) {
-              version = line.substring(line.indexOf(':'));
+              version = line.substring(line.indexOf(':')+1);
             } else if (line.startsWith("Build-Time")) {
               var dt = line.substring(line.indexOf(':')+1);
               try {
@@ -366,6 +370,14 @@ public class JournoViewer extends Application {
                 logger.warn("Failed to parse build time", e);
                 buildTime = dt;
               }
+            } else if (line.startsWith("Batik-Version")) {
+              batikVersion = line.substring(line.indexOf(':')+1);
+            } else if (line.startsWith("Jsoup-Version")) {
+              jsoupVersion = line.substring(line.indexOf(':')+1);
+            } else if (line.startsWith("Openhtmltopdf-Version")) {
+              openHtmlVersion = line.substring(line.indexOf(':')+1);
+            } else if (line.startsWith("FreeMarker-Version")) {
+              freeMarkerVersion = line.substring(line.indexOf(':')+1);
             }
           }
         } else {
@@ -377,11 +389,17 @@ public class JournoViewer extends Application {
       }
       content.append("Journo version: ").append(version)
           .append("\nBuilt: ").append(buildTime)
-          .append("\nJava Runtime Version: ")
+          .append("\n\nFreeMarker version: ").append(freeMarkerVersion)
+          .append("\nOpenHTMLtoPDF version: ").append(openHtmlVersion)
+          .append("\nBatik version: ").append(batikVersion)
+          .append("\nJsoup version: ").append(jsoupVersion)
+          .append("\n\nJava Runtime Version: ")
           .append(System.getProperty("java.runtime.version"))
           .append(" (").append(System.getProperty("os.arch")).append(")")
-          .append(")")
           .append("\nGroovy version: ").append(GroovySystem.getVersion());
+
+
+
       Alert infoDialog = new Alert(Alert.AlertType.INFORMATION, content.toString());
       infoDialog.setHeaderText("About Journo");
       infoDialog.show();

@@ -17,16 +17,15 @@
     <url>https://github.com/Alipsa/journo</url>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <batik.version>1.18</batik.version>
         <classgraph.version>4.8.179</classgraph.version>
         <fxsvgimage.version>1.1</fxsvgimage.version>
         <groovy-version>4.0.24</groovy-version>
         <javafx.version>23.0.1</javafx.version>
-        <journo-runtime.version>0.7.0-SNAPSHOT</journo-runtime.version>
+        <journo-runtime.version>${revision}</journo-runtime.version>
         <log4j.version>2.24.3</log4j.version>
         <pdfbox.version>3.0.3</pdfbox.version>
         <richtextfx.version>0.11.4</richtextfx.version>
@@ -140,9 +139,9 @@
                                     <message>Please use maven version 3.8.4 or higher</message>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>[17,)</version>
+                                    <version>[21,)</version>
                                     <level>ERROR</level>
-                                    <message>Please use Java 17 or higher</message>
+                                    <message>Please use Java 21 or higher</message>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -176,6 +175,10 @@
                         </manifest>
                         <manifestEntries>
                             <Build-Time>${maven.build.timestamp}</Build-Time>
+                            <Batik-Version>${batik.version}</Batik-Version>
+                            <Jsoup-Version>${jsoup.version}</Jsoup-Version>
+                            <Openhtmltopdf-Version>${openhtmltopdfVersion}</Openhtmltopdf-Version>
+                            <FreeMarker-Version>${freemarker.version}</FreeMarker-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
