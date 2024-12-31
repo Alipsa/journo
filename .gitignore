@@ -30,3 +30,6 @@ replay_pid*
 /viewer/target/
 /viewer/dependency-reduced-pom.xml
 .DS_Store
+/runtime/.flattened-pom.xml
+/viewer/.flattened-pom.xml
+/.flattened-pom.xml
