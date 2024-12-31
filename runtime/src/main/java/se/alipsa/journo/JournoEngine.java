@@ -162,8 +162,8 @@ public class JournoEngine {
    */
   public void renderPdf(String xhtml, Path path) throws JournoException {
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(path))) {
-      fos.write(xhtmlToPdf(xhtml));
-      log.debug("renderPdf: Wrote {}", path.toAbsolutePath());
+      xhtmlToPdf(xhtml, fos);
+      log.debug("renderPdf: Wrote " + path.toAbsolutePath());
     } catch (IOException e) {
       throw new JournoException(e);
     }
@@ -178,8 +178,8 @@ public class JournoEngine {
    */
   public void renderPdf(String xhtml, File file) throws JournoException {
     try (BufferedOutputStream fos = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
-      fos.write(xhtmlToPdf(xhtml));
-      log.debug("renderPdf: Wrote {}", file.getAbsolutePath());
+      xhtmlToPdf(xhtml, fos);
+      log.debug("renderPdf: Wrote " + file.getAbsolutePath());
     } catch (IOException e) {
       throw new JournoException(e);
     }

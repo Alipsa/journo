@@ -34,7 +34,7 @@ public class SvgImageTest {
     assertTrue(html.contains("<h1>A big SVG circle</h1>"));
     assertTrue(html.contains("<circle cx=\"150\" cy=\"90\" r=\"80\" stroke=\"black\" stroke-width=\"3\""));
 
-    // Create a pdf file from the html
+    // Create a pdf file from the template
     Path path = Paths.get("target/svgImage.pdf");
     engine.renderPdf("svgImage.ftlh", data, path);
     System.out.println("Wrote " + path.toAbsolutePath());
