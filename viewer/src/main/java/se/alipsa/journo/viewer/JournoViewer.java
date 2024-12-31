@@ -36,6 +36,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
@@ -48,6 +51,8 @@ public class JournoViewer extends Application {
 
   private static Logger logger = LogManager.getLogger(JournoViewer.class);
 
+  private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' HH:mm:ss");
+  private final DateTimeFormatter isoFormat = DateTimeFormatter.ISO_DATE_TIME;
   private PDFViewer pdfViewer;
   FreemarkerTab freeMarkerTab;
   Tab pdfTab;
@@ -164,7 +169,7 @@ public class JournoViewer extends Application {
   private Node createProjectBar() {
     HBox hbox = new HBox();
     hbox.setSpacing(5);
-    hbox.setPadding(new Insets(3,2,0,2));
+    hbox.setPadding(new Insets(3, 2, 0, 2));
     hbox.setStyle("-fx-border-color: lightgray");
 
     viewPdfButton = new Button("View PDF");
@@ -303,7 +308,6 @@ public class JournoViewer extends Application {
     projectMenu.getItems().addAll(saveProjectMi, openProjectMi, newProjectMi);
 
 
-
     Menu graphicsMenu = new Menu("Graphics");
     menuBar.getMenus().add(graphicsMenu);
     MenuItem addSvgTabMi = new MenuItem("Add SVG tab");
@@ -345,6 +349,7 @@ public class JournoViewer extends Application {
     about.setOnAction(a -> {
       StringBuilder content = new StringBuilder();
       String version = "unknown";
+      String buildTime = "unknown";
       try (InputStream is = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
         if (is != null) {
           BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -352,6 +357,15 @@ public class JournoViewer extends Application {
           while ((line = bufferedReader.readLine()) != null) {
             if (line.startsWith("Implementation-Version")) {
               version = line.substring(line.indexOf(':'));
+            } else if (line.startsWith("Build-Time")) {
+              var dt = line.substring(line.indexOf(':')+1);
+              try {
+                var zdt = ZonedDateTime.parse(dt.trim(), isoFormat);
+                buildTime = dateFormat.format(zdt);
+              } catch (DateTimeParseException e) {
+                logger.warn("Failed to parse build time", e);
+                buildTime = dt;
+              }
             }
           }
         } else {
@@ -362,8 +376,9 @@ public class JournoViewer extends Application {
         ExceptionAlert.showAlert("Error reading manifest", e);
       }
       content.append("Journo version: ").append(version)
-      .append("\nJava Runtime Version: ")
-      .append(System.getProperty("java.runtime.version"))
+          .append("\nBuilt: ").append(buildTime)
+          .append("\nJava Runtime Version: ")
+          .append(System.getProperty("java.runtime.version"))
           .append(" (").append(System.getProperty("os.arch")).append(")")
           .append(")")
           .append("\nGroovy version: ").append(GroovySystem.getVersion());
@@ -397,7 +412,7 @@ public class JournoViewer extends Application {
   private void saveAsTabContent() {
     Tab tab = tabPane.getSelectionModel().getSelectedItem();
     if (tab instanceof JournoTab journoTab) {
-      journoTab.setFile((File)null);
+      journoTab.setFile((File) null);
       journoTab.save();
     }
   }
@@ -424,7 +439,7 @@ public class JournoViewer extends Application {
     }
     EditProjectDialog editProjectDialog = new EditProjectDialog(p);
     Optional<Boolean> isChanged = editProjectDialog.showAndWait();
-    if(isChanged.isPresent() && isChanged.get()) {
+    if (isChanged.isPresent() && isChanged.get()) {
       freeMarkerTab.setFile(p.getTemplateFile());
       codeTab.setFile(p.getDataFile());
     }
@@ -474,7 +489,7 @@ public class JournoViewer extends Application {
     searchInput.setEditable(true);
     if (!searchStrings.isEmpty()) {
       searchStrings.forEach(s -> searchInput.getItems().add(s));
-      searchInput.setValue(searchStrings.get(searchStrings.size()-1));
+      searchInput.setValue(searchStrings.get(searchStrings.size() - 1));
     }
 
     findButton.setOnAction(e -> {
@@ -660,7 +675,7 @@ public class JournoViewer extends Application {
     } catch (IOException | JournoException e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
-    }  catch (Throwable e) {
+    } catch (Throwable e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
     }
@@ -679,7 +694,7 @@ public class JournoViewer extends Application {
     } catch (JournoException e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
-    }  catch (Throwable e) {
+    } catch (Throwable e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
     }
