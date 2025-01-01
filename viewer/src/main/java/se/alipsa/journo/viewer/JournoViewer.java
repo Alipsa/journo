@@ -375,7 +375,7 @@ public class JournoViewer extends Application {
           openHtmlVersion = props.getProperty("Openhtmltopdf-Version", openHtmlVersion);
           freeMarkerVersion = props.getProperty("FreeMarker-Version", freeMarkerVersion);
         } else {
-          content.append("Failed to find journo.properties");
+          content.append("Failed to find journo.properties!\n");
         }
       } catch (IOException e) {
         ExceptionAlert.showAlert("Error reading journo.properties", e);

@@ -19,4 +19,4 @@ else
 fi
 
 cd "$DIR" || exit 1
-mvn clean package || exit 1
+mvn -Pfatjar clean package || exit 1

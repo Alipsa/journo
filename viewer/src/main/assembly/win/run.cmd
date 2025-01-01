@@ -4,7 +4,7 @@ cd %DIR%
 
 set JAVA_OPTS=-Xmx8g
 
-SET COMMAND="dir /B /O-D journo-viewer-*.jar"
+SET COMMAND="dir /B /O-D journo-viewer-*-with-dependencies.jar"
 FOR /F "delims=" %%A IN ('%COMMAND%') DO (
     SET TEMPVAR=%%A
     GOTO :SetJar

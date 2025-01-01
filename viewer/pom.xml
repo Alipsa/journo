@@ -171,7 +171,7 @@
                 <executions>
                     <execution>
                         <id>createProps</id>
-                        <phase>package</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>

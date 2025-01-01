@@ -33,6 +33,6 @@ cd "$DIR" || exit
 
 JAVA_OPTS="-Xmx8g"
 
-JAR=$(ls -1 -t journo-viewer-*.jar | head -1)
+JAR=$(ls -1 -t journo-viewer-*-with-dependencies.jar | head -1)
 java $JAVA_OPTS -jar ./$JAR
 
