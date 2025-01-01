@@ -33,3 +33,4 @@ replay_pid*
 /runtime/.flattened-pom.xml
 /viewer/.flattened-pom.xml
 /.flattened-pom.xml
+/runtime/dependency-reduced-pom.xml

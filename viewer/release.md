@@ -1,9 +1,13 @@
 # Release history
 (Note, dates are in yyyy-MM-dd format)
 
-## v0.7.0
+## v0.7.1 (in progress)
+
+## v0.7.0 (2024-01-01)
 - fix bug that saved only selected content instead of all in the groovy script
 - add journoViewer.xml for an alternative way to run the Journo Viewer Gui
+- upgrade dependencies (notably to Javafx 23.0.1)
+- enhance about dialog to include dependency version info
 
 ## v0.6.5
 - fix npe bug when opening a project for the first time

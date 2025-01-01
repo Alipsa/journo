@@ -270,6 +270,8 @@
                                 <configuration>
                                     <!-- note setting this to true requires a lot of filter settings to include groovy stuff-->
                                     <minimizeJar>false</minimizeJar>
+                                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                                    <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
                                 </configuration>
                             </execution>
                         </executions>
