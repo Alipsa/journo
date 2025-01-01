@@ -354,38 +354,31 @@ public class JournoViewer extends Application {
       String jsoupVersion = "unknown";
       String openHtmlVersion = "unknown";
       String freeMarkerVersion = "unknown";
-      try (InputStream is = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
+      Properties props = new Properties();
+
+      try (InputStream is = getClass().getResourceAsStream("/journo.properties")) {
         if (is != null) {
-          BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-          String line;
-          while ((line = bufferedReader.readLine()) != null) {
-            if (line.startsWith("Implementation-Version")) {
-              version = line.substring(line.indexOf(':')+1);
-            } else if (line.startsWith("Build-Time")) {
-              var dt = line.substring(line.indexOf(':')+1);
-              try {
-                var zdt = ZonedDateTime.parse(dt.trim(), isoFormat);
-                buildTime = dateFormat.format(zdt);
-              } catch (DateTimeParseException e) {
-                logger.warn("Failed to parse build time", e);
-                buildTime = dt;
-              }
-            } else if (line.startsWith("Batik-Version")) {
-              batikVersion = line.substring(line.indexOf(':')+1);
-            } else if (line.startsWith("Jsoup-Version")) {
-              jsoupVersion = line.substring(line.indexOf(':')+1);
-            } else if (line.startsWith("Openhtmltopdf-Version")) {
-              openHtmlVersion = line.substring(line.indexOf(':')+1);
-            } else if (line.startsWith("FreeMarker-Version")) {
-              freeMarkerVersion = line.substring(line.indexOf(':')+1);
+          props.load(is);
+          version = props.getProperty("Implementation-Version", version);
+          var dt = props.getProperty("Build-Time");
+          if (dt != null) {
+            try {
+              var zdt = ZonedDateTime.parse(dt.trim(), isoFormat);
+              buildTime = dateFormat.format(zdt);
+            } catch (DateTimeParseException e) {
+              logger.warn("Failed to parse build time", e);
+              buildTime = dt;
             }
           }
+          batikVersion = props.getProperty("Batik-Version", batikVersion);
+          jsoupVersion = props.getProperty("Jsoup-Version", jsoupVersion);
+          openHtmlVersion = props.getProperty("Openhtmltopdf-Version", openHtmlVersion);
+          freeMarkerVersion = props.getProperty("FreeMarker-Version", freeMarkerVersion);
         } else {
-          content.append("Failed to find MANIFEST.MF");
+          content.append("Failed to find journo.properties");
         }
-
       } catch (IOException e) {
-        ExceptionAlert.showAlert("Error reading manifest", e);
+        ExceptionAlert.showAlert("Error reading journo.properties", e);
       }
       content.append("Journo version: ").append(version)
           .append("\nBuilt: ").append(buildTime)

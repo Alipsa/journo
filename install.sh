@@ -4,10 +4,9 @@ set -e
 SCRIPTDIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd "$SCRIPTDIR"
 installDir=${1:-$HOME/programs/}
-pushd ..
-mvn install
-popd
+mvn -Pfatjar install
+pushd viewer
 source ./createApp.sh skipInstructions skipBuild
-cd "$SCRIPTDIR"
-unzip -o target/journo-viewer.zip -d "$installDir"
+unzip -o "$SCRIPTDIR/viewer/target/journo-viewer.zip" -d "$installDir"
+popd
 echo "installed!"

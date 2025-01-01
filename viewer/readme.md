@@ -4,13 +4,20 @@ The Journo Viewer is a javafx application simplifying the workflow of creating F
 are rendered into a PDF using Journo. It requires a JDK version 17 or higher with JavaFx included (such as the [Bellsoft full distribution](https://bell-sw.com/pages/downloads/#jdk-17-lts))
 for both compilation and running.
 
-You start the application with e.g. `java -jar journo-viewer-0.6.2.jar`.  
+## Installing and Running journo via maven
+A simple way to run Journo, provided you have maven and java >= 21 installed, is to do the following
+- download the journoViewer.xml from [github](https://github.com/Alipsa/journo/releases)
+- put the journoViewer.xml file in a directory of choice
+- open a command prompt in that directory and execute `mvn -f journoViewer.xml javafx:run`
+
+This way you do not need to install a jdk with javafx included, any java jdk version 21 or above will work.
 
 ## Installing the zipped release package
 Zipped releases are available on [github](https://github.com/Alipsa/journo/releases)
 Note: prior to version 0.6.3 the journo viewer was packaged into 3 different zip files,
 one for each platform, but from version 0.6.3 all platform have been combined into a single 
-zip file.
+zip file. You need to have a JDK with Javafx included, such as the BellSoft liberica full distribution
+to run the Journo GUI this way. 
 
 ### Mac
 1. Downloaded the release (journo-viewer.zip) and unzip it
@@ -30,7 +37,7 @@ as a trusted application
 
 ## Groovy code to generate data
 Using groovy scripts makes it easy to create mock data to provide input data to Freemarker.
-Groovy is almost 100% compatible with Java syntax but add some nice things.
+Groovy is almost 100% compatible with Java syntax but adds some nice things.
 
 - include dependencies using @Grab
 - the last line (the return value) must be a Map<String, Object>

@@ -24,6 +24,7 @@
         <classgraph.version>4.8.179</classgraph.version>
         <fxsvgimage.version>1.1</fxsvgimage.version>
         <groovy-version>4.0.24</groovy-version>
+        <!-- don't forget to change journoViewer.xml if javafx version is changed -->
         <javafx.version>23.0.1</javafx.version>
         <journo-runtime.version>${revision}</journo-runtime.version>
         <log4j.version>2.24.3</log4j.version>
@@ -157,6 +158,34 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- javafx plugin creates its own jar with a new manifest, so we must create a
+                separate properties file instead -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>createProps</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <propertyfile file="${project.build.outputDirectory}/journo.properties">
+                                    <entry key="Implementation-Version" value="${revision}"/>
+                                    <entry key="Build-Time" value="${maven.build.timestamp}"/>
+                                    <entry key="Batik-Version" value="${batik.version}"/>
+                                    <entry key="Jsoup-Version" value="${jsoup.version}"/>
+                                    <entry key="Openhtmltopdf-Version" value="${openhtmltopdfVersion}"/>
+                                    <entry key="FreeMarker-Version" value="${freemarker.version}"/>
+                                </propertyfile>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.2</version>
@@ -173,47 +202,49 @@
                             <addClasspath>true</addClasspath>
                             <mainClass>se.alipsa.journo.viewer.JournoViewer</mainClass>
                         </manifest>
-                        <manifestEntries>
-                            <Build-Time>${maven.build.timestamp}</Build-Time>
-                            <Batik-Version>${batik.version}</Batik-Version>
-                            <Jsoup-Version>${jsoup.version}</Jsoup-Version>
-                            <Openhtmltopdf-Version>${openhtmltopdfVersion}</Openhtmltopdf-Version>
-                            <FreeMarker-Version>${freemarker.version}</FreeMarker-Version>
-                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>module-info.class</exclude>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                                <exclude>org.openjfx:*</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <!-- note setting this to true requires a lot of filter settings to include groovy stuff-->
-                            <minimizeJar>false</minimizeJar>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>fatjar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>org.openjfx:*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- note setting this to true requires a lot of filter settings to include groovy stuff-->
+                                    <minimizeJar>false</minimizeJar>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
