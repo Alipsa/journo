@@ -1,5 +1,6 @@
 #Journo project file
-#Tue Apr 09 17:02:34 CEST 2024
+#Thu Jan 02 17:20:11 CET 2025
+dataFile=differentFooter.groovy
 dependencies=
 name=differentFooter
 templateFile=differentFooter.ftl

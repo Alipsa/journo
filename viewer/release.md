@@ -1,7 +1,8 @@
-# Release history
+# Journo Viewer Release History
 (Note, dates are in yyyy-MM-dd format)
 
 ## v0.7.1 (in progress)
+- Handle no groovy content without throwing exceptions
 
 ## v0.7.0 (2024-01-01)
 - fix bug that saved only selected content instead of all in the groovy script
