@@ -1,9 +1,12 @@
 # Release history
 
-### v0.7.0 (in progress)
+## v0.7.1 (in progress)
+
+### v0.7.0 (2024-01-01)
 - Throw JournoException on errors instead of exposing the underlying exception directly
 - upgrade freemarker 2.3.32 -> 2.3.33
-- upgrade flying saucer 9.8.0 -> 9.10.2
+- replace flying saucer with openhtmltopdf
+- add support for math ML
 - upgrade batik-transcoder 1.17 -> 1.18
 - Add stream method for rendering output
 - Add ReportEngine constructor for a custom TemplateLoader

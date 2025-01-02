@@ -4,9 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>se.alipsa</groupId>
+    <parent>
+        <groupId>se.alipsa</groupId>
+        <artifactId>journo-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
     <artifactId>journo-viewer</artifactId>
-    <version>0.6.3</version>
     <packaging>jar</packaging>
 
     <name>Journo Viewer</name>
@@ -14,19 +17,19 @@
     <url>https://github.com/Alipsa/journo</url>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <batik.version>1.18</batik.version>
-        <classgraph.version>4.8.177</classgraph.version>
+        <classgraph.version>4.8.179</classgraph.version>
         <fxsvgimage.version>1.1</fxsvgimage.version>
-        <groovy-version>4.0.23</groovy-version>
-        <javafx.version>22.0.2</javafx.version>
-        <journo-runtime.version>0.7.0-SNAPSHOT</journo-runtime.version>
-        <log4j.version>2.24.1</log4j.version>
+        <groovy-version>4.0.24</groovy-version>
+        <!-- don't forget to change journoViewer.xml if javafx version is changed -->
+        <javafx.version>23.0.1</javafx.version>
+        <journo-runtime.version>${revision}</journo-runtime.version>
+        <log4j.version>2.24.3</log4j.version>
         <pdfbox.version>3.0.3</pdfbox.version>
-        <richtextfx.version>0.11.3</richtextfx.version>
+        <richtextfx.version>0.11.4</richtextfx.version>
     </properties>
 
     <repositories>
@@ -96,6 +99,11 @@
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <licenses>
         <license>
@@ -137,9 +145,9 @@
                                     <message>Please use maven version 3.8.4 or higher</message>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>[17,)</version>
+                                    <version>[21,)</version>
                                     <level>ERROR</level>
-                                    <message>Please use Java 17 or higher</message>
+                                    <message>Please use Java 21 or higher</message>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -149,10 +157,38 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.17.1</version>
+                <version>2.18.0</version>
                 <configuration>
                     <rulesUri>file://${basedir}/version-plugin-rules.xml</rulesUri>
                 </configuration>
+            </plugin>
+            <plugin>
+                <!-- javafx plugin creates its own jar with a new manifest, so we must create a
+                separate properties file instead -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>createProps</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <propertyfile file="${project.build.outputDirectory}/journo.properties">
+                                    <entry key="Implementation-Version" value="${revision}"/>
+                                    <entry key="Build-Time" value="${maven.build.timestamp}"/>
+                                    <entry key="Batik-Version" value="${batik.version}"/>
+                                    <entry key="Jsoup-Version" value="${jsoup.version}"/>
+                                    <entry key="Openhtmltopdf-Version" value="${openhtmltopdfVersion}"/>
+                                    <entry key="FreeMarker-Version" value="${freemarker.version}"/>
+                                </propertyfile>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -176,35 +212,72 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>module-info.class</exclude>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                                <exclude>org.openjfx:*</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                </configuration>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>attach-javadocs</id>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <!-- note setting this to true requires a lot of filter settings to include groovy stuff-->
-                            <minimizeJar>false</minimizeJar>
-                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>fatjar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>org.openjfx:*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- note setting this to true requires a lot of filter settings to include groovy stuff-->
+                                    <minimizeJar>false</minimizeJar>
+                                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                                    <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

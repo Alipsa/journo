@@ -354,4 +354,8 @@ public class GroovyTextArea extends CodeTextArea {
     return code;
   }
 
+  public String getAllText() {
+    return textProperty().getValue();
+  }
+
 }

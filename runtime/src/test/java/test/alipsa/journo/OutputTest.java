@@ -1,6 +1,5 @@
 package test.alipsa.journo;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.alipsa.journo.ImageUtil;
@@ -8,7 +7,6 @@ import se.alipsa.journo.JournoException;
 import se.alipsa.journo.JournoEngine;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -99,12 +97,11 @@ public class OutputTest {
   }
 
   @Test
-  void testMathmlToPDF() throws JournoException {
-    var pdfFile = new File("target/mathml.pdf");
+  void testMathMlToPdf() throws JournoException {
+    var pdfFile = Paths.get("target/mathml.pdf");
     String html = engine.renderHtml("mathml.ftlh", new HashMap<>());
     engine.renderPdf(html, pdfFile);
-    assertTrue(pdfFile.exists());
-    System.out.println("Wrote " + pdfFile.getAbsolutePath());
-    //pdfFile.delete()
+    assertTrue(pdfFile.toFile().exists());
+    System.out.println("Wrote " + pdfFile.toFile().getAbsolutePath());
   }
 }

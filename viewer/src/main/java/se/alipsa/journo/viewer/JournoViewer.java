@@ -1,6 +1,5 @@
 package se.alipsa.journo.viewer;
 
-import freemarker.template.TemplateException;
 import groovy.lang.GroovySystem;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -37,6 +36,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
@@ -49,6 +51,8 @@ public class JournoViewer extends Application {
 
   private static Logger logger = LogManager.getLogger(JournoViewer.class);
 
+  private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' HH:mm:ss");
+  private final DateTimeFormatter isoFormat = DateTimeFormatter.ISO_DATE_TIME;
   private PDFViewer pdfViewer;
   FreemarkerTab freeMarkerTab;
   Tab pdfTab;
@@ -165,7 +169,7 @@ public class JournoViewer extends Application {
   private Node createProjectBar() {
     HBox hbox = new HBox();
     hbox.setSpacing(5);
-    hbox.setPadding(new Insets(3,2,0,2));
+    hbox.setPadding(new Insets(3, 2, 0, 2));
     hbox.setStyle("-fx-border-color: lightgray");
 
     viewPdfButton = new Button("View PDF");
@@ -304,7 +308,6 @@ public class JournoViewer extends Application {
     projectMenu.getItems().addAll(saveProjectMi, openProjectMi, newProjectMi);
 
 
-
     Menu graphicsMenu = new Menu("Graphics");
     menuBar.getMenus().add(graphicsMenu);
     MenuItem addSvgTabMi = new MenuItem("Add SVG tab");
@@ -346,28 +349,50 @@ public class JournoViewer extends Application {
     about.setOnAction(a -> {
       StringBuilder content = new StringBuilder();
       String version = "unknown";
-      try (InputStream is = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
+      String buildTime = "unknown";
+      String batikVersion = "unknown";
+      String jsoupVersion = "unknown";
+      String openHtmlVersion = "unknown";
+      String freeMarkerVersion = "unknown";
+      Properties props = new Properties();
+
+      try (InputStream is = getClass().getResourceAsStream("/journo.properties")) {
         if (is != null) {
-          BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-          String line;
-          while ((line = bufferedReader.readLine()) != null) {
-            if (line.startsWith("Implementation-Version")) {
-              version = line.substring(line.indexOf(':'));
+          props.load(is);
+          version = props.getProperty("Implementation-Version", version);
+          var dt = props.getProperty("Build-Time");
+          if (dt != null) {
+            try {
+              var zdt = ZonedDateTime.parse(dt.trim(), isoFormat);
+              buildTime = dateFormat.format(zdt);
+            } catch (DateTimeParseException e) {
+              logger.warn("Failed to parse build time", e);
+              buildTime = dt;
             }
           }
+          batikVersion = props.getProperty("Batik-Version", batikVersion);
+          jsoupVersion = props.getProperty("Jsoup-Version", jsoupVersion);
+          openHtmlVersion = props.getProperty("Openhtmltopdf-Version", openHtmlVersion);
+          freeMarkerVersion = props.getProperty("FreeMarker-Version", freeMarkerVersion);
         } else {
-          content.append("Failed to find MANIFEST.MF");
+          content.append("Failed to find journo.properties!\n");
         }
-
       } catch (IOException e) {
-        ExceptionAlert.showAlert("Error reading manifest", e);
+        ExceptionAlert.showAlert("Error reading journo.properties", e);
       }
       content.append("Journo version: ").append(version)
-      .append("\nJava Runtime Version: ")
-      .append(System.getProperty("java.runtime.version"))
+          .append("\nBuilt: ").append(buildTime)
+          .append("\n\nFreeMarker version: ").append(freeMarkerVersion)
+          .append("\nOpenHTMLtoPDF version: ").append(openHtmlVersion)
+          .append("\nBatik version: ").append(batikVersion)
+          .append("\nJsoup version: ").append(jsoupVersion)
+          .append("\n\nJava Runtime Version: ")
+          .append(System.getProperty("java.runtime.version"))
           .append(" (").append(System.getProperty("os.arch")).append(")")
-          .append(")")
           .append("\nGroovy version: ").append(GroovySystem.getVersion());
+
+
+
       Alert infoDialog = new Alert(Alert.AlertType.INFORMATION, content.toString());
       infoDialog.setHeaderText("About Journo");
       infoDialog.show();
@@ -398,7 +423,7 @@ public class JournoViewer extends Application {
   private void saveAsTabContent() {
     Tab tab = tabPane.getSelectionModel().getSelectedItem();
     if (tab instanceof JournoTab journoTab) {
-      journoTab.setFile((File)null);
+      journoTab.setFile((File) null);
       journoTab.save();
     }
   }
@@ -425,7 +450,7 @@ public class JournoViewer extends Application {
     }
     EditProjectDialog editProjectDialog = new EditProjectDialog(p);
     Optional<Boolean> isChanged = editProjectDialog.showAndWait();
-    if(isChanged.isPresent() && isChanged.get()) {
+    if (isChanged.isPresent() && isChanged.get()) {
       freeMarkerTab.setFile(p.getTemplateFile());
       codeTab.setFile(p.getDataFile());
     }
@@ -475,7 +500,7 @@ public class JournoViewer extends Application {
     searchInput.setEditable(true);
     if (!searchStrings.isEmpty()) {
       searchStrings.forEach(s -> searchInput.getItems().add(s));
-      searchInput.setValue(searchStrings.get(searchStrings.size()-1));
+      searchInput.setValue(searchStrings.get(searchStrings.size() - 1));
     }
 
     findButton.setOnAction(e -> {
@@ -661,7 +686,7 @@ public class JournoViewer extends Application {
     } catch (IOException | JournoException e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
-    }  catch (Throwable e) {
+    } catch (Throwable e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
     }
@@ -680,7 +705,7 @@ public class JournoViewer extends Application {
     } catch (JournoException e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to render the pdf", e);
-    }  catch (Throwable e) {
+    } catch (Throwable e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
     }

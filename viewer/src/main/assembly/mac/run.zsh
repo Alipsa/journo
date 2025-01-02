@@ -31,6 +31,6 @@ fi
 DIR="${0:A:h}"
 cd "$DIR" || exit
 
-JAR=$(ls -1 -t journo-viewer-*.jar | head -1)
+JAR=$(ls -1 -t journo-viewer-*-with-dependencies.jar | head -1)
 java -Xmx8g -Xdock:name=journo -Xdock:icon=./Contents/Resources/journo.icns -jar ./$JAR
 
