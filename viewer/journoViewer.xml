@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.alipsa</groupId>
     <!-- this should match revision in journo-parent -->
-    <version>0.7.0</version>
+    <version>0.7.1-SNAPSHOT</version>
     <artifactId>journoGui</artifactId>
     <packaging>pom</packaging>
     <name>Journo Viewer GUI</name>

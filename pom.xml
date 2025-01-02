@@ -43,7 +43,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- don't forget to change journoViewer.xml if revision is changed -->
-        <revision>0.7.0</revision>
+        <revision>0.7.1-SNAPSHOT</revision>
         <batik.version>1.18</batik.version>
         <freemarker.version>2.3.34</freemarker.version>
         <jsoup.version>1.18.3</jsoup.version>
