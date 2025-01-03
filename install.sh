@@ -3,7 +3,9 @@
 set -e
 SCRIPTDIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd "$SCRIPTDIR"
-installDir=${1:-$HOME/programs/}
+defaultInstallDir=$HOME/programs/
+case $OSTYPE in darwin*) defaultInstallDir=$HOME/Applications ;; esac
+installDir=${1:-$defaultInstallDir}
 mvn install
 pushd viewer
 source ./createApp.sh skipInstructions

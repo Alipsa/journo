@@ -68,7 +68,7 @@ public class OutputTest {
 
   @Test
   public void testRenderToByteArray() throws JournoException, IOException {
-    JournoEngine engine = new JournoEngine(this, "/templates");
+    //JournoEngine engine = new JournoEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");
@@ -82,7 +82,7 @@ public class OutputTest {
 
   @Test
   public void testRenderToStream() throws JournoException, IOException {
-    JournoEngine engine = new JournoEngine(this, "/templates");
+    //JournoEngine engine = new JournoEngine(this, "/templates");
 
     Map<String, Object> data = new HashMap<>();
     data.put("user", "Per");

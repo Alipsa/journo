@@ -2,6 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!--
+    This pom file is meant to be used to run the Journo Viewer via maven i.e.
+
+    mvn -f journoViewer.xml javafx:run
+
+    i.e. it's an alternative way to run the viewer that does not require a Javafx enabled JDK as the zip distribution does
+    The following prerequisites are required:
+    - JDK version 21 or higher
+    - Maven 3.8.4 or higher
+    -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.alipsa.journo</groupId>
     <!-- this should match revision in journo-parent -->

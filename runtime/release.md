@@ -1,4 +1,4 @@
-# Release history
+# Journo Runtime Release History
 
 ## v0.7.1 (in progress)
 - change artifact group name to se.alipsa.journo
