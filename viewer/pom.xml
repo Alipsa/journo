@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>se.alipsa</groupId>
+        <groupId>se.alipsa.journo</groupId>
         <artifactId>journo-parent</artifactId>
         <version>${revision}</version>
     </parent>
@@ -59,7 +59,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>se.alipsa</groupId>
+            <groupId>se.alipsa.journo</groupId>
             <artifactId>journo-runtime</artifactId>
             <version>${journo-runtime.version}</version>
         </dependency>

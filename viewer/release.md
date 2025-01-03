@@ -2,6 +2,7 @@
 (Note, dates are in yyyy-MM-dd format)
 
 ## v0.7.1 (in progress)
+- change artifact group name to se.alipsa.journo
 
 ## v0.7.0 (2024-01-01)
 - fix bug that saved only selected content instead of all in the groovy script
