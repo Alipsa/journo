@@ -1,3 +1,8 @@
+.pagination > .pagination-control > .control-box {
+    -fx-alignment: top-right;
+    /*-fx-padding: 0.416em 1.1em 0 0;*/
+}
+
 .styled-text-area .env-varName {
     -fx-fill: black;
 }
