@@ -413,6 +413,7 @@ public class JournoViewer extends Application {
         Preferences projects = preferences().node("projects");
         String path = projectFile.toPath().toString();
         projects.node(p.getName()).put("projectFile", path);
+        projects.flush(); // Ensure the nodes are persisted
         setActiveProject(p, path);
       } catch (Exception e) {
         ExceptionAlert.showAlert("Failed to load " + projectFile, e);
@@ -644,9 +645,11 @@ public class JournoViewer extends Application {
     pdfTab.setClosable(false);
     BorderPane root = new BorderPane();
 
-    FlowPane buttonPane = new FlowPane();
+    VBox buttonPane = new VBox();
+
     buttonPane.setPadding(new Insets(5));
-    buttonPane.setAlignment(Pos.CENTER);
+    buttonPane.setSpacing(5);
+    buttonPane.setAlignment(Pos.BASELINE_LEFT);
     Button reloadButton = new Button("Reload");
     buttonPane.getChildren().add(reloadButton);
     reloadButton.setOnAction(a -> run());
@@ -665,7 +668,7 @@ public class JournoViewer extends Application {
     });
     buttonPane.getChildren().add(saveButton);
 
-    root.setTop(buttonPane);
+    root.setLeft(buttonPane);
 
     pdfViewer = new PDFViewer(this);
     root.setCenter(pdfViewer);
