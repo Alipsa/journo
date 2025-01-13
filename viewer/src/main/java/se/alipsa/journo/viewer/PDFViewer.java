@@ -35,6 +35,7 @@ public class PDFViewer extends Pagination {
   private void load(PDDocument document, PDFRenderer renderer) {
     this.setPageCount(document.getNumberOfPages());
     this.setMaxPageIndicatorCount(3);
+
     this.setPageFactory((pageIndex) -> {
       BufferedImage image;
       ImageView imageView;

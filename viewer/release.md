@@ -4,6 +4,8 @@
 ## v0.7.1 (in progress)
 - Handle no groovy content without throwing exceptions
 - change artifact group name to se.alipsa.journo
+- Change location of the pdf action buttons to give more space to the pdf content
+- Ensure project is created when opening a project not created on this computer.
 
 ## v0.7.0 (2024-01-01)
 - fix bug that saved only selected content instead of all in the groovy script

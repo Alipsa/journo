@@ -19,6 +19,10 @@ if [[ "${OS}" == "mac" ]]; then
   JAVA_OPTS="$JAVA_OPTS -Xdock:name=journo -Xdock:icon=./src/main/assembly/mac/journo.icns"
 fi
 
-mvn package || exit 1
-jarFilePath=$(ls -t target/journo-viewer-*.jar)
+pushd ../runtime || exit
+mvn -DskipTests install
+popd || exit
+
+mvn -Pfatjar package || exit 1
+jarFilePath=$(ls -t target/journo-viewer-*jar-with-dependencies.jar)
 java $JAVA_OPTS -jar "$jarFilePath"
