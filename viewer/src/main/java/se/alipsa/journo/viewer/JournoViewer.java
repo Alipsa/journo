@@ -119,6 +119,17 @@ public class JournoViewer extends Application {
     });
 
     primaryStage.getIcons().add(appIcon);
+    //Set icon on the taskbar/dock
+    if (Taskbar.isTaskbarSupported()) {
+      var taskbar = Taskbar.getTaskbar();
+
+      if (taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
+        final Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+        var dockIcon = defaultToolkit.getImage(getClass().getResource("/journo-rounded.png"));
+        taskbar.setIconImage(dockIcon);
+      }
+
+    }
     primaryStage.setResizable(true);
     primaryStage.setTitle("Journo Viewer");
     primaryStage.setScene(scene);
@@ -127,7 +138,7 @@ public class JournoViewer extends Application {
 
   public static Image getLogo() {
     if (appIcon == null) {
-      try (InputStream is = JournoViewer.class.getResourceAsStream("/journo-logo.png")) {
+      try (InputStream is = JournoViewer.class.getResourceAsStream("/journo-rounded.png")) {
         appIcon = is == null ? null : new Image(is);
       } catch (Exception e) {
         // ignore
