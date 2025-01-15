@@ -31,9 +31,8 @@ public class ExternalCssTest {
     String html = engine.renderHtml("externalCss.ftlh", data);
     // System.out.println(html);
 
-    Path pdfFilePath = Paths.get("externalCss.pdf");
+    Path pdfFilePath = Paths.get("target/externalCss.pdf");
     engine.renderPdf("externalCss.ftlh", data, pdfFilePath);
     assertTrue(pdfFilePath.toFile().exists());
-    pdfFilePath.toFile().deleteOnExit();
   }
 }

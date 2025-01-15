@@ -32,7 +32,5 @@ public class HeaderFooterImageTest {
     engine.renderPdf(html, path);
     File file = path.toFile();
     assertTrue(file.exists());
-    file.deleteOnExit();
-
   }
 }
