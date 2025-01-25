@@ -1,8 +1,6 @@
 # Journo Viewer
 
-The Journo Viewer is a javafx application simplifying the workflow of creating Freemarker Templates that
-are rendered into a PDF using Journo. It requires a JDK version 17 or higher with JavaFx included (such as the [Bellsoft full distribution](https://bell-sw.com/pages/downloads/#jdk-17-lts))
-for both compilation and running.
+The Journo Viewer is a javafx application simplifying the workflow of creating Freemarker Templates that are rendered into a PDF using Journo. 
 
 ## Installing and Running journo via maven
 A simple way to run Journo, provided you have maven and java >= 21 installed, is to do the following
@@ -16,8 +14,7 @@ This way you do not need to install a jdk with javafx included, any java jdk ver
 Zipped releases are available on [github](https://github.com/Alipsa/journo/releases)
 Note: prior to version 0.6.3 the journo viewer was packaged into 3 different zip files,
 one for each platform, but from version 0.6.3 all platform have been combined into a single 
-zip file. You need to have a JDK with Javafx included, such as the BellSoft liberica full distribution
-to run the Journo GUI this way. 
+zip file. You need to have a JDK with Javafx included, such as the [Bellsoft full distribution](https://bell-sw.com/pages/downloads/#jdk-21-lts) to run the Journo GUI this way. 
 
 ### Mac
 1. Downloaded the release (journo-viewer.zip) and unzip it
@@ -37,10 +34,13 @@ as a trusted application
 
 ## Groovy code to generate data
 Using groovy scripts makes it easy to create mock data to provide input data to Freemarker.
-Groovy is almost 100% compatible with Java syntax but adds some nice things.
+Groovy is almost 100% compatible with Java syntax but adds some nice things such as:
 
 - include dependencies using @Grab
-- the last line (the return value) must be a Map<String, Object>
+- shortened syntax for creating lists and maps
+- shorthand syntax for accessing ans assigning values to lists and maps
+
+The last line (the return value) of the Groovy script must be a Map<String, Object>. Each variable in the freemarker template (e.g. ${myVar}) corresponds to a key in the Map and will be replaced wing the Map value for that key.
 
 Here is a simple example:
 
@@ -79,7 +79,7 @@ def number = phoneNumberUtil.parseAndKeepRawInput('070-1232345', "SE")
 
 # Building the journo viewer
 Journo uses maven. The prerequisites for building are
-1. A JDK version 21 or later (a jvm with javafx included (e.g. the Bellsoft full distro) is recommended)
+1. A JDK version 21 or later
 2. Maven version 3.8.4 or later installed
 
 Then it's just a matter of `mvn install`!
