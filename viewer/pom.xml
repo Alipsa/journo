@@ -23,12 +23,12 @@
 
         <classgraph.version>4.8.179</classgraph.version>
         <fxsvgimage.version>1.1</fxsvgimage.version>
-        <groovy-version>4.0.24</groovy-version>
+        <groovy-version>4.0.25</groovy-version>
         <!-- don't forget to change journoViewer.xml if javafx version is changed -->
-        <javafx.version>23.0.1</javafx.version>
+        <javafx.version>23.0.2</javafx.version>
         <journo-runtime.version>${revision}</journo-runtime.version>
         <log4j.version>2.24.3</log4j.version>
-        <pdfbox.version>3.0.3</pdfbox.version>
+        <pdfbox.version>3.0.4</pdfbox.version>
         <richtextfx.version>0.11.4</richtextfx.version>
     </properties>
 

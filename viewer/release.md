@@ -6,8 +6,10 @@
 - change artifact group name to se.alipsa.journo
 - Change location of the pdf action buttons to give more space to the pdf content
 - Ensure project is created when opening a project not created on this computer.
-- Set taskbar/dock icon in the JournoViewer removing the ned for jvm properties enabling a nice journo icon when running 
-  from the journoViewer pom file
+- Set taskbar/dock icon in the JournoViewer removing the ned for jvm properties enabling a nice journo icon when running from the journoViewer pom file
+- Upgrade groovy 4.0.24 -> 4.0.25
+- Upgrade pdfbox 3.0.3 -> 3.0.4
+- Upgrade javafx 23.0.1 -> 23.0.2
 
 
 ## v0.7.0 (2024-01-01)

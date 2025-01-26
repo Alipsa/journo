@@ -3,6 +3,7 @@
 ## v0.7.1 (in progress)
 - change artifact group name to se.alipsa.journo
 - Add concurrency tests
+- upgrade openhtmltopdf version 1.1.23 -> 1.1.24
 
 ### v0.7.0 (2024-01-01)
 - Throw JournoException on errors instead of exposing the underlying exception directly

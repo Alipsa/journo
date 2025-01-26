@@ -35,6 +35,11 @@ public class Project {
     this.templateFile = templateFile;
   }
 
+  /**
+   * Return the path to the groovy file that produces the test data.
+   *
+   * @return the path to the groovy file that produces the test data
+   */
   public Path getDataFile() {
     return dataFile;
   }
