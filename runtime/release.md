@@ -1,6 +1,6 @@
 # Journo Runtime Release History
 
-## v0.7.1 (in progress)
+## v0.7.1, 2025-01-27
 - change artifact group name to se.alipsa.journo
 - Add concurrency tests
 - upgrade openhtmltopdf version 1.1.23 -> 1.1.24

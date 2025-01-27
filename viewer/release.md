@@ -1,7 +1,7 @@
 # Journo Viewer Release History
 (Note, dates are in yyyy-MM-dd format)
 
-## v0.7.1 (in progress)
+## v0.7.1, 2025-01-27
 - Handle no groovy content without throwing exceptions
 - change artifact group name to se.alipsa.journo
 - Change location of the pdf action buttons to give more space to the pdf content
