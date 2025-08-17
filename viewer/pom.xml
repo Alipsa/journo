@@ -2,282 +2,277 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>se.alipsa.journo</groupId>
-        <artifactId>journo-parent</artifactId>
-        <version>${revision}</version>
-    </parent>
-    <artifactId>journo-viewer</artifactId>
-    <packaging>jar</packaging>
+  <parent>
+    <groupId>se.alipsa.journo</groupId>
+    <artifactId>journo-parent</artifactId>
+    <version>${revision}</version>
+  </parent>
+  <artifactId>journo-viewer</artifactId>
+  <packaging>jar</packaging>
 
-    <name>Journo Viewer</name>
-    <description>Viewer for the journo project</description>
-    <url>https://github.com/Alipsa/journo</url>
+  <name>Journo Viewer</name>
+  <description>Viewer for the journo project</description>
+  <url>https://github.com/Alipsa/journo</url>
 
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <properties>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <classgraph.version>4.8.179</classgraph.version>
-        <fxsvgimage.version>1.1</fxsvgimage.version>
-        <groovy-version>4.0.25</groovy-version>
-        <!-- don't forget to change journoViewer.xml if javafx version is changed -->
-        <javafx.version>23.0.2</javafx.version>
-        <journo-runtime.version>${revision}</journo-runtime.version>
-        <log4j.version>2.24.3</log4j.version>
-        <pdfbox.version>3.0.4</pdfbox.version>
-        <richtextfx.version>0.11.4</richtextfx.version>
-    </properties>
+    <classgraph.version>4.8.181</classgraph.version>
+    <fxsvgimage.version>1.3</fxsvgimage.version>
+    <groovy-version>4.0.28</groovy-version>
+    <!-- don't forget to change journoViewer.xml if javafx version is changed -->
+    <javafx.version>23.0.2</javafx.version>
+    <journo-runtime.version>${revision}</journo-runtime.version>
+    <log4j.version>2.25.1</log4j.version>
+    <pdfbox.version>3.0.5</pdfbox.version>
+    <richtextfx.version>0.11.5</richtextfx.version>
+  </properties>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
-            <version>${javafx.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-web</artifactId>
-            <version>${javafx.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>se.alipsa.journo</groupId>
-            <artifactId>journo-runtime</artifactId>
-            <version>${journo-runtime.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>${pdfbox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-codec</artifactId>
-            <version>${batik.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>${groovy-version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.fxmisc.richtext</groupId>
-            <artifactId>richtextfx</artifactId>
-            <version>${richtextfx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.classgraph</groupId>
-            <artifactId>classgraph</artifactId>
-            <version>${classgraph.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.hervegirod</groupId>
-            <artifactId>fxsvgimage</artifactId>
-            <version>${fxsvgimage.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    <licenses>
-        <license>
-            <name>MIT</name>
-            <url>https://github.com/Alipsa/journo/blob/main/LICENSE</url>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <name>Per Nyfelt</name>
-            <email>per.nyfelt@alipsa.se</email>
-            <organization>Alipsa HB</organization>
-            <organizationUrl>http://www.alipsa.se</organizationUrl>
-        </developer>
-    </developers>
-    <scm>
-        <connection>scm:git:https://github.com/Alipsa/journo.git</connection>
-        <developerConnection>scm:git:https://github.com/Alipsa/journo.git</developerConnection>
-        <url>https://github.com/Alipsa/journo/tree/main</url>
-    </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${javafx.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-swing</artifactId>
+      <version>${javafx.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+      <version>${javafx.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>se.alipsa.journo</groupId>
+      <artifactId>journo-runtime</artifactId>
+      <version>${journo-runtime.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>${pdfbox.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-codec</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>${groovy-version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.fxmisc.richtext</groupId>
+      <artifactId>richtextfx</artifactId>
+      <version>${richtextfx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.classgraph</groupId>
+      <artifactId>classgraph</artifactId>
+      <version>${classgraph.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.hervegirod</groupId>
+      <artifactId>fxsvgimage</artifactId>
+      <version>${fxsvgimage.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <licenses>
+    <license>
+      <name>MIT</name>
+      <url>https://github.com/Alipsa/journo/blob/main/LICENSE</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Per Nyfelt</name>
+      <email>per.nyfelt@alipsa.se</email>
+      <organization>Alipsa HB</organization>
+      <organizationUrl>http://www.alipsa.se</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/Alipsa/journo.git</connection>
+    <developerConnection>scm:git:https://github.com/Alipsa/journo.git</developerConnection>
+    <url>https://github.com/Alipsa/journo/tree/main</url>
+  </scm>
 
-    <build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-releases-maven-java</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.9.9,)</version>
+                  <level>ERROR</level>
+                  <message>Please use maven version 3.9.9 or higher</message>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>[21,)</version>
+                  <level>ERROR</level>
+                  <message>Please use Java 21 or higher</message>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <configuration>
+          <rulesUri>file://${basedir}/version-plugin-rules.xml</rulesUri>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- javafx plugin creates its own jar with a new manifest, so we must create a
+        separate properties file instead -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>createProps</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <propertyfile file="${project.build.outputDirectory}/journo.properties">
+                  <entry key="Implementation-Version" value="${revision}"/>
+                  <entry key="Build-Time" value="${maven.build.timestamp}"/>
+                  <entry key="Batik-Version" value="${batik.version}"/>
+                  <entry key="Jsoup-Version" value="${jsoup.version}"/>
+                  <entry key="Openhtmltopdf-Version" value="${openhtmltopdfVersion}"/>
+                  <entry key="FreeMarker-Version" value="${freemarker.version}"/>
+                </propertyfile>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <!-- Below line will add the following attributes to the jar:
+                  Implementation-Title: ${pom.name}
+                  Implementation-Version: ${pom.version}
+                  Implementation-Vendor-Id: ${pom.groupId}
+                  Implementation-Vendor: ${pom.organization.name}
+              -->
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addClasspath>true</addClasspath>
+              <mainClass>se.alipsa.journo.viewer.JournoViewer</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>fatjar</id>
+      <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <id>enforce-releases-maven-java</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>[3.8.4,)</version>
-                                    <level>ERROR</level>
-                                    <message>Please use maven version 3.8.4 or higher</message>
-                                </requireMavenVersion>
-                                <requireJavaVersion>
-                                    <version>[21,)</version>
-                                    <level>ERROR</level>
-                                    <message>Please use Java 21 or higher</message>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.18.0</version>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.6.0</version>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>module-info.class</exclude>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <exclude>org.openjfx:*</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
                 <configuration>
-                    <rulesUri>file://${basedir}/version-plugin-rules.xml</rulesUri>
+                  <!-- note setting this to true requires a lot of filter settings to include groovy stuff-->
+                  <minimizeJar>false</minimizeJar>
+                  <shadedArtifactAttached>true</shadedArtifactAttached>
+                  <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
                 </configuration>
-            </plugin>
-            <plugin>
-                <!-- javafx plugin creates its own jar with a new manifest, so we must create a
-                separate properties file instead -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>createProps</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <propertyfile file="${project.build.outputDirectory}/journo.properties">
-                                    <entry key="Implementation-Version" value="${revision}"/>
-                                    <entry key="Build-Time" value="${maven.build.timestamp}"/>
-                                    <entry key="Batik-Version" value="${batik.version}"/>
-                                    <entry key="Jsoup-Version" value="${jsoup.version}"/>
-                                    <entry key="Openhtmltopdf-Version" value="${openhtmltopdfVersion}"/>
-                                    <entry key="FreeMarker-Version" value="${freemarker.version}"/>
-                                </propertyfile>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <!-- Below line will add the following attributes to the jar:
-                                Implementation-Title: ${pom.name}
-                                Implementation-Version: ${pom.version}
-                                Implementation-Vendor-Id: ${pom.groupId}
-                                Implementation-Vendor: ${pom.organization.name}
-                            -->
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>se.alipsa.journo.viewer.JournoViewer</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
-    <profiles>
-        <profile>
-            <id>fatjar</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.6.0</version>
-                        <configuration>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>module-info.class</exclude>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>org.openjfx:*</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>shade</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- note setting this to true requires a lot of filter settings to include groovy stuff-->
-                                    <minimizeJar>false</minimizeJar>
-                                    <shadedArtifactAttached>true</shadedArtifactAttached>
-                                    <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+      </build>
+    </profile>
+  </profiles>
 </project>

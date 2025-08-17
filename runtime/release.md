@@ -1,5 +1,17 @@
 # Journo Runtime Release History
 
+## v0.7.2, In progress
+io.github.openhtmltopdf:openhtmltopdf-core 1.1.24 -> 1.1.30
+io.github.openhtmltopdf:openhtmltopdf-mathml-support 1.1.24 -> 1.1.30
+io.github.openhtmltopdf:openhtmltopdf-pdfbox  1.1.24 -> 1.1.30
+io.github.openhtmltopdf:openhtmltopdf-svg-support 1.1.24 -> 1.1.30
+org.apache.xmlgraphics:batik-transcoder 1.18 -> 1.19
+org.jsoup:jsoup 1.18.3 -> 1.21.1
+org.junit.jupiter:junit-jupiter 5.11.4 -> 5.13.4
+org.slf4j:jcl-over-slf4j 2.0.16 -> 2.0.17
+org.slf4j:slf4j-api 2.0.16 -> 2.0.17
+org.slf4j:slf4j-simple 2.0.16 -> 2.0.17
+
 ## v0.7.1, 2025-01-27
 - change artifact group name to se.alipsa.journo
 - Add concurrency tests
