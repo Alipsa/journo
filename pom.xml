@@ -18,6 +18,20 @@
     <module>viewer</module>
   </modules>
 
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- don't forget to change journoViewer.xml if revision is changed -->
+    <revision>0.7.2</revision>
+    <batik.version>1.19</batik.version>
+    <freemarker.version>2.3.34</freemarker.version>
+    <jsoup.version>1.21.2</jsoup.version>
+    <junit-jupiter.version>5.13.4</junit-jupiter.version>
+    <openhtmltopdfVersion>1.1.30</openhtmltopdfVersion>
+    <slf4j.version>2.0.17</slf4j.version>
+  </properties>
+
   <licenses>
     <license>
       <name>MIT</name>
@@ -37,20 +51,6 @@
     <developerConnection>scm:git:https://github.com/Alipsa/journo.git</developerConnection>
     <url>https://github.com/Alipsa/journo/tree/main</url>
   </scm>
-
-  <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- don't forget to change journoViewer.xml if revision is changed -->
-    <revision>0.7.2-SNAPSHOT</revision>
-    <batik.version>1.19</batik.version>
-    <freemarker.version>2.3.34</freemarker.version>
-    <jsoup.version>1.21.1</jsoup.version>
-    <junit-jupiter.version>5.13.4</junit-jupiter.version>
-    <openhtmltopdfVersion>1.1.30</openhtmltopdfVersion>
-    <slf4j.version>2.0.17</slf4j.version>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -200,7 +200,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.18.0</version>
+          <version>2.19.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -308,15 +308,13 @@
             </executions>
           </plugin>
           <plugin>
-            <!-- See https://central.sonatype.org/pages/apache-maven.html for details -->
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.7.0</version>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.8.0</version>
             <extensions>true</extensions>
             <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
             </configuration>
           </plugin>
         </plugins>

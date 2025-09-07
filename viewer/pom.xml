@@ -22,14 +22,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <classgraph.version>4.8.181</classgraph.version>
-    <fxsvgimage.version>1.3</fxsvgimage.version>
-    <groovy-version>4.0.28</groovy-version>
+    <fxsvgimage.version>1.4</fxsvgimage.version>
+    <groovy-version>5.0.0</groovy-version>
     <!-- don't forget to change journoViewer.xml if javafx version is changed -->
     <javafx.version>23.0.2</javafx.version>
     <journo-runtime.version>${revision}</journo-runtime.version>
     <log4j.version>2.25.1</log4j.version>
     <pdfbox.version>3.0.5</pdfbox.version>
-    <richtextfx.version>0.11.5</richtextfx.version>
+    <richtextfx.version>0.11.6</richtextfx.version>
   </properties>
 
   <repositories>
@@ -151,7 +151,31 @@
               </rules>
             </configuration>
           </execution>
+          <execution>
+            <id>enforce-bytecode</id>
+            <goals><goal>enforce</goal></goals>
+            <configuration>
+              <rules>
+                <enforceBytecodeVersion>
+                  <!-- Cap dependencies at JDK 21 -->
+                  <maxJdkVersion>21</maxJdkVersion>
+                  <!-- Optional: ignore test scope -->
+                  <ignoredScopes>
+                    <ignoredScope>test</ignoredScope>
+                  </ignoredScopes>
+                </enforceBytecodeVersion>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>extra-enforcer-rules</artifactId>
+            <version>1.10.0</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

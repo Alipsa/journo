@@ -1,7 +1,7 @@
 # Journo Viewer Release History
 (Note, dates are in yyyy-MM-dd format)
 
-## v0.7.2, In progress
+## v0.7.2, 2025-09-07
 io.github.openhtmltopdf:openhtmltopdf-core 1.1.24 -> 1.1.30
 io.github.openhtmltopdf:openhtmltopdf-mathml-support 1.1.24 -> 1.1.30
 io.github.openhtmltopdf:openhtmltopdf-pdfbox  1.1.24 -> 1.1.30
@@ -13,12 +13,12 @@ org.junit.jupiter:junit-jupiter 5.11.4 -> 5.13.4
 org.slf4j:jcl-over-slf4j 2.0.16 -> 2.0.17
 org.slf4j:slf4j-api 2.0.16 -> 2.0.17
 org.slf4j:slf4j-simple 2.0.16 -> 2.0.17
-com.github.hervegirod:fxsvgimage 1.1 -> 1.3
+com.github.hervegirod:fxsvgimage 1.1 -> 1.4
 io.github.classgraph:classgraph 4.8.179 -> 4.8.181
-org.apache.groovy:groovy-all 4.0.25 -> 4.0.28
+org.apache.groovy:groovy-all 4.0.25 -> 5.0.5
 org.apache.logging.log4j:log4j-core 2.24.3 -> 2.25.1
 org.apache.pdfbox:pdfbox 3.0.4 -> 3.0.5
-org.fxmisc.richtext:richtextfx 0.11.4 -> 0.11.5
+org.fxmisc.richtext:richtextfx 0.11.4 -> 0.11.6
 
 ## v0.7.1, 2025-01-27
 - Handle no groovy content without throwing exceptions

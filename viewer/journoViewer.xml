@@ -15,7 +15,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.alipsa.journo</groupId>
     <!-- this should match revision in journo-parent -->
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.7.2</version>
     <artifactId>journoGui</artifactId>
     <packaging>pom</packaging>
     <name>Journo Viewer GUI</name>
@@ -23,7 +23,7 @@
     <url>https://github.com/Alipsa/journo</url>
 
     <properties>
-        <javafx.version>23.0.1</javafx.version>
+        <javafx.version>23.0.2</javafx.version>
     </properties>
 
     <repositories>
@@ -71,7 +71,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.1</version>
                 <executions>
                     <execution>
                         <id>enforce-releases-maven-java</id>
@@ -81,7 +81,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>[3.8.4,)</version>
+                                    <version>[3.9.9,)</version>
                                     <level>ERROR</level>
                                     <message>Please use maven version 3.8.4 or higher</message>
                                 </requireMavenVersion>

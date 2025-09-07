@@ -1,6 +1,6 @@
 # Journo Runtime Release History
 
-## v0.7.2, In progress
+## v0.7.2, 2025-09-07
 io.github.openhtmltopdf:openhtmltopdf-core 1.1.24 -> 1.1.30
 io.github.openhtmltopdf:openhtmltopdf-mathml-support 1.1.24 -> 1.1.30
 io.github.openhtmltopdf:openhtmltopdf-pdfbox  1.1.24 -> 1.1.30
