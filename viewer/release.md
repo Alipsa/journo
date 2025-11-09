@@ -1,5 +1,9 @@
 # Journo Viewer Release History
 (Note, dates are in yyyy-MM-dd format)
+## v0.7.3 in progress
+- io.github.classgraph:classgraph 4.8.181 -> 4.8.184
+- pdfbox 3.0.5 -> 3.0.6
+- org.apache.groovy:groovy-all 5.0.0 -> 5.0.2
 
 ## v0.7.2, 2025-09-07
 io.github.openhtmltopdf:openhtmltopdf-core 1.1.24 -> 1.1.30

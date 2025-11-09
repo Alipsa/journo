@@ -21,14 +21,14 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <classgraph.version>4.8.181</classgraph.version>
+    <classgraph.version>4.8.184</classgraph.version>
     <fxsvgimage.version>1.4</fxsvgimage.version>
-    <groovy-version>5.0.0</groovy-version>
+    <groovy-version>5.0.2</groovy-version>
     <!-- don't forget to change journoViewer.xml if javafx version is changed -->
     <javafx.version>23.0.2</javafx.version>
     <journo-runtime.version>${revision}</journo-runtime.version>
-    <log4j.version>2.25.1</log4j.version>
-    <pdfbox.version>3.0.5</pdfbox.version>
+    <log4j.version>2.25.2</log4j.version>
+    <pdfbox.version>3.0.6</pdfbox.version>
     <richtextfx.version>0.11.6</richtextfx.version>
   </properties>
 
@@ -173,7 +173,7 @@
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.10.0</version>
+            <version>1.11.0</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -265,7 +265,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
-            <version>3.6.0</version>
             <configuration>
               <filters>
                 <filter>
