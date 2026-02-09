@@ -6,6 +6,9 @@ cd "$SCRIPTDIR"
 defaultInstallDir=$HOME/programs/
 case $OSTYPE in darwin*) defaultInstallDir=$HOME/Applications ;; esac
 installDir=${1:-$defaultInstallDir}
+if command -v jdk21; then
+  . jdk21
+fi
 mvn install
 pushd viewer
 source ./createApp.sh skipInstructions

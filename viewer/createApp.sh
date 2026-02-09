@@ -3,12 +3,12 @@
 ### Create a joint zip release for macos, linux and windows
 ### This script should be run from a mac since SetFile only exists on Mac
 ###
-
+set -e
 DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 skipInstructions=${1:-false}
 skipBuild=${2:-false}
 if [[ "$skipBuild" == "false" ]]; then
-  source "$DIR"/build.sh || exit 1
+  source "$DIR"/build.sh
 fi
 
 appName="journo.app"
@@ -34,14 +34,14 @@ chmod +x  "$targetDir"/*.sh
 chmod +x  "$targetDir"/*.zsh
 
 # cd to the target so we dont have to allow full disk access in Settings -> Privacy and Security
-cd "${targetDir}/.." || exit 1
+cd "${targetDir}/.."
 if command -v Setfile; then
   SetFile -a B "${appName}"
 else
   echo "Not building from a Mac so cannot set application props with SetFile"
 fi
 
-cd "$DIR/target" || exit 1
+cd "$DIR/target"
 zip -r journo-viewer.zip "${appName}"
 
 echo "Done!"
