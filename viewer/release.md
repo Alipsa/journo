@@ -1,9 +1,16 @@
 # Journo Viewer Release History
 (Note, dates are in yyyy-MM-dd format)
-## v0.7.3 in progress
+
+## v0.7.3, 2026-02-19
 - io.github.classgraph:classgraph 4.8.181 -> 4.8.184
-- pdfbox 3.0.5 -> 3.0.6
-- org.apache.groovy:groovy-all 5.0.0 -> 5.0.2
+- org.apache.pdfbox:pdfbox 3.0.5 -> 3.0.6
+- org.apache.groovy:groovy-all 5.0.0 -> 5.0.4
+- com.github.hervegirod:fxsvgimage 1.4 -> se.alipsa:fxsvgimage 1.5.1
+- Fix NPE in getProjectDir() when no project is selected
+- Fix incorrect error message in viewHtml() (said "pdf" instead of "html")
+- Auto-save template before rendering in run(), viewHtml(), and viewExternal()
+- Fix fxsvgimage dependency not using its version property
+- Fix non-final static logger fields
 
 ## v0.7.2, 2025-09-07
 io.github.openhtmltopdf:openhtmltopdf-core 1.1.24 -> 1.1.30

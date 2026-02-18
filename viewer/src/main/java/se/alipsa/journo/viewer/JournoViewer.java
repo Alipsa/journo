@@ -49,7 +49,7 @@ import static se.alipsa.journo.viewer.CreateProjectDialog.KEY_PATH;
 
 public class JournoViewer extends Application {
 
-  private static Logger logger = LogManager.getLogger(JournoViewer.class);
+  private static final Logger logger = LogManager.getLogger(JournoViewer.class);
 
   private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' HH:mm:ss");
   private final DateTimeFormatter isoFormat = DateTimeFormatter.ISO_DATE_TIME;
@@ -691,8 +691,10 @@ public class JournoViewer extends Application {
   void run() {
     scene.setCursor(Cursor.WAIT);
     try {
+      if (freeMarkerTab.isChanged()) {
+        freeMarkerTab.save();
+      }
       Map<String, Object> data = codeTab.runScript(true);
-      // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       byte[] pdf = freeMarkerTab.renderPdf(data);
       pdfViewer.load(pdf);
       tabPane.getSelectionModel().select(pdfTab);
@@ -709,8 +711,10 @@ public class JournoViewer extends Application {
   void viewHtml() {
     scene.setCursor(Cursor.WAIT);
     try {
+      if (freeMarkerTab.isChanged()) {
+        freeMarkerTab.save();
+      }
       Map<String, Object> data = codeTab.runScript(true);
-      // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       String html = freeMarkerTab.renderHtml(data);
       WebView webView = new WebView();
       webView.getEngine().loadContent(html);
@@ -718,7 +722,7 @@ public class JournoViewer extends Application {
       scene.setCursor(Cursor.DEFAULT);
     } catch (JournoException e) {
       scene.setCursor(Cursor.DEFAULT);
-      ExceptionAlert.showAlert("Failed to render the pdf", e);
+      ExceptionAlert.showAlert("Failed to render the html", e);
     } catch (Throwable e) {
       scene.setCursor(Cursor.DEFAULT);
       ExceptionAlert.showAlert("Failed to execute groovy script", e);
@@ -728,8 +732,10 @@ public class JournoViewer extends Application {
   void viewExternal() {
     scene.setCursor(Cursor.WAIT);
     try {
+      if (freeMarkerTab.isChanged()) {
+        freeMarkerTab.save();
+      }
       Map<String, Object> data = codeTab.runScript(true);
-      // TODO: Check if templateArea is saved and if not save if loaded from file or prompt to save to new file
       File file = File.createTempFile(projectCombo.getValue().getName(), ".pdf");
       freeMarkerTab.renderPdf(data, file);
       openInExternalApp(file);
@@ -836,9 +842,12 @@ public class JournoViewer extends Application {
   public File getProjectDir() {
     File dir = new File(System.getProperty("user.dir"));
     if (!dir.exists()) {
-      String projectFilePref = preferences().node(projectCombo.getValue().getName()).get("projectFile", null);
-      if (projectFilePref != null) {
-        return new File(projectFilePref).getParentFile();
+      Project active = projectCombo.getValue();
+      if (active != null) {
+        String projectFilePref = preferences().node(active.getName()).get("projectFile", null);
+        if (projectFilePref != null) {
+          return new File(projectFilePref).getParentFile();
+        }
       }
     } else if (dir.isFile()) {
       return dir.getParentFile();

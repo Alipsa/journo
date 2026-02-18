@@ -52,10 +52,6 @@ public class FreemarkerTab extends JournoTab {
     }
   }
 
-  /* public Path getTemplatePath() {
-    return file == null ? null : file.toPath();
-  }*/
-
   public byte[] renderPdf(Map<String, Object> data) throws JournoException {
     return journoEngine.renderPdf(file.getName(), data);
   }

@@ -22,7 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <classgraph.version>4.8.184</classgraph.version>
-    <fxsvgimage.version>1.4</fxsvgimage.version>
+    <fxsvgimage.version>1.5.1</fxsvgimage.version>
     <groovy-version>5.0.4</groovy-version>
     <!-- don't forget to change journoViewer.xml if javafx version is changed -->
     <javafx.version>23.0.2</javafx.version>
@@ -32,12 +32,12 @@
     <richtextfx.version>0.11.7</richtextfx.version>
   </properties>
 
-  <repositories>
+  <!--repositories>
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
-  </repositories>
+  </repositories-->
 
   <dependencies>
     <dependency>
@@ -90,7 +90,7 @@
       <version>${classgraph.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.github.hervegirod</groupId>
+      <groupId>se.alipsa</groupId>
       <artifactId>fxsvgimage</artifactId>
       <version>${fxsvgimage.version}</version>
     </dependency>

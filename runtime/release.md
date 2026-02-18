@@ -1,4 +1,14 @@
 # Journo Runtime Release History
+(Note, dates are in yyyy-MM-dd format)
+
+## v0.7.3, 2026-02-19
+- org.freemarker:freemarker 2.3.33 -> 2.3.34
+- org.jsoup:jsoup 1.21.1 -> 1.22.1
+- io.github.openhtmltopdf:openhtmltopdf-core 1.1.30 -> 1.1.37
+- io.github.openhtmltopdf:openhtmltopdf-mathml-support 1.1.30 -> 1.1.37
+- io.github.openhtmltopdf:openhtmltopdf-pdfbox 1.1.30 -> 1.1.37
+- io.github.openhtmltopdf:openhtmltopdf-svg-support 1.1.30 -> 1.1.37
+- org.junit:junit-bom 5.13.4 -> 6.0.3
 
 ## v0.7.2, 2025-09-07
 io.github.openhtmltopdf:openhtmltopdf-core 1.1.24 -> 1.1.30

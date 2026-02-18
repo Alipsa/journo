@@ -39,7 +39,7 @@ To use it, add the following dependency to your maven pom.xml (or equivalent for
 <dependency>
     <groupId>se.alipsa</groupId>
     <artifactId>journo-runtime</artifactId>
-    <version>0.7.0</version>
+    <version>0.7.3</version>
 </dependency>
 ```
 

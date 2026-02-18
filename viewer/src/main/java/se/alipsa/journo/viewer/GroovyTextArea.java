@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 public class GroovyTextArea extends CodeTextArea {
 
-  private static Logger logger = LogManager.getLogger(GroovyTextArea.class);
+  private static final Logger logger = LogManager.getLogger(GroovyTextArea.class);
   private GroovyScriptEngineImpl groovyScriptEngine;
   Map<String, Object> contextObjects = new HashMap<>();
 
@@ -76,7 +76,6 @@ public class GroovyTextArea extends CodeTextArea {
         autoComplete();
       }
     });
-    //Platform.runLater(() -> setParagraphGraphicFactory(LineNumberFactory.get(this)));
   }
 
   /**
@@ -146,7 +145,6 @@ public class GroovyTextArea extends CodeTextArea {
   }
 
   private void suggestCompletion(String lastWord) {
-    //console.appendFx("Getting suggestions for " + lastWord, true);
     TreeMap<String, Boolean> suggestions = new TreeMap<>();
 
     contextObjects = getContextObjects();
@@ -240,7 +238,6 @@ public class GroovyTextArea extends CodeTextArea {
   private Map<String, Boolean> getInstanceMethods(Object obj, String start) {
     Map<String, Boolean> instanceMethods = new TreeMap<>();
     for(Method method : obj.getClass().getMethods()) {
-      //Gade.instance().getConsoleComponent().getConsole().appendFx(method.getName() + " and startWith '" + start + "'");
       if ( !Modifier.isStatic(method.getModifiers()) && ("".equals(start) || method.getName().startsWith(start))) {
         Boolean hasParams = method.getParameterCount() > 0;
         String suggestion = method.getName() + "()";
