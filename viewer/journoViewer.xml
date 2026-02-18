@@ -15,7 +15,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.alipsa.journo</groupId>
     <!-- this should match revision in journo-parent -->
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.7.4-SNAPSHOT</version>
     <artifactId>journoGui</artifactId>
     <packaging>pom</packaging>
     <name>Journo Viewer GUI</name>
@@ -25,24 +25,6 @@
     <properties>
         <javafx.version>23.0.2</javafx.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
-            <id>ossrh</id>
-            <name>Sonatype Snapshot Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
